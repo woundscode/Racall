@@ -1,12 +1,27 @@
-name: Check installed 0.2 to 0.3 upgrade
+name: Check installed 0.3 to candidate upgrade
 on:
   workflow_dispatch:
-  push:
-    branches: ['codex/0.3-context-studio']
-    paths:
-      - .github/workflows/check-upgrade.yml
-      - scripts/check-upgrade.cjs
-      - scripts/upgrade/**
+    inputs:
+      candidate_source:
+        description: Full source commit SHA from the successful native build
+        required: true
+        type: string
+      candidate_run:
+        description: Successful build.yml run ID
+        required: true
+        type: string
+      candidate_artifact:
+        description: Racall-win-x64 artifact ID from that run
+        required: true
+        type: string
+      candidate_size:
+        description: Exact Windows x64 EXE byte size from BUILD.json
+        required: true
+        type: string
+      candidate_sha256:
+        description: Exact Windows x64 EXE SHA-256 from BUILD.json
+        required: true
+        type: string
 permissions:
   contents: read
   actions: read
@@ -16,6 +31,11 @@ jobs:
     timeout-minutes: 30
     env:
       PYTHON_KEYRING_BACKEND: keyring.backends.null.Keyring
+      RACALL_UPGRADE_SOURCE: ${{ inputs.candidate_source }}
+      RACALL_UPGRADE_RUN: ${{ inputs.candidate_run }}
+      RACALL_UPGRADE_ARTIFACT: ${{ inputs.candidate_artifact }}
+      RACALL_UPGRADE_SIZE: ${{ inputs.candidate_size }}
+      RACALL_UPGRADE_SHA256: ${{ inputs.candidate_sha256 }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,17 +44,34 @@ jobs:
           architecture: x64
           cache: npm
       - run: npm ci
+      - name: Verify upgrade harness contracts
+        run: node --test scripts/upgrade/unit.test.cjs
+      - name: Bind candidate to its successful native workflow and exact artifact
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { readCandidate, verifyProvenance } = require('./scripts/upgrade/inputs.cjs');
+            const candidate = readCandidate();
+            const { data: run } = await github.rest.actions.getWorkflowRun({
+              ...context.repo, run_id: candidate.run,
+            });
+            const { data: artifact } = await github.rest.actions.getArtifact({
+              ...context.repo, artifact_id: candidate.artifact,
+            });
+            verifyProvenance(run, artifact, candidate);
+            const fs = require('node:fs');
+            fs.mkdirSync('test-results/upgrade-inputs', { recursive: true });
+            fs.writeFileSync('test-results/upgrade-inputs/provenance.json',
+              JSON.stringify({ candidate, run, artifact }, null, 2) + '\n');
       - name: Download immutable verified Windows x64 candidate
         uses: actions/download-artifact@v4
         with:
-          artifact-ids: '12611260738'
-          run-id: '40223957296'
+          artifact-ids: ${{ inputs.candidate_artifact }}
+          run-id: ${{ inputs.candidate_run }}
           merge-multiple: true
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/racall-upgrade-candidate
-      - name: Verify upgrade harness contracts
-        run: node --test scripts/upgrade/unit.test.cjs
-      - name: Install published 0.2, upgrade to verified 0.3, and check real app data
+      - name: Install published 0.3, upgrade to the verified candidate, and check real app data
         run: node scripts/check-upgrade.cjs
         env:
           RACALL_UPGRADE_CANDIDATE_DIR: ${{ runner.temp }}/racall-upgrade-candidate
@@ -44,6 +81,7 @@ jobs:
         with:
           name: upgrade-win-x64
           path: |
+            test-results/upgrade-inputs/provenance.json
             test-results/upgrade-*/result.json
             test-results/upgrade-*/inputs.json
             test-results/upgrade-*/before-upgrade.json

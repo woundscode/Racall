@@ -1,7 +1,7 @@
 {
-  "version": "0.3.0-beta.1",
-  "label": "0.3 Beta",
-  "publication": "approved",
+  "version": "0.4.0-beta.1",
+  "label": "0.4 Beta",
+  "publication": "hold",
   "platforms": ["win-x64", "win-arm64", "mac-arm64", "mac-x64", "linux-x64", "linux-arm64"],
-  "github_latest": true
+  "github_latest": false
 }

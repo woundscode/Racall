@@ -11,7 +11,7 @@ const NOTE_BODY =
   '# Upgrade notes\n\nMarigold launches on October 18.\n\nСохранить заметку и [[связь]].';
 const QUESTION = 'When does Marigold launch?';
 
-/** All fixture records are created by the real installed 0.2 API, not hand-written schemas. */
+/** All fixture records are created by the real installed baseline API. */
 async function seedBaseline(desktop, endpoint) {
   assert.deepEqual(await desktop.api('/preferences'), { locale: 'ru' });
   await desktop.api('/settings', 'PUT', {
@@ -32,7 +32,7 @@ async function seedBaseline(desktop, endpoint) {
     })
     .toBe('ready');
   const thread = await desktop.api(base + '/chats', 'POST', {
-    title: 'Preserved 0.2 conversation',
+    title: 'Preserved baseline conversation',
   });
   const turn = await desktop.api(base + `/chats/${thread.id}/turns`, 'POST', {
     question: QUESTION,
@@ -63,7 +63,8 @@ async function seedBaseline(desktop, endpoint) {
     body: 'Still belongs to its owner.',
   });
   await desktop.api(`/notebooks/${trashed.id}`, 'DELETE');
-  // Exercise both supported choices, then preserve Russian against an English 0.3 install seed.
+  const studio = await seedStudio(desktop, base, note);
+  // Exercise both supported choices, then preserve Russian against an English install seed.
   await desktop.api('/preferences', 'PUT', { locale: 'en' });
   await desktop.api('/preferences', 'PUT', { locale: 'ru' });
   await desktop.api('/appearance', 'PUT', { theme: 'dark' });
@@ -71,7 +72,7 @@ async function seedBaseline(desktop, endpoint) {
   await desktop.page.reload();
   await expect(desktop.page.locator('html')).toHaveAttribute('lang', 'ru');
   await expect(desktop.page.locator('html')).toHaveAttribute('data-theme', 'dark');
-  await desktop.capture('01-baseline-02.png');
+  await desktop.capture('01-baseline-03.png');
   return {
     notebook,
     note,
@@ -83,7 +84,27 @@ async function seedBaseline(desktop, endpoint) {
     report,
     trashed,
     settings,
+    studio,
   };
+}
+
+async function seedStudio(desktop, base, note) {
+  const accepted = await desktop.api(base + '/jobs', 'POST', {
+    request_id: randomUUID(),
+    kind: 'summary',
+    title: 'Preserved baseline Studio summary',
+    language: 'en',
+    context: { source_ids: [], note_ids: [note.id] },
+  });
+  await expect
+    .poll(async () => (await desktop.api(base + `/jobs/${accepted.id}`)).status, { timeout: 60000 })
+    .toBe('completed');
+  const job = await desktop.api(base + `/jobs/${accepted.id}`);
+  const material = await desktop.api(base + `/materials/${job.result.material_id}`);
+  assert.equal(material.kind, 'summary');
+  assert.equal(material.answer.validated, true);
+  assert.ok(material.answer.citations.length > 0);
+  return { job, material };
 }
 
 async function assertLegacyData(desktop, fixture) {
@@ -149,6 +170,15 @@ async function assertLegacyData(desktop, fixture) {
     base + `/materials/${encodeURIComponent(material.id)}/export`,
   );
   assert.equal(exported, report.body);
+  assert.deepEqual(
+    await desktop.api(base + `/materials/${fixture.studio.material.id}`),
+    fixture.studio.material,
+  );
+  assert.deepEqual(await desktop.api(base + `/jobs/${fixture.studio.job.id}`), fixture.studio.job);
+  assert.equal(
+    await desktop.text(base + `/materials/${fixture.studio.material.id}/export`),
+    fixture.studio.material.body,
+  );
   const upgradedSettings = await desktop.api('/settings');
   for (const key of [
     'provider',

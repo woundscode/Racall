@@ -1,8 +1,54 @@
 # Reference projects and implementation priorities
 
-Last refreshed 2026-10-25 for 0.3 planning; the October 17 and September 26 reviews are retained below. [Roadmap](ROADMAP.md) · [Architecture decisions](adr) · [Project home](../README.md)
+Last refreshed 2026-11-03 for 0.4 planning; earlier reviews are retained below as historical snapshots. [Roadmap](ROADMAP.md) · [0.4 proposal](PLAN_04.md) · [Architecture decisions](adr) · [Project home](../README.md)
 
 Use comparable projects to learn which workflows matter and how they are implemented. Adapt useful patterns to Racall's desktop application, local files and Python service. Source reviews and observations of an installed application are distinguished below. Code presence is evidence of an implementation path, not proof of output quality, completeness, security or cross-platform support.
+
+## Refresh: 2026-11-03
+
+This is a source review and a proposed development scope, not an implementation or a new release. Racall's baseline is the published [0.3 Beta](releases/0.3.0-beta.1.md), release source `839d5219d9269071c07e61497061905cc3f707e9`, with local documentation at `68d81b1`. Its [publication evidence](VERIFICATION_03_RELEASE_2026-10-25.md) covers the six native targets and the limits of the live-model evaluation. No model inference, application installation, Docker or WSL run was needed for this review.
+
+### What changed upstream
+
+| Reference | Current reviewed default-branch source | Change from the last reviewed source |
+| --- | --- | --- |
+| Open Notebook | [`a0f6f3081ae0`](https://github.com/lfnovo/open-notebook/tree/a0f6f3081ae06328f0a451b3a3ef2959ca25721d) | Identical to the October 25 snapshot: zero new commits/files in the explicit comparison |
+| SurfSense | [`f41e037fd704`](https://github.com/MODSetter/SurfSense/tree/f41e037fd704a0e4418e74117734d13cffdd1a2f), November 2 | [565 commits ahead](https://github.com/MODSetter/SurfSense/compare/e3de9e0d293b2ebb1fb813628ecc1d6f26909396...f41e037fd704a0e4418e74117734d13cffdd1a2f); latest inspected release [v2.3.0](https://github.com/MODSetter/SurfSense/releases/tag/v2.3.0) |
+| Open-NotebookLM | [`36ecc9336eb5`](https://github.com/Anionex/Open-NotebookLM/tree/36ecc9336eb5fb9b9e91e48a057ef9fb010ea50a) | Identical to the October 25 snapshot: zero new commits/files |
+| Ollama | [`9a3e81777672`](https://github.com/ollama/ollama/tree/9a3e8177767245acc62b735eba7d5d8a553606d0), November 3 | [51 commits ahead](https://github.com/ollama/ollama/compare/d1ed3fd13ac73f60cff00bbead8af24a68c4200d...9a3e8177767245acc62b735eba7d5d8a553606d0) of the October 17 source review; speech support and request/integration fixes |
+| Unsloth | [`9448b9d68205`](https://github.com/unslothai/unsloth/tree/9448b9d682051944c0b096aeff3b0ee2813f438b), November 3 | Current presentation reference; no README commits returned for October 25 onward, so the page layout is not a newly introduced feature |
+
+The unchanged results use explicit comparisons for [Open Notebook](https://github.com/lfnovo/open-notebook/compare/a0f6f3081ae06328f0a451b3a3ef2959ca25721d...a0f6f3081ae06328f0a451b3a3ef2959ca25721d) and [Open-NotebookLM](https://github.com/Anionex/Open-NotebookLM/compare/36ecc9336eb5fb9b9e91e48a057ef9fb010ea50a...36ecc9336eb5fb9b9e91e48a057ef9fb010ea50a). A repository's `pushed_at` can change without its default branch moving. Commit counts describe activity, not the number of usable features. SurfSense's comparison lists at most 300 changed paths; the important presentation files were compared using both complete recursive trees instead.
+
+**Open Notebook:** still useful for saved text transformations and separately configured outline/transcript/speech generation. Its [transformation implementation](https://github.com/lfnovo/open-notebook/blob/a0f6f3081ae06328f0a451b3a3ef2959ca25721d/open_notebook/graphs/transformation.py) is not a slide editor. The inspected tree has no dedicated presentation/PPTX workflow. Its generic [job listing/cancellation](https://github.com/lfnovo/open-notebook/blob/a0f6f3081ae06328f0a451b3a3ef2959ca25721d/api/command_service.py#L71-L96) remains placeholder behavior; retain Racall's existing durable job lifecycle.
+
+**SurfSense:** new useful paths include [HTML-page generation/refinement](https://github.com/MODSetter/SurfSense/blob/f41e037fd704a0e4418e74117734d13cffdd1a2f/surfsense_local/backend/worker/studio/web/html/pipeline.py), a [no-network policy for that output](https://github.com/MODSetter/SurfSense/blob/f41e037fd704a0e4418e74117734d13cffdd1a2f/surfsense_local/backend/modules/artifacts/web_pages/no_network.py), [versioned image/infographic edits](https://github.com/MODSetter/SurfSense/blob/f41e037fd704a0e4418e74117734d13cffdd1a2f/surfsense_local/backend/modules/artifacts/image_edits/service.py), and [MOBI/AZW3 input validation](https://github.com/MODSetter/SurfSense/blob/f41e037fd704a0e4418e74117734d13cffdd1a2f/surfsense_local/backend/modules/documents/kindle_books/upload_check.py). These were read, not executed or independently security-audited.
+
+Its [office pipeline](https://github.com/MODSetter/SurfSense/blob/f41e037fd704a0e4418e74117734d13cffdd1a2f/surfsense_local/backend/worker/studio/office/pipeline.py), [PPTX specification](https://github.com/MODSetter/SurfSense/blob/f41e037fd704a0e4418e74117734d13cffdd1a2f/surfsense_local/backend/worker/studio/office/pptx/__init__.py), presentation viewer and context gatherer are unchanged from our October 25 snapshot. The pipeline executes model-written Python to make a PPTX; for Studio-created decks it explicitly retains no editable specification/version chain. The [viewer](https://github.com/MODSetter/SurfSense/blob/f41e037fd704a0e4418e74117734d13cffdd1a2f/surfsense_local/frontend/src/features/studio/viewers/pptx-viewer.tsx) is not evidence of a slide-content editor. For Racall, prefer validated slide data and fixed Python exporters. Keep an editable document as the authoritative result.
+
+SurfSense's new [queue helper](https://github.com/MODSetter/SurfSense/blob/f41e037fd704a0e4418e74117734d13cffdd1a2f/surfsense_local/backend/modules/artifacts/queued_job.py) marks an artifact failed if enqueueing fails: a useful acceptance case. Do not copy its [model-script repair loop](https://github.com/MODSetter/SurfSense/blob/f41e037fd704a0e4418e74117734d13cffdd1a2f/surfsense_local/backend/worker/studio/office/script_attempts.py) or [ordinary-failure queue retries](https://github.com/MODSetter/SurfSense/blob/f41e037fd704a0e4418e74117734d13cffdd1a2f/surfsense_local/backend/worker/studio/job.py) unchanged. Racall's explicit retry and no model replay after restart remain intentional.
+
+**Open-NotebookLM:** its existing staged [slide workflow](https://github.com/Anionex/Open-NotebookLM/blob/36ecc9336eb5fb9b9e91e48a057ef9fb010ea50a/workflow_engine/workflow/wf_paper2ppt_parallel_consistent_style.py) separates outlines, page generation and revisions. Pages are generated images. The inspected [export call](https://github.com/Anionex/Open-NotebookLM/blob/36ecc9336eb5fb9b9e91e48a057ef9fb010ea50a/workflow_engine/workflow/wf_paper2ppt_parallel_consistent_style.py#L704-L728) still disables PPTX with `output_pptx_path=None`; a conversion helper elsewhere is not proof that this user workflow exports editable slides. Learn from its review stages without requiring an image model or OCR for Racall's own generated text.
+
+**Ollama:** [remote cancellation now uses the request context](https://github.com/ollama/ollama/commit/4ed3ba13cf8e35ef0e52db2e71a70543955afe1d), and streaming error fixes reinforce the value of testing failure/stop behavior. Current [speech documentation](https://github.com/ollama/ollama/blob/9a3e8177767245acc62b735eba7d5d8a553606d0/docs/capabilities/speech.mdx) describes `/v1/audio/speech`, speech-model capability discovery and Phonon's English checkpoint for Ollama 0.40.9+. This is a future audio-provider option, not evidence that the previously tested local 0.40.5 binary has it or that Russian speech works. No installed Ollama settings or version were changed in this review. The inspected UI diff is concentrated in connection/disconnection feedback, not a broad chat redesign.
+
+**Unsloth:** retain the clear [README hierarchy](https://github.com/unslothai/unsloth/blob/9448b9d682051944c0b096aeff3b0ee2813f438b/README.md): brand, short purpose, navigation, real screenshot, downloads, then features. Its model-training scope is not a reason to add training to Racall. Keep Racall's own mascot, colors and GitHub-hosted documentation.
+
+**Google's workflow reference:** the current [Slide Deck help](https://support.google.com/gemininotebook/answer/16757456?hl=en) documents source/language selection, background generation, outline review, per-slide revision, reordering and PDF/PPTX downloads. It also notes that sources are not considered during revisions. This is product documentation, not an inspected implementation. Racall should preserve the source/version context during any future AI revision. PDF/PPTX export and slide revisions were already announced in [March 2026](https://workspaceupdates.googleblog.com/2026/03/new-ways-to-customize-and-interact-with-your-content-in-NotebookLM.html); they are not new discoveries since our October review.
+
+### Recommended 0.4 scope
+
+Keep **presentations** as the milestone: selected sources/notes → reviewable outline → editable slides → saved library item → PPTX/PDF. The [detailed proposal](PLAN_04.md) limits the first slice to template-based text slides, citations, speaker notes, manual editing/reordering, and export. Use current text connections, jobs and versioned evidence; put generation, validation, persistence and export in Python. No mandatory image, speech or large local model.
+
+Prioritize source fidelity, editable outputs, EN/RU layout and restart-safe edits before more formats. Leave image generation, infographic creation, audio, video, extra connectors, mobile/sync and another desktop redesign to separate decisions. The 0.3 critic's documented false positives remain a limitation to test and communicate, not a claim that generated slide facts become guaranteed.
+
+### Review method and action record
+
+1. Read the current release, roadmap, code map and previous pinned reviews to establish the 0.3 baseline.
+2. Fetch default-branch metadata and explicit comparisons; inspect changed paths and relevant implementations at fixed SHAs.
+3. Trace presentation generation, saved output, edits, export and failures; distinguish source presence, product documentation and actual runtime checks.
+4. Inspect Racall's context/jobs/material boundaries to propose a Python-first extension without a new queue or global rewrite.
+5. Record this review, the bounded 0.4 proposal and roadmap targets locally. No upstream code/assets/dependencies imported, no application version changed, no commit/push/publication performed.
 
 ## Refresh: 2026-10-25
 

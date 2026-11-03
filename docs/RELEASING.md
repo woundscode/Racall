@@ -12,7 +12,7 @@ Update `package.json`, the root entries in `package-lock.json`, `pyproject.toml`
 
 Only after the owner explicitly chooses the release timing may the maintainer change the value to `"approved"`, complete the final checklist and create a release tag. Do not infer a date or minimum interval, schedule automatic publication, or clear the hold merely because CI passed. Return the next development version to `"hold"`. See the [current release checklist](RELEASE_03_CHECKLIST.md).
 
-On **October 19, 2026**, the owner explicitly approved publishing **Racall 0.2 Beta for Windows x64**. Its policy is `publication: "approved"`, `platforms: ["win-x64"]`, `github_latest: true`. macOS and Linux are not included in this release's packages or acceptance claim. The required fresh native build and publication passed in [run 39257810891](https://github.com/SleepyCodeMeow/Racall/actions/runs/39257810891), from the exact tagged source `70fd79bd69cef06d88c03e1fa5ff88929fc1fa3e`; old native CI and the earlier local candidate were not reused as the released build.
+On **October 19, 2026**, the owner explicitly approved publishing **Racall 0.2 Beta for Windows x64**. Its policy is `publication: "approved"`, `platforms: ["win-x64"]`, `github_latest: true`. macOS and Linux are not included in this release's packages or acceptance claim. The required fresh native build and publication passed in [run 39257810891](https://github.com/woundscode/Racall/actions/runs/39257810891), from the exact tagged source `70fd79bd69cef06d88c03e1fa5ff88929fc1fa3e`; old native CI and the earlier local candidate were not reused as the released build.
 
 On **October 25, 2026**, the owner explicitly approved **0.3 Beta** for all six
 x64/ARM64 targets on Windows, macOS and Linux, with the same GitHub Latest
@@ -22,7 +22,7 @@ approval permits publication; it does not turn the open model-reliability gate
 into a passed test. Preserve the [evaluation results](MODEL_EVALUATION_03_2026-10-25.md)
 and the release's known limitations.
 
-The matching tag `v0.3.0-beta.1` at `839d5219d9269071c07e61497061905cc3f707e9` passed its fresh six-target build and publication in [run 40223957296](https://github.com/SleepyCodeMeow/Racall/actions/runs/40223957296). The [published release report](VERIFICATION_03_RELEASE_2026-10-25.md) records all eleven uploaded asset checks and the exact released-installer upgrade.
+The matching tag `v0.3.0-beta.1` at `839d5219d9269071c07e61497061905cc3f707e9` passed its fresh six-target build and publication in [run 40223957296](https://github.com/woundscode/Racall/actions/runs/40223957296). The [published release report](VERIFICATION_03_RELEASE_2026-10-25.md) records all eleven uploaded asset checks and the exact released-installer upgrade.
 
 Supported platform identifiers are `win-x64`, `win-arm64`, `mac-arm64`, `mac-x64`,
 `linux-x64` and `linux-arm64`. The nonempty, unique list is validated by

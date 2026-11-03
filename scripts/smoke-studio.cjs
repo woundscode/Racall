@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { studioProvider } = require('./smoke/studio-provider.cjs');
+const { captureWindow } = require('./smoke/capture.cjs');
 
 const root = path.resolve(__dirname, '..');
 const run = path.join(root, 'test-results', 'studio-desktop-' + Date.now());
@@ -89,9 +90,7 @@ async function api(page, endpoint, method = 'GET', body) {
 }
 
 async function capture(name) {
-  await app
-    .windows()[0]
-    .screenshot({ path: path.join(run, name), animations: 'disabled', timeout: 15000 });
+  await captureWindow(app, path.join(run, name));
 }
 
 async function chooseContext(container, source, note) {

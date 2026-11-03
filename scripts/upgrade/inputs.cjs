@@ -4,31 +4,74 @@ const path = require('node:path');
 const { createHash } = require('node:crypto');
 const { Readable, Transform } = require('node:stream');
 const { pipeline } = require('node:stream/promises');
+const REPOSITORY = Object.freeze(require('../../apps/shared/repository.json'));
 
-// Immutable release/candidate inputs. This gate neither rebuilds nor publishes them.
+// Published 0.3 hashes are recorded in docs/VERIFICATION_03_RELEASE_2026-10-25.md.
+// The candidate is supplied explicitly after its native build; never guess or use latest.
 const BASELINE = Object.freeze({
-  version: '0.2.0-beta.1',
-  source: '70fd79bd69cef06d88c03e1fa5ff88929fc1fa3e',
-  name: 'Racall-0.2.0-beta.1-win-x64.exe',
-  size: 144616175,
-  sha256: '82fc01e779997f7fc4fe5c570cd371c6dc5d83cea0cf7d337b508332f45e02e0',
-});
-const CANDIDATE = Object.freeze({
   version: '0.3.0-beta.1',
   source: '839d5219d9269071c07e61497061905cc3f707e9',
-  run: 40223957296,
-  artifact: 12611260738,
-  publication: 'approved',
   name: 'Racall-0.3.0-beta.1-win-x64.exe',
   size: 153279432,
   sha256: 'b968cb0f91f0ddfba481853c2949e0978d7d603a9634b18be6d76fde91dc1eb9',
 });
 
+function positiveInteger(value, label) {
+  assert.match(value || '', /^[1-9]\d*$/, `${label} must be an explicit positive integer.`);
+  const number = Number(value);
+  assert.ok(Number.isSafeInteger(number), `${label} exceeds the safe integer range.`);
+  return number;
+}
+
+function readCandidate(env = process.env, policy = require('../../apps/shared/release.json')) {
+  assert.match(policy.version, /^\d+\.\d+\.\d+(?:-[a-z0-9]+(?:\.[a-z0-9]+)*)?$/);
+  assert.notEqual(policy.version, BASELINE.version, 'The candidate must differ from the baseline.');
+  assert.ok(['hold', 'approved'].includes(policy.publication));
+  assert.match(env.RACALL_UPGRADE_SOURCE || '', /^[a-f0-9]{40}$/, 'Pin the candidate source SHA.');
+  assert.match(env.RACALL_UPGRADE_SHA256 || '', /^[a-f0-9]{64}$/, 'Pin the installer SHA-256.');
+  const size = positiveInteger(env.RACALL_UPGRADE_SIZE, 'Installer size');
+  assert.ok(size > 1000000, 'The candidate is too small to be a Racall installer.');
+  return Object.freeze({
+    version: policy.version,
+    source: env.RACALL_UPGRADE_SOURCE,
+    run: positiveInteger(env.RACALL_UPGRADE_RUN, 'Build run ID'),
+    artifact: positiveInteger(env.RACALL_UPGRADE_ARTIFACT, 'Artifact ID'),
+    publication: policy.publication,
+    name: `Racall-${policy.version}-win-x64.exe`,
+    size,
+    sha256: env.RACALL_UPGRADE_SHA256,
+  });
+}
+
+function verifyProvenance(run, artifact, candidate) {
+  assert.equal(run.id, candidate.run);
+  assert.equal(run.head_sha, candidate.source);
+  assert.equal(run.path, '.github/workflows/build.yml');
+  assert.ok(
+    ['push', 'workflow_dispatch'].includes(run.event),
+    'Use a source build, not a PR merge.',
+  );
+  assert.equal(run.status, 'completed');
+  assert.equal(run.conclusion, 'success');
+  assert.equal(run.repository?.id, REPOSITORY.id, 'Build belongs to another repository.');
+  assert.equal(
+    run.head_repository?.id,
+    REPOSITORY.id,
+    'Build source belongs to another repository.',
+  );
+  assert.equal(artifact.id, candidate.artifact);
+  assert.equal(artifact.name, 'Racall-win-x64');
+  assert.equal(artifact.expired, false);
+  assert.equal(artifact.workflow_run?.id, candidate.run);
+  assert.equal(artifact.workflow_run?.head_sha, candidate.source);
+}
+
 function assertHostedWindows(root, env = process.env, host = process) {
   assert.equal(env.CI, 'true', 'Upgrade checks require CI.');
   assert.equal(env.GITHUB_ACTIONS, 'true', 'Upgrade checks require GitHub Actions.');
   assert.equal(env.RUNNER_ENVIRONMENT, 'github-hosted', 'Self-hosted machines are not disposable.');
-  assert.equal(env.GITHUB_REPOSITORY, 'SleepyCodeMeow/Racall');
+  assert.equal(env.GITHUB_REPOSITORY_ID, String(REPOSITORY.id));
+  assert.match(env.GITHUB_REPOSITORY || '', /^[a-z\d-]+\/[a-z\d_.-]+$/i);
   assert.equal(env.RUNNER_OS, 'Windows');
   assert.equal(env.RUNNER_ARCH, 'X64');
   assert.equal(host.platform, 'win32');
@@ -44,14 +87,14 @@ function assertHostedWindows(root, env = process.env, host = process) {
   return { candidate, profile: path.join(env.APPDATA, 'OpenNotebook') };
 }
 
-function verifyManifest(manifest) {
-  assert.equal(manifest.version, CANDIDATE.version);
-  assert.equal(manifest.source, CANDIDATE.source);
+function verifyManifest(manifest, candidate) {
+  assert.equal(manifest.version, candidate.version);
+  assert.equal(manifest.source, candidate.source);
   assert.equal(manifest.platform, 'win');
   assert.equal(manifest.arch, 'x64');
-  assert.equal(manifest.publication, CANDIDATE.publication);
+  assert.equal(manifest.publication, candidate.publication);
   assert.deepEqual(manifest.packages, [
-    { name: CANDIDATE.name, size: CANDIDATE.size, sha256: CANDIDATE.sha256 },
+    { name: candidate.name, size: candidate.size, sha256: candidate.sha256 },
   ]);
 }
 
@@ -62,17 +105,22 @@ async function verifyFile(file, expected) {
   assert.equal(digest.digest('hex'), expected.sha256, 'Unexpected installer SHA-256.');
 }
 
-async function prepareInputs(run, candidate) {
-  const manifest = JSON.parse(fs.readFileSync(path.join(candidate, 'BUILD.json'), 'utf8'));
-  verifyManifest(manifest);
-  const next = path.join(candidate, CANDIDATE.name);
-  await verifyFile(next, CANDIDATE);
-  const sums = fs.readFileSync(path.join(candidate, 'SHA256SUMS.txt'), 'utf8');
-  assert.equal(sums.trim(), `${CANDIDATE.sha256}  ${CANDIDATE.name}`);
+async function verifyCandidateFiles(directory, candidate) {
+  const manifest = JSON.parse(fs.readFileSync(path.join(directory, 'BUILD.json'), 'utf8'));
+  verifyManifest(manifest, candidate);
+  const next = path.join(directory, candidate.name);
+  await verifyFile(next, candidate);
+  const sums = fs.readFileSync(path.join(directory, 'SHA256SUMS.txt'), 'utf8');
+  assert.equal(sums.trim(), `${candidate.sha256}  ${candidate.name}`);
+  return { next, manifest };
+}
+
+async function prepareInputs(run, directory, candidate) {
+  const { next, manifest } = await verifyCandidateFiles(directory, candidate);
   const old = path.join(run, BASELINE.name);
-  const url = `https://github.com/SleepyCodeMeow/Racall/releases/download/v${BASELINE.version}/${BASELINE.name}`;
+  const url = `https://github.com/${REPOSITORY.full_name}/releases/download/v${BASELINE.version}/${BASELINE.name}`;
   const response = await fetch(url, { signal: AbortSignal.timeout(120000) });
-  assert.equal(response.status, 200, 'Published 0.2 installer is unavailable.');
+  assert.equal(response.status, 200, `Published ${BASELINE.version} installer is unavailable.`);
   let bytes = 0;
   const bound = new Transform({
     transform(chunk, _encoding, callback) {
@@ -92,4 +140,12 @@ async function prepareInputs(run, candidate) {
   return { old, next, manifest };
 }
 
-module.exports = { BASELINE, CANDIDATE, assertHostedWindows, verifyManifest, prepareInputs };
+module.exports = {
+  BASELINE,
+  readCandidate,
+  verifyProvenance,
+  assertHostedWindows,
+  verifyManifest,
+  verifyCandidateFiles,
+  prepareInputs,
+};

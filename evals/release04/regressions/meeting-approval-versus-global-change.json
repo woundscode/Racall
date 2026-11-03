@@ -1,0 +1,240 @@
+{
+  "origin": "Observed 0.4 presentation speaker-note false positive, 2026-11-03",
+  "source_base_commit": "68d81b15c365dd8f6daa20166e0aafc391a3b340",
+  "source_manifest_sha256": "da500b415c3895372487ed8f748345e7ece16d979987aaf90c1f64fce51637e0",
+  "model_digest": "6114515d63c17436a7c0417d82820ac65ad643e2806c5a3c89cb62846436ed0b",
+  "ollama_version": "0.40.11",
+  "runtime_alias_parameters": {
+    "num_gpu": 40,
+    "num_ctx": 4096
+  },
+  "critic_prompt_sha256": "a9f8f74ee9ed3da4321bbbb39d8835a92cfc6c47dc0a6c2add4a6f3bf2aecaeb",
+  "writer_data": {
+    "question": "Create exactly two short slides in English, with at most two bullets per slide. Slide 1: the station plan approval, scheduled opening, planned sensors and capacity. Slide 2: what the records say about actual results, measured temperatures and the meeting's decision on schedule or budget changes. Keep speaker notes short.",
+    "format": "presentation",
+    "answer_language": "en",
+    "evidence": [
+      {
+        "id": "E1",
+        "title": "station-en.md",
+        "quote": "The Marigold station plan was approved on September 21, 2030. Its opening is scheduled for November 12, 2030. The plan specifies seven sensors and a planned capacity of 40 kW. The station's actual results have not yet been received.",
+        "location": {
+          "type": "paragraph",
+          "page": null,
+          "section": "",
+          "line_start": 1,
+          "line_end": 1,
+          "element": 0,
+          "offset_start": 0,
+          "offset_end": 232
+        }
+      },
+      {
+        "id": "E2",
+        "title": "Meeting record",
+        "quote": "At the review meeting, measured temperatures were not reported. Changes to the schedule or budget were not approved at this meeting.",
+        "location": {
+          "element": 0,
+          "type": "note",
+          "section": "Meeting record",
+          "line_start": 1,
+          "line_end": 1,
+          "offset_start": 0,
+          "offset_end": 132
+        }
+      }
+    ],
+    "outline": {
+      "schema_version": 1,
+      "revision": 2,
+      "stage": "outline",
+      "title": "Marigold review — reviewed",
+      "language": "en",
+      "template": "light",
+      "slides": [
+        {
+          "id": "1acd93cf-7585-49a1-bea0-2ce8434e832f",
+          "layout": "bullets",
+          "title": "Marigold Station Plan Overview",
+          "bullets": [
+            "The station plan was approved on September 21, 2030, with a scheduled opening for November 12, 2030.",
+            "The plan specifies a capacity of 40 kW and the installation of seven sensors."
+          ],
+          "notes": "Summary of the approved project plan and initial specifications.",
+          "evidence_ids": [
+            "E1"
+          ],
+          "review_state": "edited"
+        },
+        {
+          "id": "f2daed26-cd5e-4962-821b-5042d0e502b3",
+          "layout": "bullets",
+          "title": "Meeting Results and Decisions",
+          "bullets": [
+            "Actual results have not yet been received, and measured temperatures were not reported at the meeting.",
+            "No changes to the schedule or budget were approved during the review meeting."
+          ],
+          "notes": "Status of results and decision-making from the review meeting.",
+          "evidence_ids": [
+            "E1",
+            "E2"
+          ],
+          "review_state": "edited"
+        }
+      ]
+    }
+  },
+  "writer_response": {
+    "slides": [
+      {
+        "layout": "bullets",
+        "title": "Marigold Station Plan Overview",
+        "bullets": [
+          "The station plan was approved on September 21, 2030, with a scheduled opening on November 12, 2030.",
+          "The plan specifies the installation of seven sensors and a planned capacity of 40 kW."
+        ],
+        "notes": "Summary of the project's approval date, intended opening timeline, and key technical specifications.",
+        "evidence_ids": [
+          "E1"
+        ]
+      },
+      {
+        "layout": "bullets",
+        "title": "Meeting Results and Decisions",
+        "bullets": [
+          "Actual station results have not been received, and measured temperatures were not reported.",
+          "No changes to the project's schedule or budget were approved during the review meeting."
+        ],
+        "notes": "Overview of the status of data reporting and the lack of schedule or budget adjustments-at this stage.",
+        "evidence_ids": [
+          "E1",
+          "E2"
+        ]
+      }
+    ]
+  },
+  "critic_data": {
+    "question": "Create exactly two short slides in English, with at most two bullets per slide. Slide 1: the station plan approval, scheduled opening, planned sensors and capacity. Slide 2: what the records say about actual results, measured temperatures and the meeting's decision on schedule or budget changes. Keep speaker notes short.",
+    "claims": [
+      {
+        "claim_id": "C1",
+        "text": "Marigold Station Plan Overview",
+        "evidence_ids": [
+          "E1"
+        ]
+      },
+      {
+        "claim_id": "C2",
+        "text": "The station plan was approved on September 21, 2030, with a scheduled opening on November 12, 2030.",
+        "evidence_ids": [
+          "E1"
+        ]
+      },
+      {
+        "claim_id": "C3",
+        "text": "The plan specifies the installation of seven sensors and a planned capacity of 40 kW.",
+        "evidence_ids": [
+          "E1"
+        ]
+      },
+      {
+        "claim_id": "C4",
+        "text": "Summary of the project's approval date, intended opening timeline, and key technical specifications.",
+        "evidence_ids": [
+          "E1"
+        ]
+      },
+      {
+        "claim_id": "C5",
+        "text": "Meeting Results and Decisions",
+        "evidence_ids": [
+          "E1",
+          "E2"
+        ]
+      },
+      {
+        "claim_id": "C6",
+        "text": "Actual station results have not been received, and measured temperatures were not reported.",
+        "evidence_ids": [
+          "E1",
+          "E2"
+        ]
+      },
+      {
+        "claim_id": "C7",
+        "text": "No changes to the project's schedule or budget were approved during the review meeting.",
+        "evidence_ids": [
+          "E1",
+          "E2"
+        ]
+      },
+      {
+        "claim_id": "C8",
+        "text": "Overview of the status of data reporting and the lack of schedule or budget adjustments-at this stage.",
+        "evidence_ids": [
+          "E1",
+          "E2"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "id": "E1",
+        "title": "station-en.md",
+        "quote": "The Marigold station plan was approved on September 21, 2030. Its opening is scheduled for November 12, 2030. The plan specifies seven sensors and a planned capacity of 40 kW. The station's actual results have not yet been received.",
+        "location": {
+          "type": "paragraph",
+          "page": null,
+          "section": "",
+          "line_start": 1,
+          "line_end": 1,
+          "element": 0,
+          "offset_start": 0,
+          "offset_end": 232
+        }
+      },
+      {
+        "id": "E2",
+        "title": "Meeting record",
+        "quote": "At the review meeting, measured temperatures were not reported. Changes to the schedule or budget were not approved at this meeting.",
+        "location": {
+          "element": 0,
+          "type": "note",
+          "section": "Meeting record",
+          "line_start": 1,
+          "line_end": 1,
+          "offset_start": 0,
+          "offset_end": 132
+        }
+      }
+    ]
+  },
+  "critic_response": {
+    "supported_claim_ids": [
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5",
+      "C6",
+      "C7",
+      "C8"
+    ]
+  },
+  "expected_rejected_claim_ids": [
+    "C8"
+  ],
+  "independent_review": {
+    "verdict": "fail",
+    "reason": "No approval of changes at one meeting does not entail absence of changes at this project stage. The claim loses both predicate identity and meeting scope.",
+    "supported_alternative": "Changes to the schedule or budget were not approved at the review meeting.",
+    "propagation": [
+      "saved slide 2 notes",
+      "PPTX speaker notes",
+      "PPTX notes appendix",
+      "PDF notes appendix"
+    ],
+    "kind": "Independent assistant review, not owner hands-on acceptance"
+  },
+  "status": "Known unfixed semantic false positive; no retry-until-pass run"
+}

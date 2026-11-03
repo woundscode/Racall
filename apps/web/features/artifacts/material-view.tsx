@@ -7,6 +7,7 @@ import { useI18n } from '../../lib/i18n';
 import { Markdown } from '../../components/markdown';
 import { AnswerView } from '../chat/answer-view';
 import { generationKindLabel } from '../jobs/generation-job';
+import { PresentationEditor } from '../presentations/presentation-editor';
 
 export function MaterialView({
   notebook,
@@ -14,12 +15,16 @@ export function MaterialView({
   cite,
   report,
   navigate,
+  openMaterial,
+  editScope,
 }: {
   notebook: string;
   id: string;
   cite: (evidence: Evidence) => void;
   report: (message: string) => void;
   navigate?: (tab: string) => void;
+  openMaterial: (id: string) => void;
+  editScope: 'artifacts' | 'studio';
 }) {
   const { tr } = useI18n();
   const client = useQueryClient();
@@ -44,6 +49,19 @@ export function MaterialView({
       </p>
     );
   if (!material) return <p className="muted">{tr('materials.unavailable')}</p>;
+  if (material.presentation)
+    return (
+      <PresentationEditor
+        key={material.id}
+        notebook={notebook}
+        material={material}
+        document={material.presentation}
+        cite={cite}
+        report={report}
+        openMaterial={openMaterial}
+        editScope={editScope}
+      />
+    );
   const download = () => {
     const url = URL.createObjectURL(
       new Blob([material.body], { type: 'text/markdown;charset=utf-8' }),

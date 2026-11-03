@@ -16,7 +16,7 @@ export async function origin() {
       : Promise.resolve(window.location.origin);
   return connection;
 }
-export async function api<T>(path: string, method = 'GET', body?: unknown): Promise<T> {
+async function request(path: string, method = 'GET', body?: unknown): Promise<Response> {
   const token = sessionStorage.getItem('on-token');
   const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
   if (body && !(body instanceof FormData)) headers['Content-Type'] = 'application/json';
@@ -38,5 +38,14 @@ export async function api<T>(path: string, method = 'GET', body?: unknown): Prom
       response.status,
     );
   }
-  return response.json();
+  return response;
+}
+export async function api<T>(path: string, method = 'GET', body?: unknown): Promise<T> {
+  return (await request(path, method, body)).json();
+}
+export async function apiBlob(path: string): Promise<Blob> {
+  return (await request(path)).blob();
+}
+export async function apiEmpty(path: string, method: string): Promise<void> {
+  await request(path, method);
 }

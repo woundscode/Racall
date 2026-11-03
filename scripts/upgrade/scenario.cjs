@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { BASELINE, CANDIDATE, assertHostedWindows, prepareInputs } = require('./inputs.cjs');
+const { BASELINE, readCandidate, assertHostedWindows, prepareInputs } = require('./inputs.cjs');
 const { writeEvidence, portableSnapshot, assertPreserved } = require('./files.cjs');
 const { InstalledDesktop } = require('./desktop.cjs');
 const {
@@ -30,8 +30,9 @@ function installerCommand(file, args, run, label) {
 async function runUpgrade() {
   const root = path.resolve(__dirname, '../..');
   const { profile, candidate } = assertHostedWindows(root);
-  // 0.2 predates the isolated Chromium smoke profile. Both actual binaries must
-  // use the same default APPDATA profile, so this is forbidden outside a fresh VM.
+  const expected = readCandidate();
+  // Exercise the real default APPDATA profile and registered install location.
+  // This is intentionally forbidden outside a fresh hosted Windows VM.
   assert.equal(fs.existsSync(profile), false, 'Refusing to touch a pre-existing Racall profile.');
   const run = path.join(root, 'test-results', 'upgrade-' + Date.now());
   const destination = path.join(run, 'installed');
@@ -43,18 +44,20 @@ async function runUpgrade() {
   const desktop = new InstalledDesktop(path.join(destination, 'Racall.exe'), profile, run, errors);
   let providerStarted = false;
   try {
-    const inputs = await prepareInputs(run, candidate);
-    checks.push('Exact public 0.2 and verified native 0.3 installer hashes');
+    const inputs = await prepareInputs(run, candidate, expected);
+    checks.push(
+      `Exact public ${BASELINE.version} and verified ${expected.version} installer hashes`,
+    );
     writeEvidence(run, 'inputs.json', {
       baseline: BASELINE,
-      candidate: CANDIDATE,
+      candidate: expected,
       manifest: inputs.manifest,
     });
     installerCommand(
       inputs.old,
       ['/S', '/LANGUAGE=1049', '/D=' + destination],
       run,
-      'Install published 0.2',
+      `Install published ${BASELINE.version}`,
     );
     const endpoint = await provider.start();
     providerStarted = true;
@@ -62,21 +65,21 @@ async function runUpgrade() {
     const fixture = await seedBaseline(desktop, endpoint);
     assert.equal(provider.errors.length, 0, provider.errors.join('\n'));
     assert.ok(
-      provider.calls.length >= 5,
-      'Fixture chat and Research must use the real 0.2 backend.',
+      provider.calls.length >= 7,
+      'Fixture chat, Research and Studio must use the real baseline backend.',
     );
     await desktop.close();
     const before = portableSnapshot(data);
     writeEvidence(run, 'before-upgrade.json', before);
     checks.push(
-      'Published 0.2 creates real notes, chat, versioned sources, saved Research and trash',
+      'Published 0.3 creates real notes, chat, versioned sources, saved Research, Studio and trash',
     );
     // No /D: the new installer must discover the existing registered install location.
     installerCommand(
       inputs.next,
       ['/S', '/LANGUAGE=1033'],
       run,
-      'Upgrade in place to candidate 0.3',
+      `Upgrade in place to candidate ${expected.version}`,
     );
     assertPreserved(before, data);
     assert.equal(
@@ -87,7 +90,7 @@ async function runUpgrade() {
     );
     checks.push('In-place installer reuses previous directory and preserves authoritative bytes');
     const callsBeforeLaunch = provider.calls.length;
-    const nextRuntime = await desktop.launch(CANDIDATE.version);
+    const nextRuntime = await desktop.launch(expected.version);
     await assertLegacyData(desktop, fixture);
     assert.equal(
       provider.calls.length,
@@ -101,13 +104,14 @@ async function runUpgrade() {
       'Explicit new Studio generation must reach the fixture.',
     );
     checks.push('Old chat/report citations retain exact historical source and both original files');
+    checks.push('Baseline 0.3 Studio material, completed job and Markdown export remain unchanged');
     checks.push(
       'Earlier report opens and exports in the new library; EN/RU, light/dark and note-only Studio work',
     );
     await desktop.close();
     assertPreserved(before, data);
     const completed = portableSnapshot(data);
-    await desktop.launch(CANDIDATE.version);
+    await desktop.launch(expected.version);
     await assertLegacyData(desktop, fixture);
     const restored = await desktop.api(`/notebooks/${fixture.notebook.id}/materials/${material}`);
     assert.equal(restored.answer.validated, true);
@@ -133,7 +137,7 @@ async function runUpgrade() {
       path.join(destination, uninstaller),
       ['/S', '_?=' + destination],
       run,
-      'Uninstall upgraded 0.3',
+      `Uninstall upgraded ${expected.version}`,
     );
     assert.equal(fs.existsSync(desktop.executable), false, 'Upgraded application was not removed.');
     const after = assertPreserved(completed, data);
@@ -144,7 +148,7 @@ async function runUpgrade() {
       platform: 'win',
       arch: 'x64',
       baseline: BASELINE,
-      candidate: CANDIDATE,
+      candidate: expected,
       harnessSource: process.env.GITHUB_SHA,
       profile,
       oldRuntime,
@@ -153,7 +157,7 @@ async function runUpgrade() {
       preservedFiles: Object.keys(before).length,
       syntheticProviderCalls: provider.calls.length,
       errors,
-      publication: CANDIDATE.publication,
+      publication: expected.publication,
     };
     writeEvidence(run, 'result.json', result);
     console.log(JSON.stringify(result));
@@ -164,7 +168,7 @@ async function runUpgrade() {
       checks,
       error: error.stack || String(error),
       baseline: BASELINE,
-      candidate: CANDIDATE,
+      candidate: expected,
     });
     throw error;
   } finally {

@@ -20,6 +20,8 @@ from .features.models import router as models
 from .features.models.service import Models
 from .features.notebooks import router as notebooks
 from .features.notes import router as notes
+from .features.presentations import router as presentations
+from .features.presentations.repository import PresentationRepository
 from .features.research import router as research
 from .features.research.service import recover_research
 from .features.settings import router as settings
@@ -57,7 +59,7 @@ def create_app(root: Path, token: str, web: Path | None = None) -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-        allow_methods=["GET", "POST", "PUT", "DELETE"],
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
         allow_headers=["Authorization", "Content-Type"],
     )
 
@@ -106,6 +108,7 @@ def create_app(root: Path, token: str, web: Path | None = None) -> FastAPI:
         connections.create_router(store),
         jobs.create_router(generation_service),
         artifacts.create_router(generation_service.materials),
+        presentations.create_router(PresentationRepository(store)),
     ):
         app.include_router(router)
 

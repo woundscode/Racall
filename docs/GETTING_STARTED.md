@@ -1,6 +1,6 @@
 # Getting started
 
-[Documentation](README.md) · [Download releases](https://github.com/SleepyCodeMeow/Racall/releases)
+[Documentation](README.md) · [Download releases](https://github.com/woundscode/Racall/releases)
 
 ## Install
 
@@ -69,7 +69,7 @@ Select a notebook and open Connect AI to copy its MCP configuration. The stdio s
 
 ## Troubleshooting
 
-If AI is unavailable, check the endpoint, model ID, API key or local Ollama process. Import, notes and text search remain usable without a model. For a startup failure, check `backend.log` in the data directory. Before attaching logs to an issue, remove document contents, paths, tokens and other private information. [Report a bug](https://github.com/SleepyCodeMeow/Racall/issues/new/choose).
+If AI is unavailable, check the endpoint, model ID, API key or local Ollama process. Import, notes and text search remain usable without a model. For a startup failure, check `backend.log` in the data directory. Before attaching logs to an issue, remove document contents, paths, tokens and other private information. [Report a bug](https://github.com/woundscode/Racall/issues/new/choose).
 
 
 ## Notebook and source maintenance
@@ -82,4 +82,4 @@ See the [0.3 release notes](releases/0.3.0-beta.1.md) for verification scope and
 The [model evaluation guide](MODEL_EVALUATION.md) and [recorded Ollama results](MODEL_EVALUATION_03_2026-10-25.md)
 are available for voluntary testing. Model verification can miss unsupported claims;
 review the cited passages. Reports from other hardware, operating systems and models
-are welcome through [GitHub Issues](https://github.com/SleepyCodeMeow/Racall/issues).
+are welcome through [GitHub Issues](https://github.com/woundscode/Racall/issues).

@@ -1,6 +1,6 @@
 # Contributing to Racall
 
-Bug reports, focused fixes and translations are welcome. Use [Issues](https://github.com/SleepyCodeMeow/Racall/issues/new/choose) to discuss larger changes first.
+Bug reports, focused fixes and translations are welcome. Use [Issues](https://github.com/woundscode/Racall/issues/new/choose) to discuss larger changes first.
 
 ## Contribution licensing
 

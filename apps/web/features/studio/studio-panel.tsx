@@ -16,12 +16,14 @@ import { allMaterials, ContextPicker, copySelection } from '../context/context-p
 import { GenerationJobCard, generationKindLabel } from '../jobs/generation-job';
 import { useGenerationJobs } from '../jobs/use-generation-jobs';
 import { MaterialView } from '../artifacts/material-view';
+import { settlePendingEdits } from '../../lib/pending-edits';
 
-type StudioKind = Exclude<GenerationKind, 'research'>;
+type StudioKind = Exclude<GenerationKind, 'research' | 'presentation'>;
 const defaults: Record<StudioKind, MessageKey> = {
   summary: 'studio.defaultSummary',
   study_guide: 'studio.defaultStudyGuide',
   review_questions: 'studio.defaultReviewQuestions',
+  presentation_outline: 'presentation.defaultInstructions',
 };
 export function StudioPanel({
   notebook,
@@ -58,13 +60,14 @@ export function StudioPanel({
     setMaterial(completed.result.material_id);
     void client.invalidateQueries({ queryKey: ['materials', notebook] });
   }, [completed?.id, completed?.result?.material_id, client, notebook]);
-  const accept = (job: GenerationJob) => {
-    setSelectedJob(job.id);
-    setMaterial('');
+  const accept = async (job: GenerationJob) => {
     client.setQueryData<GenerationJob[]>(['jobs', notebook], (old) => [
       job,
       ...(old || []).filter((item) => item.id !== job.id),
     ]);
+    if (!(await settlePendingEdits('studio'))) return;
+    setSelectedJob(job.id);
+    setMaterial('');
   };
   return (
     <div className="page-content studio">
@@ -94,6 +97,7 @@ export function StudioPanel({
           submitting.current = true;
           setBusy(true);
           try {
+            if (!(await settlePendingEdits('studio'))) return;
             const job = await api<GenerationJob>(`/notebooks/${notebook}/jobs`, 'POST', {
               request_id: crypto.randomUUID(),
               kind,
@@ -119,9 +123,13 @@ export function StudioPanel({
             disabled={busy}
             onChange={(event) => setKind(event.target.value as StudioKind)}
           >
-            {(['summary', 'study_guide', 'review_questions'] as StudioKind[]).map((value) => (
+            {(
+              ['summary', 'study_guide', 'review_questions', 'presentation_outline'] as StudioKind[]
+            ).map((value) => (
               <option key={value} value={value}>
-                {generationKindLabel(value, tr)}
+                {value === 'presentation_outline'
+                  ? tr('presentation.title')
+                  : generationKindLabel(value, tr)}
               </option>
             ))}
           </select>
@@ -167,7 +175,8 @@ export function StudioPanel({
               job={job}
               report={report}
               retried={accept}
-              openResult={(item) => {
+              openResult={async (item) => {
+                if (!(await settlePendingEdits('studio'))) return;
                 if (item.result?.material_id) setMaterial(item.result.material_id);
               }}
             />
@@ -181,6 +190,8 @@ export function StudioPanel({
             cite={cite}
             report={report}
             navigate={navigate}
+            openMaterial={setMaterial}
+            editScope="studio"
           />
         </div>
       )}
@@ -197,7 +208,8 @@ export function StudioPanel({
             job={job}
             report={report}
             retried={accept}
-            openResult={(item) => {
+            openResult={async (item) => {
+              if (!(await settlePendingEdits('studio'))) return;
               setSelectedJob(item.id);
               if (item.result?.material_id) setMaterial(item.result.material_id);
             }}

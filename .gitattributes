@@ -16,6 +16,8 @@
 *.png binary
 *.ico binary
 *.icns binary
+# Preserve the upstream license bytes, including its original trailing space.
+apps/api/on_knowledge/features/presentations/fonts/LICENSE text eol=lf whitespace=-blank-at-eol
 # These files are generated, not maintained source code.
 apps/web/next-env.d.ts linguist-generated=true
 # Markdown uses trailing spaces for intentional hard line breaks.

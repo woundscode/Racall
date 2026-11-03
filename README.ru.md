@@ -23,14 +23,14 @@
 
 | Платформа | Ссылка |
 | :--- | :--- |
-| **Windows x64** | [Установщик EXE](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-win-x64.exe) |
-| **Windows ARM64** | [Установщик EXE](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-win-arm64.exe) |
-| **macOS Apple Silicon (ARM64)** | [DMG](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-arm64.dmg) · [ZIP](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-arm64.zip) |
-| **macOS Intel x64** | [DMG](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-x64.dmg) · [ZIP](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-x64.zip) |
-| **Linux x64** | [AppImage](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-x86_64.AppImage) · [Пакет Debian/Ubuntu](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-amd64.deb) |
-| **Linux ARM64** | [AppImage](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-arm64.AppImage) · [Пакет Debian/Ubuntu](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-arm64.deb) |
+| **Windows x64** | [Установщик EXE](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-win-x64.exe) |
+| **Windows ARM64** | [Установщик EXE](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-win-arm64.exe) |
+| **macOS Apple Silicon (ARM64)** | [DMG](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-arm64.dmg) · [ZIP](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-arm64.zip) |
+| **macOS Intel x64** | [DMG](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-x64.dmg) · [ZIP](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-x64.zip) |
+| **Linux x64** | [AppImage](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-x86_64.AppImage) · [Пакет Debian/Ubuntu](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-amd64.deb) |
+| **Linux ARM64** | [AppImage](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-arm64.AppImage) · [Пакет Debian/Ubuntu](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-arm64.deb) |
 
-[Описание релиза](https://github.com/SleepyCodeMeow/Racall/releases/tag/v0.3.0-beta.1) · [Контрольные суммы SHA-256](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/SHA256SUMS.txt)
+[Описание релиза](https://github.com/woundscode/Racall/releases/tag/v0.3.0-beta.1) · [Контрольные суммы SHA-256](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/SHA256SUMS.txt)
 
 Пакеты включают необходимые компоненты: пользователю не нужны Python, Node.js или Docker. Пакеты Windows и macOS не подписаны; macOS-пакеты также не прошли notarization. Подробности — в [примечаниях к установке](docs/releases/0.3.0-beta.1.md).
 
@@ -133,7 +133,7 @@ Python-бинарники собираются на каждой целевой 
 
 ## Следить за проектом
 
-Пока всё находится на GitHub: [загрузки](https://github.com/SleepyCodeMeow/Racall/releases), [документация](docs/README.md), [ошибки и идеи](https://github.com/SleepyCodeMeow/Racall/issues), [план развития](docs/ROADMAP.md). Изменения каждой версии собраны в [CHANGELOG.md](CHANGELOG.md). Будем рады отзывам о бете, воспроизводимым баг-репортам, переводам и помощи с проверкой macOS/Linux.
+Пока всё находится на GitHub: [загрузки](https://github.com/woundscode/Racall/releases), [документация](docs/README.md), [ошибки и идеи](https://github.com/woundscode/Racall/issues), [план развития](docs/ROADMAP.md). Изменения каждой версии собраны в [CHANGELOG.md](CHANGELOG.md). Будем рады отзывам о бете, воспроизводимым баг-репортам, переводам и помощи с проверкой macOS/Linux.
 
 ## Лицензии
 

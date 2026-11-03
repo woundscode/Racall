@@ -1,0 +1,110 @@
+.presentation-editor {
+  max-width: 1040px;
+}
+.presentation-details {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 16px;
+  border: 0;
+  padding: 0;
+  margin: 20px 0;
+}
+.presentation-editor label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.presentation-editor input,
+.presentation-editor textarea,
+.presentation-editor select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 11px;
+  background: var(--input-bg);
+  color: var(--ink);
+  font: inherit;
+}
+.presentation-editor textarea {
+  resize: vertical;
+}
+.presentation-slides {
+  display: grid;
+  gap: 16px;
+}
+.presentation-slide {
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--surface-secondary);
+}
+.presentation-slide legend {
+  padding: 0 7px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.presentation-slide-actions,
+.presentation-save-actions,
+.presentation-preview-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.presentation-slide-actions {
+  justify-content: flex-end;
+}
+.presentation-slide-actions .secondary {
+  padding: 4px 10px;
+}
+.presentation-bullet {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.presentation-bullet label {
+  flex: 1;
+  min-width: 0;
+}
+.presentation-save-actions {
+  margin: 20px 0;
+}
+.presentation-generate {
+  margin: 20px 0;
+}
+.presentation-notice {
+  background: var(--warning-bg);
+  color: var(--warning-ink);
+  border: 1px solid var(--warning-line);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.presentation-preview {
+  margin-top: 24px;
+}
+.presentation-preview-heading {
+  justify-content: space-between;
+}
+.presentation-preview-heading label {
+  display: flex;
+  align-items: center;
+}
+.presentation-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+@media (max-width: 650px) {
+  .presentation-details {
+    grid-template-columns: 1fr;
+  }
+  .presentation-slide {
+    padding: 12px;
+  }
+}

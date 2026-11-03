@@ -14,8 +14,10 @@ from ...providers import frozen_provider_keys, provider_identity, provider_key
 from ...storage import ConflictError, Store, identifier, now, uid
 from ..artifacts.repository import Materials
 from ..context.service import ContextService
+from ..presentations.assembly import matches_assembled_material
 from ..studio.generator import NoEvidence, UnverifiedMaterial
 from .execution import generate_payload
+from .presentations import approved_outline
 from .repository import TERMINAL, JobRepository
 from .schemas import GenerationRequest
 
@@ -96,7 +98,11 @@ class GenerationService:
                     if (
                         material
                         and material.get("job_id") == job["id"]
-                        and material["answer"].get("validated")
+                        and (
+                            matches_assembled_material(job, material)
+                            if job["kind"] == "presentation"
+                            else material["answer"].get("validated")
+                        )
                     ):
                         job.update(
                             status="completed",
@@ -151,14 +157,22 @@ class GenerationService:
                 raise ConflictError("Generation service is stopping.")
             for existing in self.jobs.list(notebook):
                 if existing["request_id"] == request.request_id:
-                    if existing["_request"] != data or existing.get("retry_of") != retry_of:
+                    saved_request = GenerationRequest.model_validate(existing["_request"]).model_dump()
+                    if saved_request != data or existing.get("retry_of") != retry_of:
                         raise ConflictError("This request ID was already used for a different generation.")
                     return self.jobs.public(existing)
-            context = self.context.snapshot(notebook, request.context)
-            settings = deepcopy(self.store.settings())
-            if not settings["model"].strip():
-                raise ValueError("Укажите имя модели в настройках AI")
-            keys = self._credentials(settings)
+            approved = (
+                approved_outline(notebook, request, self.materials, self.context)
+                if request.kind == "presentation"
+                else {}
+            )
+            context = approved.get("context") or self.context.snapshot(notebook, request.context)
+            settings, keys = {}, {}
+            if request.kind != "presentation":
+                settings = deepcopy(self.store.settings())
+                if not settings["model"].strip():
+                    raise ValueError("Укажите имя модели в настройках AI")
+                keys = self._credentials(settings)
             job_id = uid()
             defaults = {
                 "en": {
@@ -166,12 +180,16 @@ class GenerationService:
                     "summary": "Summary",
                     "study_guide": "Study guide",
                     "review_questions": "Review questions",
+                    "presentation_outline": "Presentation outline",
+                    "presentation": "Presentation",
                 },
                 "ru": {
                     "research": "Исследование",
                     "summary": "Краткое содержание",
                     "study_guide": "Учебный конспект",
                     "review_questions": "Контрольные вопросы",
+                    "presentation_outline": "План презентации",
+                    "presentation": "Презентация",
                 },
             }
             title = request.title or (request.question[:160] if request.kind == "research" else "")
@@ -187,17 +205,21 @@ class GenerationService:
                 "title": title,
                 "language": request.language,
                 "context": context,
-                "provider": {key: settings[key] for key in ("provider", "base_url", "model")},
+                "provider": {
+                    key: settings[key] for key in ("provider", "base_url", "model") if key in settings
+                },
                 "created_at": now(),
                 "updated_at": now(),
                 "_request": data,
+                **({"template": request.template} if request.kind == "presentation_outline" else {}),
+                **approved,
                 **({"retry_of": retry_of} if retry_of else {}),
             }
             self.jobs.save(notebook, job)
             self._accepted[job_id] = {
                 "settings": settings,
                 "keys": keys,
-                "fingerprint": self._fingerprint(settings, keys),
+                "fingerprint": self._fingerprint(settings, keys) if settings else None,
             }
             self._protect(notebook, job_id)
             self._queue.append((notebook, job_id))
@@ -301,10 +323,11 @@ class GenerationService:
     def _execute(self, notebook: str, job_id: str):
         job = self.jobs.get(notebook, job_id)
         accepted = self._accepted[job_id]
-        current = self.store.settings()
-        current_keys = self._credentials(current)
-        if not hmac.compare_digest(self._fingerprint(current, current_keys), accepted["fingerprint"]):
-            raise ProviderChanged()
+        if job["kind"] != "presentation":
+            current = self.store.settings()
+            current_keys = self._credentials(current)
+            if not hmac.compare_digest(self._fingerprint(current, current_keys), accepted["fingerprint"]):
+                raise ProviderChanged()
 
         def checkpoint():
             self._checkpoint(notebook, job_id, job["context"])

@@ -78,9 +78,19 @@ export function useWorkspace() {
   const navigate = (id: string) => {
     // Workspace tabs hide rather than unmount Notes. In particular, a recovered
     // conflict draft must remain reachable even while it cannot be saved.
-    setTab(id);
-    setSettings(false);
-    setApps(false);
+    const change = () => {
+      setTab(id);
+      setSettings(false);
+      setApps(false);
+    };
+    // Reports unmount on exit; their presentation editor must finish its save.
+    // Flush only that panel so a hidden Notes conflict remains reachable.
+    if (tab === 'artifacts' && id !== tab) {
+      void settlePendingEdits('artifacts').then((saved) => {
+        if (saved) change();
+        else report(tr('notebook.unsaved'));
+      });
+    } else change();
   };
   const openSettings = () => {
     void guardNavigation(() => {

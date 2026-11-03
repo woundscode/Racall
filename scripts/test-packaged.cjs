@@ -48,6 +48,7 @@ run(process.execPath, ['scripts/smoke-languages.cjs']);
 run(process.execPath, ['scripts/smoke-providers.cjs']);
 run(process.execPath, ['scripts/smoke-workbench.cjs']);
 run(process.execPath, ['scripts/smoke-studio.cjs']);
+run(process.execPath, ['scripts/smoke-presentations.cjs']);
 run(process.execPath, ['scripts/smoke-persistence.cjs']);
 run(process.execPath, ['scripts/smoke-maintenance.cjs']);
 run('uv', ['run', 'python', 'scripts/check_bundle.py']);

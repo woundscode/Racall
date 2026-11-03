@@ -14,3 +14,15 @@ own licenses and notices. No patent registration is claimed by this notice.
 Builds that statically link an externally built OpenSSL retain its copyright
 and license notice at resources/backend/legal/OPENSSL.txt. OpenSSL is licensed
 under Apache-2.0: https://www.openssl.org/source/license.html
+
+Presentation exports include DejaVu Sans regular and bold 2.37, distributed
+under the Bitstream Vera / Arev font licenses. Their original copyright and
+permission notices, unchanged font files and download hashes are retained at
+apps/api/on_knowledge/features/presentations/fonts in source and at
+resources/backend/_internal/on_knowledge/features/presentations/fonts in
+packaged builds. PDF and SVG outputs embed the used glyphs; PPTX text specifies
+DejaVu Sans and may use a viewer's fallback font if it is not installed.
+
+Presentation export dependencies python-pptx, ReportLab, fontTools and XlsxWriter
+retain their license files in their distribution metadata directories under
+resources/backend/_internal in packaged builds.

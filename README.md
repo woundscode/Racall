@@ -23,14 +23,14 @@
 
 | Platform | Link |
 | :--- | :--- |
-| **Windows x64** | [EXE installer](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-win-x64.exe) |
-| **Windows ARM64** | [EXE installer](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-win-arm64.exe) |
-| **macOS Apple Silicon (ARM64)** | [DMG](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-arm64.dmg) · [ZIP](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-arm64.zip) |
-| **macOS Intel x64** | [DMG](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-x64.dmg) · [ZIP](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-x64.zip) |
-| **Linux x64** | [AppImage](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-x86_64.AppImage) · [Debian/Ubuntu package](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-amd64.deb) |
-| **Linux ARM64** | [AppImage](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-arm64.AppImage) · [Debian/Ubuntu package](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-arm64.deb) |
+| **Windows x64** | [EXE installer](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-win-x64.exe) |
+| **Windows ARM64** | [EXE installer](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-win-arm64.exe) |
+| **macOS Apple Silicon (ARM64)** | [DMG](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-arm64.dmg) · [ZIP](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-arm64.zip) |
+| **macOS Intel x64** | [DMG](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-x64.dmg) · [ZIP](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-mac-x64.zip) |
+| **Linux x64** | [AppImage](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-x86_64.AppImage) · [Debian/Ubuntu package](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-amd64.deb) |
+| **Linux ARM64** | [AppImage](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-arm64.AppImage) · [Debian/Ubuntu package](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/Racall-0.3.0-beta.1-linux-arm64.deb) |
 
-[Release notes](https://github.com/SleepyCodeMeow/Racall/releases/tag/v0.3.0-beta.1) · [SHA-256 checksums](https://github.com/SleepyCodeMeow/Racall/releases/download/v0.3.0-beta.1/SHA256SUMS.txt) · [Russian documentation](README.ru.md)
+[Release notes](https://github.com/woundscode/Racall/releases/tag/v0.3.0-beta.1) · [SHA-256 checksums](https://github.com/woundscode/Racall/releases/download/v0.3.0-beta.1/SHA256SUMS.txt) · [Russian documentation](README.ru.md)
 
 Packages include their runtime: no Python, Node.js or Docker installation is required. Windows and macOS packages are unsigned; macOS packages are not notarized. See the [installation notes](docs/releases/0.3.0-beta.1.md) for platform details.
 
@@ -136,7 +136,7 @@ applies the project's Python and interface formatting rules.
 
 ## Follow the project
 
-Everything lives on GitHub for now: [downloads](https://github.com/SleepyCodeMeow/Racall/releases), [documentation](docs/README.md), [bugs and ideas](https://github.com/SleepyCodeMeow/Racall/issues), and [the roadmap](docs/ROADMAP.md). Read [CHANGELOG.md](CHANGELOG.md) for each release. Trying the beta, reporting a reproducible bug, improving translations or helping with macOS/Linux testing are all useful contributions.
+Everything lives on GitHub for now: [downloads](https://github.com/woundscode/Racall/releases), [documentation](docs/README.md), [bugs and ideas](https://github.com/woundscode/Racall/issues), and [the roadmap](docs/ROADMAP.md). Read [CHANGELOG.md](CHANGELOG.md) for each release. Trying the beta, reporting a reproducible bug, improving translations or helping with macOS/Linux testing are all useful contributions.
 
 ## License
 

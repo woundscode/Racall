@@ -5,6 +5,7 @@ import { FileText } from '@phosphor-icons/react';
 import { api, Evidence, Material } from '../../lib/api';
 import { useI18n } from '../../lib/i18n';
 import { MaterialView } from './material-view';
+import { settlePendingEdits } from '../../lib/pending-edits';
 
 export function MaterialLibrary({
   notebook,
@@ -38,7 +39,9 @@ export function MaterialLibrary({
             <button
               key={material.id}
               className={selected === material.id ? 'selected' : ''}
-              onClick={() => setSelected(material.id)}
+              onClick={async () => {
+                if (await settlePendingEdits('artifacts')) setSelected(material.id);
+              }}
             >
               <FileText size={17} />
               <span>{material.title}</span>
@@ -62,6 +65,8 @@ export function MaterialLibrary({
             cite={cite}
             report={report}
             navigate={navigate}
+            openMaterial={setSelected}
+            editScope="artifacts"
           />
         ) : (
           <div className="editor-empty">

@@ -2,7 +2,7 @@
 
 [Project home](../README.md) · [Changelog](../CHANGELOG.md)
 
-Small, usable releases: **0.1 Beta → 0.2 Beta → 0.3 Beta**. Priorities may change with feedback; these are targets, not promised dates.
+Small, usable releases: **0.1 Beta → 0.2 Beta → 0.3 Beta → 0.4 Beta**. Priorities may change with feedback; these are targets, not promised dates.
 
 ## Product direction — research, creation and connected notes
 
@@ -42,11 +42,17 @@ The implemented checks cover thread/notebook isolation, source selection, bounde
 
 Flashcards, interactive quizzes/scoring, richer retrieval/reranking, PDF/OCR improvements, extra languages, subscription/CLI backends and larger UI changes remain follow-up candidates. Presentations and audio keep their own later milestones. No new bundled GPU model is needed for this text-only slice; it uses the owner's configured local or cloud connection.
 
-## 0.4 Beta target — Presentations and visual summaries
+## 0.4 Beta target — Editable presentations from sources
 
-- Source-grounded slide outlines and editable slides, with PPTX/PDF export.
-- Review and revise individual slides before exporting; retain source references in the deck or its companion notes.
-- Template-based layouts first; optional generated illustrations, infographics and data tables after factual and export checks.
+The [November 3 reference review](REFERENCE_PROJECTS.md#refresh-2026-11-03) supports keeping presentations as the next milestone. Implementation is now underway locally under the [0.4 plan](PLAN_04.md); the [acceptance checklist](RELEASE_04_CHECKLIST.md) distinguishes local checks from release readiness. Publication remains on hold.
+
+- Selected sources/saved notes → model-generated outline → review/save → Python slide assembly → editable saved deck → PPTX/PDF.
+- Edit titles, bullets and speaker notes; reorder/delete slides and preserve revisions, drafts and source-version references.
+- Start with restrained template layouts and existing text providers for the initial outline. **Create slides / Оформить слайды** preserves approved text, slide IDs and citations without a second model pass; assembly and exports work offline. Keep the frontend focused on editing and preview.
+- Export genuinely editable text/shapes without mandatory image generation or an Office installation. Check real rendered EN/RU output and all six native targets.
+- Preserve cancellation, explicit retry, no model replay after restart and compatibility with 0.2/0.3 materials. Human edits invalidate the changed content's previous validation state.
+
+Generated illustrations, infographics, chart/table generation, AI slide regeneration and additional source formats remain separate follow-ups. Audio/video keep their later milestones.
 
 ## 0.5 Beta target — Audio
 

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from ...answer_language import question_language
 from ..context.service import ContextService
+from ..presentations.assembly import assemble_presentation
+from ..presentations.generator import generate_presentation
 from ..studio.generator import UnverifiedMaterial, generate_material
 
 
@@ -11,6 +13,12 @@ def generate_payload(
     notebook: str, job: dict, settings: dict, *, context: ContextService, knowledge, checkpoint, progress
 ) -> tuple[dict, dict | None]:
     """Generate content only; the service fences and commits its durable result."""
+    if job["kind"] == "presentation":
+        checkpoint()
+        progress("assembling")
+        generated = assemble_presentation(job)
+        checkpoint()
+        return generated, None
     if job["kind"] == "research":
         question = job["question"] or job["title"]
         if question_language(question) != job["language"]:
@@ -29,6 +37,10 @@ def generate_payload(
 
     progress("retrieval")
     gathered = context.gather_snapshot(notebook, job["context"])
+    if job["kind"] == "presentation_outline":
+        generated = generate_presentation(job, gathered["evidence"], settings, checkpoint, progress)
+        generated["context_info"] = gathered["context_info"]
+        return generated, None
     generated = generate_material(
         job["kind"],
         job["question"],

@@ -13,6 +13,8 @@ const kinds: Record<GenerationKind, MessageKey> = {
   summary: 'studio.summary',
   study_guide: 'studio.studyGuide',
   review_questions: 'studio.reviewQuestions',
+  presentation_outline: 'presentation.outline',
+  presentation: 'presentation.title',
 };
 export function generationKindLabel(kind: GenerationKind, tr: Translate) {
   return tr(kinds[kind] || 'nav.research');
@@ -23,6 +25,7 @@ const stages: Record<string, MessageKey> = {
   retrieval: 'jobs.stage.retrieval',
   planner: 'jobs.stage.planner',
   writer: 'jobs.stage.writer',
+  assembling: 'jobs.stage.assembling',
   critic: 'jobs.stage.critic',
   revision: 'jobs.stage.revision',
   saving: 'jobs.stage.saving',

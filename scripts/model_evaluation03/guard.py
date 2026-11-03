@@ -113,6 +113,7 @@ class LiveGuard:
         self.model = model_name(model)
         self.source_model = model_name(source_model)
         self.max_calls = max_calls
+        self.minutes = minutes
         self.deadline = time.monotonic() + minutes * 60
         self.started = timestamp()
         self.lock = threading.RLock()
@@ -155,7 +156,7 @@ class LiveGuard:
         if (self.output / "STOP").exists():
             self.stop("Stopped explicitly by the acceptance reviewer (STOP file).")
         if time.monotonic() >= self.deadline:
-            self.stop("45-minute/global evaluation time budget exhausted.")
+            self.stop(f"{self.minutes}-minute/global evaluation time budget exhausted.")
 
     def runtime(self, label):
         import httpx
@@ -238,7 +239,7 @@ class LiveGuard:
                 if provider.base != self.endpoint or model_name(provider.settings["model"]) != self.model:
                     self.stop("Completion connection/model differs from the explicit test alias.")
                 if len(self.calls) >= self.max_calls:
-                    self.stop("80-call/global completion budget exhausted.")
+                    self.stop(f"{self.max_calls}-call/global completion budget exhausted.")
                 before = self.runtime("before completion")
                 with self.lock:
                     call = {

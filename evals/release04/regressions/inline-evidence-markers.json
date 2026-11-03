@@ -1,0 +1,84 @@
+{
+  "origin": "Recorded English outline with inline evidence labels, 2026-11-03",
+  "verification_kind": "Offline replay fixture, not a new model inference or factual verification",
+  "trace_sha256": "9216d42f8028ab36a11d6acc7138c48b1c9a40ded8f4550535486b57e33dfcef",
+  "started_at": "2026-11-03T13:27:29.110685+00:00",
+  "model": "racall-eval04-20261103-162435:latest",
+  "model_digest": "c9059a4b3435d1e6949939c24f4e746dc58c87a979b0634802082e2c0ba4111e",
+  "writer_call_id": 1,
+  "critic_call_id": 2,
+  "question": "Create exactly two short slides in English, with at most two bullets per slide. Slide 1: the station plan approval, scheduled opening, planned sensors and capacity. Slide 2: what the records say about actual results, measured temperatures and the meeting's decision on schedule or budget changes. Keep speaker notes short.",
+  "language": "en",
+  "evidence": [
+    {
+      "id": "E1",
+      "title": "station-en.md",
+      "quote": "The Marigold station plan was approved on September 21, 2030. Its opening is scheduled for November 12, 2030. The plan specifies seven sensors and a planned capacity of 40 kW. The station's actual results have not yet been received.",
+      "location": {
+        "type": "paragraph",
+        "page": null,
+        "section": "",
+        "line_start": 1,
+        "line_end": 1,
+        "element": 0,
+        "offset_start": 0,
+        "offset_end": 232
+      }
+    },
+    {
+      "id": "E2",
+      "title": "Meeting record",
+      "quote": "At the review meeting, measured temperatures were not reported. Changes to the schedule or budget were not approved at this meeting.",
+      "location": {
+        "element": 0,
+        "type": "note",
+        "section": "Meeting record",
+        "line_start": 1,
+        "line_end": 1,
+        "offset_start": 0,
+        "offset_end": 132
+      }
+    }
+  ],
+  "writer_response": {
+    "slides": [
+      {
+        "layout": "bullets",
+        "title": "Marigold Station Plan",
+        "bullets": [
+          "Approved on September 21, 2030, with a scheduled opening for November 12, 2030 [E1]",
+          "The plan specifies seven sensors and a planned capacity of 40 kW [E1]"
+        ],
+        "notes": "The Marigold station plan was approved in September 2030 for a planned opening in November 2030.",
+        "evidence_ids": [
+          "E1"
+        ]
+      },
+      {
+        "layout": "bullets",
+        "title": "Review Meeting and Results",
+        "bullets": [
+          "Actual results have not been received and measured temperatures were not reported [E1, E2]",
+          "Changes to the schedule or budget were not approved at the meeting [E2]"
+        ],
+        "notes": "Actual results are pending and temperatures were not reported; no schedule or budget changes were approved.",
+        "evidence_ids": [
+          "E1",
+          "E2"
+        ]
+      }
+    ]
+  },
+  "critic_response": {
+    "supported_claim_ids": [
+      "C1",
+      "C2",
+      "C3",
+      "C4",
+      "C5",
+      "C6",
+      "C7",
+      "C8"
+    ]
+  }
+}

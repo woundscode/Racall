@@ -77,7 +77,36 @@ export type ChatThread = {
   turns: ChatTurn[];
   context?: ContextSelection;
 };
-export type GenerationKind = 'research' | 'summary' | 'study_guide' | 'review_questions';
+export type GenerationKind =
+  | 'research'
+  | 'summary'
+  | 'study_guide'
+  | 'review_questions'
+  | 'presentation_outline'
+  | 'presentation';
+export type PresentationSlide = {
+  id: string;
+  layout: 'title' | 'section' | 'bullets';
+  title: string;
+  bullets: string[];
+  notes: string;
+  evidence_ids: string[];
+  review_state: 'generated' | 'edited';
+};
+export type Presentation = {
+  schema_version: 1;
+  revision: number;
+  stage: 'outline' | 'slides';
+  title: string;
+  language: 'en' | 'ru';
+  template: 'light' | 'dark';
+  slides: PresentationSlide[];
+};
+export type PresentationDraft = {
+  expected_revision: number;
+  presentation: Presentation;
+  updated_at: string;
+};
 export type GenerationJob = {
   id: string;
   request_id: string;
@@ -94,6 +123,8 @@ export type GenerationJob = {
   retry_of?: string;
   cancel_requested?: boolean;
   result?: { research_id?: string; material_id?: string };
+  outline_id?: string;
+  outline_revision?: number;
 };
 export type Material = {
   id: string;
@@ -106,6 +137,7 @@ export type Material = {
   legacy?: boolean;
   research_id?: string;
   context_info?: Partial<ContextInfo>;
+  presentation?: Presentation;
 };
 export type NoteDraft = { draft_id: string; note: Note; updated_at: string };
 export type Research = {
