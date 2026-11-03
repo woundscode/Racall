@@ -182,12 +182,25 @@ async function download(page, format) {
       });
     });
   }, file);
-  await page
-    .getByRole('button', {
-      name: en['presentation.exportFormat'].replace('{format}', format.toUpperCase()),
-      exact: true,
-    })
-    .click();
+  const [response] = await Promise.all([
+    page.waitForResponse((response) => {
+      const url = new URL(response.url());
+      return (
+        url.pathname.endsWith('/presentation/export') && url.searchParams.get('format') === format
+      );
+    }),
+    page
+      .getByRole('button', {
+        name: en['presentation.exportFormat'].replace('{format}', format.toUpperCase()),
+        exact: true,
+      })
+      .click(),
+  ]);
+  assert.equal(
+    response.status(),
+    200,
+    `${format.toUpperCase()} export: HTTP ${response.status()}${response.ok() ? '' : ': ' + (await response.text())}`,
+  );
   await expect.poll(() => app.evaluate(() => globalThis.__presentationDownload)).toBe('completed');
   const bytes = fs.readFileSync(file);
   assert.ok(bytes.length > 1000);
@@ -425,6 +438,10 @@ async function download(page, format) {
     );
     console.log(JSON.stringify({ passed: true, artifacts: run }));
   } catch (error) {
+    fs.writeFileSync(
+      path.join(run, 'result.json'),
+      JSON.stringify({ passed: false, errors, error: error.stack || String(error) }, null, 2),
+    );
     if (app) await captureWindow(app, path.join(run, 'failure.png')).catch(() => {});
     throw error;
   } finally {

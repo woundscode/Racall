@@ -31,7 +31,8 @@ subprocess.run(
         "mcp.server",
         "--collect-data",
         "certifi",
-        "--collect-data",
+        # python-pptx opens oxml/../templates; POSIX requires oxml to exist on disk.
+        "--collect-all",
         "pptx",
         "--collect-data",
         "reportlab",
