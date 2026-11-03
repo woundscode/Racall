@@ -1,5 +1,9 @@
 # 0.4 Beta dependency review — 2026-11-03
 
+The original review below is retained as historical evidence. See the
+[compatible-update follow-up](#compatible-update-follow-up) for the current
+dependency versions and remaining release assessment.
+
 The targeted Electron update to **44.9.1** in `d38bbf9` addresses the compromised
 CA advisory described below. **This is not a clean dependency audit.** npm reported
 20 vulnerable packages after the patch: 16 moderate, 3 high and 1 critical,
@@ -96,3 +100,102 @@ Local evidence is retained in ignored `test-results/native04-dependency-audit.js
 audit and baseline runtime probe describe the pre-patch state. The separate
 `test-results/electron-runtime-44.9.1/verification.json` and `versions.json`
 record the verified archive and post-patch runtime probe.
+
+## Compatible-update follow-up
+
+A fresh audit reproduced the 20-package baseline. Targeted compatible updates
+and a clean `npm ci` now leave **15 moderate, 0 high and 0 critical** npm findings.
+The full audit still exits with code 1; no advisory, dependency category or audit
+level was suppressed. The remaining findings are the propagation of
+**GHSA-g3hv-75wg-m249**, discussed below. This is not a zero-finding audit.
+
+| Dependency | Previous | Updated |
+| --- | --- | --- |
+| Electron | 44.9.1 | 44.10.1 |
+| Next.js, its environment package and native SWC packages | 16.3.6 | 16.4.4 |
+| sharp and its platform packages | 0.35.4 | 0.35.5 |
+| sharp's libvips packages | 1.3.3 | 1.3.4 |
+| source-map-js | 1.2.1 | 1.2.2 |
+| fast-uri | 3.1.8 | 3.1.9 |
+| npm Undici through `@electron/get` | 7.29.1 | 7.30.1 |
+| npm Undici through `node-gyp` | 6.28.1 | 6.29.1 |
+
+These versions address the earlier Next, sharp, source-map-js and Undici
+advisories. fast-uri 3.1.9 addresses the upstream
+[scheme-decoding](https://github.com/fastify/fast-uri/security/advisories/GHSA-w74x-v6f9-j3xg)
+and [host-canonicalization](https://github.com/fastify/fast-uri/security/advisories/GHSA-wjr9-j795-jxcr)
+advisories. electron-builder remains 26.15.6: changing it to the available 26.18.1
+would still retain the incompatible old minimatch chains. No forced downgrade,
+major upgrade, broad override or application version change was made.
+
+### Embedded runtime verified independently
+
+The [official Electron 44.10.1 release](https://github.com/electron/electron/releases/tag/v44.10.1)
+lists all six required Windows/macOS/Linux x64/ARM64 ZIPs, and each has an entry
+in its [official SHA-256 manifest](https://github.com/electron/electron/releases/download/v44.10.1/SHASUMS256.txt).
+The Windows x64 ZIP was downloaded into an isolated directory and independently
+verified before extraction: 157,982,210 bytes, SHA-256
+`5099bdc11c6a78edff35851491c1f8228a1c2e844e1b376eee219402c42c6011`.
+The other five assets received availability/checksum-entry checks, not execution.
+
+Both that isolated binary and the installed npm runtime were probed using
+`ELECTRON_RUN_AS_NODE=1`, without starting Racall or a browser profile. They report
+Electron **44.10.1**, Node **24.22.1**, Chromium **152.0.7977.169** and embedded
+Undici **7.30.1**. The embedded Undici therefore reaches the
+[upstream security-fix release](https://github.com/nodejs/undici/releases/tag/v7.30.1);
+this conclusion does not rely on the separate npm copy. Rebuilt application
+checks are still required for the updated dependency set.
+
+### Remaining minimatch assessment
+
+The [primary advisory](https://github.com/isaacs/minimatch/security/advisories/GHSA-g3hv-75wg-m249)
+describes attacker-controlled pattern amplification at `optimizationLevel >= 2`,
+and names 11.0.1 as fixed. npm marks `<11.0.1` as affected. The installed tree
+contains 10.2.6 at the root, 9.0.9 under `@electron/universal`, 5.1.9 under
+`filelist`, and 3.1.5 under `@electron/asar`, `dir-compare` and `glob`. All remain
+visible in the audit. Replacing every old callable API with minimatch 11's named
+exports would risk breaking packaging; npm's suggested electron-builder downgrade
+to 20.23.1 was not applied.
+
+The scoped reachability review found:
+
+- `app-builder-lib/out/fileMatcher.js` constructs matchers with `{ dot: true }`;
+  minimatch 10 defaults to optimization level 1. Universal's matcher calls pass
+  `{ matchBase: true }`, and its minimatch 9 also defaults to level 1. No enabling
+  of level 2 was found in these builder chains. The inspected 3/5 implementations
+  do not contain the advisory's `firstPhasePreProcess` implementation.
+- Patterns come from repository-owned packaging configuration and builder
+  defaults. Racall does not pass notebook text, imported documents or user search
+  strings into these matchers. No minimatch imports were found in application
+  source, and the previously generated static client contained no minimatch
+  markers. The earlier packaged archive also contained no npm module tree.
+- The current targets use separate architectures, not Universal macOS builds,
+  and NSIS rather than Squirrel. Some reported dependent paths are consequently
+  installed tooling that these release targets do not execute.
+
+**Proposed release disposition:** retain this named moderate build-tool finding
+as a bounded, documented exception, rather than claiming it fixed. Keep packaging
+patterns in reviewed repository configuration; do not accept user-supplied glob
+patterns or enable level 2 without reassessing this advisory. The existing native
+build jobs have a 60-minute timeout. Recheck the final package contents and revisit
+the exception when builder dependencies or glob options change. This assessment
+does not cover arbitrary untrusted build configurations or future advisories.
+
+### Validation and evidence
+
+`npm ci` completed, `npm ls --all` passed, and actual installed package manifests
+were checked against the lockfile. The selected runtime passed the headless probe.
+The lockfile retains every platform-specific SWC entry and all six supported
+sharp targets. A preliminary incremental install left older physical package
+files despite a current npm tree report; the clean install corrected that, and
+the final filesystem check confirms the versions above.
+
+Evidence is retained in ignored `test-results/dependency04-closure-audit-before.json`,
+`dependency04-closure-audit-after.json`, `dependency04-installed-tree.json`,
+`dependency04-installed-runtime.json`, `electron-v44.10.1-six-assets.json`,
+`electron-v44.10.1-SHASUMS256.txt` and
+`electron-runtime-44.10.1/{verification,versions}.json`.
+Before publication, rerun the audit and check current upstream releases: the
+[Next 16.4.4 notes](https://github.com/vercel/next.js/releases/tag/v16.4.4) explicitly
+announce a separate November security release. The selected versions resolve the
+published findings reviewed here, not undisclosed or subsequently released ones.

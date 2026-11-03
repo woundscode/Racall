@@ -37,23 +37,23 @@
     "format:check": "uv run ruff format --check apps/api tests scripts && prettier --check \"apps/**/*.{js,cjs,mjs,ts,tsx,css}\" \"scripts/**/*.{js,cjs,mjs,ts,tsx}\""
   },
   "devDependencies": {
+    "@phosphor-icons/react": "2.1.10",
     "@playwright/test": "^1.63.0",
+    "@tailwindcss/postcss": "4.3.3",
+    "@tanstack/react-query": "^5.90.0",
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "electron": "44.9.1",
+    "electron": "44.10.1",
     "electron-builder": "26.15.6",
-    "typescript": "^5.9.0",
-    "@phosphor-icons/react": "2.1.10",
-    "@tailwindcss/postcss": "4.3.3",
-    "@tanstack/react-query": "^5.90.0",
-    "next": "16.3.6",
+    "next": "16.4.4",
+    "prettier": "3.9.10",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "tailwindcss": "4.3.3",
-    "prettier": "3.9.10"
+    "typescript": "^5.9.0"
   },
   "build": {
     "appId": "org.opennotebook.desktop",
