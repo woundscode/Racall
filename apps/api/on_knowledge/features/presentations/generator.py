@@ -102,6 +102,8 @@ def generate_presentation(job, evidence, settings, checkpoint, progress):
     accepted = verify_claims(CheckedProvider(), job["question"], claims, visible)
     if len(accepted) != len(claims):
         raise UnverifiedMaterial()
+    # The model critic is a rejection filter, not a factual certificate. It can
+    # accept scope/negation errors even when schema and citation checks pass.
     for slide in slides:
         slide.evidence_ids = [references[label]["id"] for label in slide.evidence_ids]
     used = list(dict.fromkeys(key for slide in slides for key in slide.evidence_ids))
@@ -121,7 +123,7 @@ def generate_presentation(job, evidence, settings, checkpoint, progress):
     answer = {
         "claims": _claims(slides),
         "citations": citations,
-        "validated": True,
+        "validated": False,
         "mode": "presentation",
         "message": "",
     }

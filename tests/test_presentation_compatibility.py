@@ -1,7 +1,9 @@
 """The external-render gate must reject plausible damaged conversion results."""
 
+import json
 from copy import deepcopy
 from io import BytesIO
+from pathlib import Path
 from xml.etree import ElementTree as ET
 
 import pytest
@@ -10,6 +12,7 @@ from pptx import Presentation as PowerPoint
 
 from scripts.presentation_compatibility.checks import verify_bbox, verify_roundtrip
 from scripts.presentation_compatibility.fixtures import cases
+from scripts.presentation_compatibility.runner import run
 
 
 def bbox_page(words, width=960, height=540):
@@ -81,3 +84,17 @@ def test_compatibility_cases_cover_languages_themes_and_schema_limits():
     for case in bounded:
         slide = case.document.slides[0]
         assert len(slide.title) == 160 and len(slide.bullets[0]) == 220 and len(slide.notes) == 1200
+
+
+def test_missing_renderer_records_failure_and_preserves_existing_evidence(tmp_path, monkeypatch):
+    monkeypatch.setattr("scripts.presentation_compatibility.runner.shutil.which", lambda _name: None)
+    with pytest.raises(AssertionError, match="Required independent renderer"):
+        run(tmp_path, Path(__file__).resolve().parents[1])
+    evidence = (tmp_path / "result.json").read_bytes()
+    result = json.loads(evidence)
+    assert not result["passed"] and result["cases"] == []
+    assert "Required independent renderer" in result["error"]
+    assert result["visual_review"] == "pending" and result["microsoft_powerpoint"] == "not tested"
+    with pytest.raises(AssertionError, match="fresh evidence directory"):
+        run(tmp_path, tmp_path)
+    assert (tmp_path / "result.json").read_bytes() == evidence

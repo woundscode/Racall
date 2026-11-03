@@ -4,7 +4,7 @@ import pytest
 from on_knowledge.features.artifacts.repository import Materials
 from on_knowledge.features.presentations.repository import PresentationRepository
 from on_knowledge.features.presentations.schemas import Presentation, PresentationUpdate
-from on_knowledge.storage import ConflictError, Store, now, uid
+from on_knowledge.storage import ConflictError, Store, now, uid, write_json
 from pydantic import ValidationError
 
 
@@ -114,13 +114,20 @@ def test_edits_cannot_forge_provenance_or_identity(stored, change):
     assert Materials(store).get(nb, material["id"]) == material
 
 
-def test_template_and_order_change_do_not_invalidate_text(stored):
+@pytest.mark.parametrize("validated", [False, True])
+def test_template_and_order_change_preserve_new_and_legacy_answer_flags(stored, validated):
     store, nb, material = stored
+    material["answer"]["validated"] = validated
+    path = Materials(store).path(nb, material["id"])
+    write_json(path, material)
+    saved_bytes = path.read_bytes()
+    assert PresentationRepository(store).get(nb, material["id"]) == material
+    assert path.read_bytes() == saved_bytes  # A read must not migrate historical material.
     request = update(material)
     request["presentation"]["template"] = "dark"
     request["presentation"]["slides"].reverse()
     result = PresentationRepository(store).update(nb, material["id"], request)
-    assert result["answer"]["validated"]
+    assert result["answer"]["validated"] is validated
     assert all(s["review_state"] == "generated" for s in result["presentation"]["slides"])
 
 

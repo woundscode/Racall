@@ -137,12 +137,14 @@ def test_outline_approval_generates_separate_deck_with_canonical_sources(setup, 
     store, notebook, source, service, provider = setup
     outline = create_outline(service, notebook, language=language, template="dark")
     assert len(provider.calls) == 2
+    assert outline["answer"]["validated"] is False
     assert outline["presentation"]["stage"] == "outline"
     assert outline["presentation"]["template"] == "dark"
     assert notebook not in store.active_operations
     job = terminal(service, notebook, service.submit(notebook, deck_request(outline)))
     assert job["status"] == "completed", job
     deck = service.materials.get(notebook, job["result"]["material_id"])
+    assert deck["answer"]["validated"] is False
     assert deck["presentation"]["stage"] == "slides"
     assert deck["presentation"]["language"] == language
     assert deck["presentation"]["template"] == "dark"

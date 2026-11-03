@@ -56,8 +56,9 @@ def assemble_presentation(job: dict) -> dict:
     if any(key not in references for slide in outline.slides for key in slide.evidence_ids):
         raise ValueError("The approved outline contains an unknown citation.")
     document = outline.model_copy(update={"stage": "slides", "revision": 1})
-    # Carry prior verification forward only for unchanged generated content.
-    # A user's approval is not an AI or human factual verification certificate.
+    # New AI outlines stay unverified through approval and assembly. Preserve
+    # historical flags for unchanged saved snapshots; neither those flags nor
+    # an approval marker establish factual correctness.
     if any(slide.review_state == "edited" for slide in document.slides):
         answer.update(validated=False, claims=[])
     answer["mode"] = "presentation_assembled"

@@ -3,6 +3,7 @@
 import time
 from io import BytesIO
 
+import pytest
 from fastapi.testclient import TestClient
 from on_knowledge.app import create_app
 from on_knowledge.storage import uid, write_json
@@ -24,7 +25,10 @@ def test_development_origin_can_save_presentations(tmp_path):
         assert "PATCH" in response.headers["Access-Control-Allow-Methods"]
 
 
-def test_approved_edited_outline_exports_without_further_provider_calls(tmp_path, monkeypatch):
+@pytest.mark.parametrize("edit_outline", [False, True])
+def test_approved_outline_exports_without_certification_or_further_provider_calls(
+    tmp_path, monkeypatch, edit_outline
+):
     calls = []
 
     class Provider:
@@ -77,10 +81,12 @@ def test_approved_edited_outline_exports_without_further_provider_calls(tmp_path
             {"kind": "presentation_outline", "context": {"source_ids": [], "note_ids": [note["id"]]}}
         )
         assert len(calls) == 2
+        assert outline["answer"]["validated"] is False
         outline_path = prefix + "/materials/" + outline["id"] + "/presentation"
         document = outline["presentation"]
-        document["title"] = "My talk"
-        document["slides"][0]["title"] = "Launch plan"
+        if edit_outline:
+            document["title"] = "My talk"
+            document["slides"][0]["title"] = "Launch plan"
         saved = client.patch(outline_path, json={"expected_revision": 1, "presentation": document})
         assert saved.status_code == 200, saved.text
         assert saved.json()["presentation"]["revision"] == 2
@@ -96,7 +102,7 @@ def test_approved_edited_outline_exports_without_further_provider_calls(tmp_path
         assert len(calls) == 2
         assert deck["presentation"] == {**saved.json()["presentation"], "stage": "slides", "revision": 1}
         assert deck["answer"]["validated"] is False
-        assert deck["presentation"]["title"] == "My talk"
+        assert deck["presentation"]["title"] == document["title"]
         assert deck["outline_revision"] == 2
         assert deck["context"] == outline["context"]
         assert deck["answer"]["citations"][0]["version"] == note["revision"]
@@ -115,5 +121,7 @@ def test_approved_edited_outline_exports_without_further_provider_calls(tmp_path
         )
         assert "Launch is planned for October 18." in editable_text
         assert len(calls) == 2
+        persisted = client.get(prefix + "/materials/" + deck["id"]).json()
+        assert persisted == deck  # Neither exporter may mutate the saved verdict or text.
         client.headers["Authorization"] = "Bearer wrong"
         assert client.get(path + "/export?format=pdf&revision=1").status_code == 401

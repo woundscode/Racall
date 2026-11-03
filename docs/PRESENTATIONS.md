@@ -38,11 +38,11 @@ Generated and manually edited slide content remain distinguishable. Editing
 content clears its previous validation state; changing template or order does not
 change factual content. The document name is user-controlled metadata, not a
 verified factual claim. Titles, bullets and speaker notes generated for the
-initial outline go through the evidence critic, whose known limitations still
-apply. Creating slides carries forward the outline's existing review state; it
-does not certify the facts again. Manually edited content stays marked as edited
-and is not given a new model-validated status. Review facts and citations before
-sharing a deck.
+initial outline go through a fallible AI evidence critic. It can reject a draft,
+but acceptance is not factual certification: newly generated presentation answers
+always have `validated=false`. Creating slides does not promote that status.
+Manually edited content stays marked as edited. Review facts and citations before
+sharing a deck, including the speaker notes.
 
 The [first live 0.4 Ollama check](MODEL_EVALUATION_04_2026-11-03.md) found a
 speaker-note inference that the critic incorrectly accepted in the earlier
