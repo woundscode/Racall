@@ -6,6 +6,10 @@ builds passed. Local contract tests never execute an installer. An actual run
 requires the candidate source and harness on GitHub and a successful native
 build. No candidate run ID, artifact ID or source SHA is invented in the gate.
 
+The updated Electron 44.10.1 candidate also passed the
+[follow-up installed upgrade](VERIFICATION_04_CLOSURE_2026-11-03.md), run
+`41666757073`, after native run `41662836801` completed on source `3c22f580`.
+
 Repository identity is pinned to GitHub repository ID **1385819102**, currently
 `woundscode/Racall`, in `apps/shared/repository.json`. Provenance checks both the
 build repository and its head repository IDs; the hosted-runner guard checks

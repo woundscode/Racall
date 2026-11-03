@@ -50,4 +50,13 @@ The machine report deliberately leaves `visual_review: pending` and `microsoft_p
 - Separated synthetic fixture generation, pure content/geometry checks and external tool execution so a contributor can inspect each boundary independently.
 - Added rejection tests before the gate implementation, then checked all six fixtures through the production exporter locally.
 - Added a narrowly scoped workflow that preserves artifacts even when a conversion or check fails. No existing application layout, logo or theme was changed for this gate.
-- Actual LibreOffice conversion and visual acceptance remain pending until the workflow and review have completed for the candidate commit.
+- On 2026-11-03, [workflow run 41662366119](https://github.com/woundscode/Racall/actions/runs/41662366119) passed all six cases at commit `4abe9c1063cd313c8dc22125501b3fea5a458b0a`: 22 pages in each of the reference, direct office and round-trip PDF paths, with editable text and speaker notes preserved. The recorded environment was LibreOffice 24.2.7.2, Poppler 24.02.0 and Python 3.12.3. Ubuntu's DejaVu Sans files differed from the bundled font hashes; this result therefore covers those recorded system font versions, not identical embedded PPTX fonts.
+- Artifact `13241229044` has ZIP SHA-256 `ab8ad8ad247ad7c075dfaecc33e3568009471f5c2bc0b4bc7ad1a0853fd635a0`.
+
+## Candidate acceptance, 2026-11-03
+
+[Workflow run 41662832717](https://github.com/woundscode/Racall/actions/runs/41662832717) passed again at candidate commit `3c22f580ad09078917c86075adc70bf17628faa0`. Artifact `13241708950` has ZIP SHA-256 `4518ed342abbfe94edd593d71d6f70cf074d032df9ec7d9355afd3c2ac2df8e4`. All 66 rendered PNG files are byte-identical to the first run, and the exporter, layout, fonts, schemas, fixtures and compatibility runner were unchanged between those commits.
+
+The root coding agent separately inspected all six contact sheets covering all 66 page images (three columns: reference, LibreOffice, returned PPTX). The review accepted readable text, correct Cyrillic glyphs and light/dark themes, complete notes/source appendices, and no visible clipping or overlapping content. The deliberate truncated sentence at the 1,200-character boundary fixture appears equally in all three paths and is fixture content, not lost export text. This was an agent visual review, not a claim that the user manually opened the files in Office.
+
+The LibreOffice compatibility gate is accepted for this candidate and recorded environment. The immutable machine reports still say `visual_review: pending`; the review above and the separate local `visual-review.json` record provide the complementary visual evidence. Microsoft PowerPoint remains **not tested**.
