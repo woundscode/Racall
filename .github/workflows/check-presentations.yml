@@ -1,0 +1,59 @@
+name: Check presentation compatibility in LibreOffice
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/0.4-presentations]
+    paths:
+      - '.github/workflows/check-presentations.yml'
+      - 'scripts/check_presentation_compatibility.py'
+      - 'scripts/presentation_compatibility/**'
+      - 'scripts/evaluate_presentations.py'
+      - 'apps/api/on_knowledge/features/presentations/**'
+      - 'tests/test_presentation_compatibility.py'
+      - 'tests/test_presentation_exports.py'
+permissions:
+  contents: read
+jobs:
+  libreoffice:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHON_KEYRING_BACKEND: keyring.backends.null.Keyring
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.12.13'
+          python-version: '3.12'
+          enable-cache: true
+      - name: Install independent office renderer on the disposable runner
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y libreoffice-impress poppler-utils fonts-dejavu-core
+          mkdir -p test-results/presentation-compatibility
+          dpkg-query -W > test-results/presentation-compatibility/runner-packages.txt
+      - run: uv sync --frozen
+      - name: Verify the compatibility checker rejects damaged output
+        run: uv run python scripts/test.py tests/test_presentation_compatibility.py -q
+      - name: Render, inspect and round-trip editable EN/RU presentations
+        run: uv run python scripts/check_presentation_compatibility.py
+      - name: Preserve independent office rendering and review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: presentation-compatibility
+          if-no-files-found: error
+          path: |
+            test-results/presentation-compatibility/result.json
+            test-results/presentation-compatibility/environment.json
+            test-results/presentation-compatibility/commands.log
+            test-results/presentation-compatibility/runner-packages.txt
+            test-results/presentation-compatibility/**/case-result.json
+            test-results/presentation-compatibility/**/expected.json
+            test-results/presentation-compatibility/**/*.pptx
+            test-results/presentation-compatibility/**/*.odp
+            test-results/presentation-compatibility/**/*.pdf
+            test-results/presentation-compatibility/**/*.png
+            test-results/presentation-compatibility/**/*.bbox.xml
+            test-results/presentation-compatibility/**/*.fonts.txt
