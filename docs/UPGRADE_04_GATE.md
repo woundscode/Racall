@@ -1,8 +1,9 @@
 # Installed 0.3 to 0.4 upgrade gate
 
-This document describes the prepared gate, **not a completed installed upgrade**.
-Local contract tests never execute an installer. An actual run requires the
-candidate source and harness to be available on GitHub and a successful native
+This document describes the installed-upgrade gate. Its first 0.4 hosted run
+[passed on November 3](VERIFICATION_04_NATIVE_2026-11-03.md), after the six native
+builds passed. Local contract tests never execute an installer. An actual run
+requires the candidate source and harness on GitHub and a successful native
 build. No candidate run ID, artifact ID or source SHA is invented in the gate.
 
 Repository identity is pinned to GitHub repository ID **1385819102**, currently
@@ -76,8 +77,8 @@ fontTools tables, bundled DejaVu fonts and relevant distribution metadata. The
 font paths use `os.pathsep`, preserving native PyInstaller argument syntax.
 
 Local Windows verification cannot substitute for the five other native jobs.
-Their result remains pending until an authorized source push/build. This gate
-does not publish, create a tag or change release approval.
+All six passed in the [recorded candidate build](VERIFICATION_04_NATIVE_2026-11-03.md).
+This gate does not publish, create a tag or change release approval.
 
 ## Local verification log
 
@@ -88,6 +89,9 @@ does not publish, create a tag or change release approval.
 - Added baseline Studio job/material preservation to the installed scenario.
 - Added the upgrade contracts to the native build workflow's existing Node test
   step. Ran all fourteen native-target/upgrade tests, JavaScript syntax checks,
-  Prettier and `git diff --check`; they passed. The upgrade tests use synthetic
-  bytes only and never launch Electron or an installer. The installed scenario
-  and remote workflows have not been run here.
+  Prettier and `git diff --check`; they passed. The upgrade contract tests use
+  synthetic bytes only and never launch Electron or an installer.
+- After explicit owner authorization, the native matrix and installed scenario
+  ran on GitHub and passed. The [execution record](VERIFICATION_04_NATIVE_2026-11-03.md)
+  pins their actual source, run/artifact IDs, installer hashes and preservation
+  results. Installation remained confined to the disposable hosted machine.

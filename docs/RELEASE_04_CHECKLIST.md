@@ -30,12 +30,16 @@ and [final local follow-up](VERIFICATION_04_FOLLOWUP_2026-11-03.md).
 - [x] Final deterministic-assembly checks: exact approved text, slide IDs and
       citations, preserved edited review states, no provider/embedding calls, and
       offline **Create slides / Оформить слайды** followed by export.
-- [ ] Final desktop acceptance across the 0.4 release platforms.
-- [ ] Six native builds: Windows/macOS/Linux, x64 and ARM64, with export smoke checks.
-- [ ] Installed 0.3 → 0.4 upgrade preserves original notebooks/materials/revisions
-      ([prepared hosted-runner gate](UPGRADE_04_GATE.md), not yet executed).
+- [x] Automated desktop acceptance across the 0.4 release platforms.
+- [x] Six native builds: Windows/macOS/Linux, x64 and ARM64, with export smoke checks
+      ([native candidate verification](VERIFICATION_04_NATIVE_2026-11-03.md)).
+- [x] Installed Windows x64 0.3 → 0.4 upgrade preserves original
+      notebooks/materials/revisions and knowledge after uninstall
+      ([hosted-runner result](VERIFICATION_04_NATIVE_2026-11-03.md)).
 - [ ] Actual PowerPoint/LibreOffice rendering checked; font substitution limits recorded.
 - [ ] Bounded real-provider EN/RU presentation evaluation with independent factual review.
+- [ ] Resolve remaining dependency findings for release; the targeted Electron CA
+      fix does not close the [other advisories](DEPENDENCY_REVIEW_04_2026-11-03.md).
 - [ ] Final release notes/screenshots, checksums and owner publication approval.
 
 Automated fixtures establish request, storage and file-format behavior. They do

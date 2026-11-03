@@ -1,0 +1,125 @@
+{
+  "version": "0.4.0-beta.1",
+  "source": "c3abd0d3b4330cd82ed935025a93d113b108d544",
+  "workflow_run": 41654163237,
+  "workflow_url": "https://github.com/woundscode/Racall/actions/runs/41654163237",
+  "publication": "hold",
+  "artifacts": [
+    {
+      "platform": "linux",
+      "arch": "arm64",
+      "artifact_id": 13240176469,
+      "artifact_name": "Racall-linux-arm64",
+      "archive_size": 311930366,
+      "archive_digest": "sha256:edd06c9f60042ee88cf798869a1f864889ac50131a7710faac2c170d479e352d",
+      "expires_at": "2027-02-01T14:29:21Z",
+      "packages": [
+        {
+          "name": "Racall-0.4.0-beta.1-linux-arm64.AppImage",
+          "size": 175886799,
+          "sha256": "6601fa3586edd9e681fde00829b40679c6c28270f854e496d836442069aba1b9"
+        },
+        {
+          "name": "Racall-0.4.0-beta.1-linux-arm64.deb",
+          "size": 136756152,
+          "sha256": "402a05b3e0f09e035e9bbcab0331f75245e3dc3fa3e11e8dd5b328899617f23c"
+        }
+      ]
+    },
+    {
+      "platform": "linux",
+      "arch": "x64",
+      "artifact_id": 13240096554,
+      "artifact_name": "Racall-linux-x64",
+      "archive_size": 321378723,
+      "archive_digest": "sha256:a2fcba71bd69795f761937397e33754540a6ee3d075e847ef66f9c36b42b040c",
+      "expires_at": "2027-02-01T14:29:21Z",
+      "packages": [
+        {
+          "name": "Racall-0.4.0-beta.1-linux-x86_64.AppImage",
+          "size": 177422991,
+          "sha256": "e936b1461f39a83050615237277a6e4992e9958c8765ad5f8840574313f207ae"
+        },
+        {
+          "name": "Racall-0.4.0-beta.1-linux-amd64.deb",
+          "size": 144681932,
+          "sha256": "7451bb20570e81cf9e35cbaa1f04ca83846c9ee295164847583669c7beb10fe5"
+        }
+      ]
+    },
+    {
+      "platform": "mac",
+      "arch": "arm64",
+      "artifact_id": 13239566682,
+      "artifact_name": "Racall-mac-arm64",
+      "archive_size": 339344702,
+      "archive_digest": "sha256:ba2c15d348b6d35a12916f6bf423ff5b0281cd66822fbe392553cba8f1b743c2",
+      "expires_at": "2027-02-01T14:29:21Z",
+      "packages": [
+        {
+          "name": "Racall-0.4.0-beta.1-mac-arm64.dmg",
+          "size": 173110119,
+          "sha256": "037e3c2e216f6af374ecae98ecdf4f3db7efbabd7467ec0f3472e30ebbfa3ec5"
+        },
+        {
+          "name": "Racall-0.4.0-beta.1-mac-arm64.zip",
+          "size": 167148144,
+          "sha256": "d5958c383076779f74e9cce6e0889a5a1a0f24755c3d4f29e4cec0703705bc15"
+        }
+      ]
+    },
+    {
+      "platform": "mac",
+      "arch": "x64",
+      "artifact_id": 13239942248,
+      "artifact_name": "Racall-mac-x64",
+      "archive_size": 350200147,
+      "archive_digest": "sha256:ef7763aca597c56658cbda2365399baf64e0fa519a2bf52b3c704d775b1eb137",
+      "expires_at": "2027-02-01T14:29:21Z",
+      "packages": [
+        {
+          "name": "Racall-0.4.0-beta.1-mac-x64.dmg",
+          "size": 178466226,
+          "sha256": "2aa0fb222a76b1f04bf069f75d752b024bed629840266f4e3983b71c62b5ac78"
+        },
+        {
+          "name": "Racall-0.4.0-beta.1-mac-x64.zip",
+          "size": 172549189,
+          "sha256": "92d71e62231bcea399e3f0382c9d8159187d101f6602eba272fddbcb3d510462"
+        }
+      ]
+    },
+    {
+      "platform": "win",
+      "arch": "arm64",
+      "artifact_id": 13240996163,
+      "artifact_name": "Racall-win-arm64",
+      "archive_size": 150871357,
+      "archive_digest": "sha256:7f583cb5cfc76d81b1fe395a7608989ae4ddb3ed8c1021ac360c5caae2327f03",
+      "expires_at": "2027-02-01T14:29:21Z",
+      "packages": [
+        {
+          "name": "Racall-0.4.0-beta.1-win-arm64.exe",
+          "size": 150863109,
+          "sha256": "5587c19fefcb304985c50b9e3fe8923c19323c4ab76598c21e6a0a47763cc053"
+        }
+      ]
+    },
+    {
+      "platform": "win",
+      "arch": "x64",
+      "artifact_id": 13239791812,
+      "artifact_name": "Racall-win-x64",
+      "archive_size": 159197065,
+      "archive_digest": "sha256:17c5925e7653d58e3bb12f2aa96509a9bfd21607020fe4b71c8e4624ad7bdabb",
+      "expires_at": "2027-02-01T14:29:21Z",
+      "packages": [
+        {
+          "name": "Racall-0.4.0-beta.1-win-x64.exe",
+          "size": 159186611,
+          "sha256": "66a98d78f8e3c2dc70c0eb5e52a9bd6d27e118858c7e7e4ae508b174d394f214"
+        }
+      ]
+    }
+  ]
+}
