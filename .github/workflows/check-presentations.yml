@@ -8,6 +8,8 @@ on:
       - 'scripts/check_presentation_compatibility.py'
       - 'scripts/presentation_compatibility/**'
       - 'scripts/evaluate_presentations.py'
+      - 'pyproject.toml'
+      - 'uv.lock'
       - 'apps/api/on_knowledge/features/presentations/**'
       - 'tests/test_presentation_compatibility.py'
       - 'tests/test_presentation_exports.py'
