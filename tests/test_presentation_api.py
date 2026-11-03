@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from on_knowledge.app import create_app
 from on_knowledge.storage import uid, write_json
 from pptx import Presentation as PowerPoint
+from presentation_protocol_fixtures import audit_response, ledger_from_slides
 from pypdf import PdfReader
 
 
@@ -34,9 +35,9 @@ def test_approved_outline_exports_without_certification_or_further_provider_call
     class Provider:
         def complete(self, system, data):
             calls.append(data)
-            if "evidence critic" in system:
-                return {"supported_claim_ids": [claim["claim_id"] for claim in data["claims"]]}
-            return {
+            if "claims" in data:
+                return audit_response(data)
+            raw = {
                 "slides": [
                     {
                         "layout": "bullets",
@@ -47,6 +48,7 @@ def test_approved_outline_exports_without_certification_or_further_provider_call
                     }
                 ]
             }
+            return ledger_from_slides(raw, data["evidence"])
 
     monkeypatch.setattr(
         "on_knowledge.features.presentations.generator.completion_provider", lambda _: Provider()

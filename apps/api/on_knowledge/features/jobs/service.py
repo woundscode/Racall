@@ -14,10 +14,10 @@ from ...providers import frozen_provider_keys, provider_identity, provider_key
 from ...storage import ConflictError, Store, identifier, now, uid
 from ..artifacts.repository import Materials
 from ..context.service import ContextService
-from ..presentations.assembly import matches_assembled_material
 from ..studio.generator import NoEvidence, UnverifiedMaterial
 from .execution import generate_payload
 from .presentations import approved_outline
+from .recovery import matches_saved_material
 from .repository import TERMINAL, JobRepository
 from .schemas import GenerationRequest
 
@@ -95,15 +95,7 @@ class GenerationService:
                     if job["status"] not in {"queued", "running"} or job["id"] in self._accepted:
                         continue
                     material = self.materials.for_job(notebook["id"], job["id"])
-                    if (
-                        material
-                        and material.get("job_id") == job["id"]
-                        and (
-                            matches_assembled_material(job, material)
-                            if job["kind"] == "presentation"
-                            else material["answer"].get("validated")
-                        )
-                    ):
+                    if matches_saved_material(job, material):
                         job.update(
                             status="completed",
                             stage="completed",
@@ -319,6 +311,7 @@ class GenerationService:
             if job["status"] == "running":
                 job.update(status="failed", stage="failed", error=code, updated_at=now(), finished_at=now())
                 self.jobs.save(notebook, job)
+                self._release(notebook, job_id)
 
     def _execute(self, notebook: str, job_id: str):
         job = self.jobs.get(notebook, job_id)
@@ -379,3 +372,6 @@ class GenerationService:
                     },
                 )
                 self.jobs.save(notebook, job)
+                # Readers use the same lock: terminal publication and releasing
+                # this job's notebook guard must become visible together.
+                self._release(notebook, job_id)

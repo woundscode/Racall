@@ -2,58 +2,52 @@
 
 from __future__ import annotations
 
-from pydantic import ValidationError
-
 from ...answer_language import language_instruction, language_mismatch
-from ...claim_verification import verify_claims
 from ...evidence_policy import EVIDENCE_SCOPE
 from ...evidence_references import prepare_evidence
 from ...provider_factory import completion_provider
-from ...storage import uid
-from ..studio.generator import NoEvidence, UnverifiedMaterial
-from .citation_markers import canonicalize_generated_citations
+from ..studio.generator import NoEvidence
+from .citation_markers import canonical_markers, canonicalize_generated_citations
+from .claims import parse_outline
+from .errors import PresentationProtocolError
 from .markdown import presentation_markdown
-from .schemas import Presentation, Slide
+from .review import review_facts
+from .schemas import Presentation
 
 _CONTRACT = (
-    'Return only JSON {"slides":[{"layout":"bullets","title":"topic",'
-    '"bullets":["short supported point"],"notes":"speaker notes",'
-    '"evidence_ids":["E1"]}]}. Use 1 to 12 slides, normally 6 to 10 when evidence suffices. '
-    "Each title is at most 160 characters, each slide has at most 5 bullets of at most 220 characters "
-    "each and notes of at most 1200 characters. Layout is title, section or bullets. "
-    "Title/section layouts have no bullets. Every slide must cite supplied evidence IDs supporting "
-    "ALL its title, bullet text and notes. Do not include IDs, revisions, code or HTML. "
+    'Return only JSON {"claims":[{"id":"F1","text":"short supported claim",'
+    '"evidence":[{"evidence_id":"E1","quote":"exact substring of the source"}]}],'
+    '"slides":[{"layout":"bullets","title_id":"F1","bullet_ids":[],"note_ids":[]}]}. '
+    "Create 1 to 60 facts with unique F IDs and 1 to 12 slides, normally 6 to 10 when evidence suffices. "
+    "Each fact is a short standalone atomic statement or topic heading of at most 220 characters. "
+    "Every fact requires 1 to 16 exact source quotes from supplied E IDs, preserving source wording "
+    "and relevant qualifications. Do not paraphrase the quotes. A quote must support the whole fact. "
+    "Facts used as titles have at most 160 characters. Every slide refers only to existing F IDs; "
+    "use every fact at least once. Layout is title, section or bullets. Title/section layouts have "
+    "empty bullet_ids. A slide has at most 5 unique bullet_ids and 5 unique note_ids. "
+    "Reuse the same fact ID in notes when discussing a bullet: notes are assembled from these exact "
+    "fact texts, not another prose summary. Put any additional speaker-note fact in the same ledger "
+    "with its own exact support. Do not add text/notes fields to slides, revisions, code or HTML. "
 )
 
 
-def _slide_data(raw, references):
-    if not isinstance(raw, dict) or set(raw) != {"slides"} or not isinstance(raw["slides"], list):
-        raise UnverifiedMaterial()
-    items = raw["slides"]
-    if not 1 <= len(items) <= 12:
-        raise UnverifiedMaterial()
-    slides = []
-    for item in items:
-        if not isinstance(item, dict) or set(item) != {"layout", "title", "bullets", "notes", "evidence_ids"}:
-            raise UnverifiedMaterial()
-        labels = item["evidence_ids"]
-        if (
-            not isinstance(labels, list)
-            or not labels
-            or any(not isinstance(label, str) or label not in references for label in labels)
-        ):
-            raise UnverifiedMaterial()
-        slide = Slide.model_validate({**item, "id": uid(), "review_state": "generated"})
-        slides.append(slide)
-    return slides
-
-
-def _claims(slides):
+def _answer_claims(facts, references, citations):
+    numbers = {item["id"]: item["number"] for item in citations}
+    labels = {label: numbers[item["id"]] for label, item in references.items() if item["id"] in numbers}
     return [
-        {"text": text, "evidence_ids": slide.evidence_ids}
-        for slide in slides
-        for text in (slide.title, *slide.bullets, slide.notes)
-        if text
+        {
+            "text": canonical_markers(
+                fact["text"], labels, {item["evidence_id"] for item in fact["evidence"]}
+            ),
+            "evidence_ids": list(
+                dict.fromkeys(references[item["evidence_id"]]["id"] for item in fact["evidence"])
+            ),
+            "source_anchors": [
+                {"evidence_id": references[item["evidence_id"]]["id"], "quote": item["quote"]}
+                for item in fact["evidence"]
+            ],
+        }
+        for fact in facts
     ]
 
 
@@ -83,13 +77,9 @@ def generate_presentation(job, evidence, settings, checkpoint, progress):
         },
     )
     checkpoint()
-    try:
-        slides = _slide_data(raw, references)
-    except ValidationError as error:
-        raise UnverifiedMaterial() from error
-    claims = _claims(slides)
-    if any(language_mismatch(claim["text"], language) for claim in claims):
-        raise UnverifiedMaterial()
+    facts, slides = parse_outline(raw, visible)
+    if any(language_mismatch(fact["text"], language) for fact in facts):
+        raise PresentationProtocolError("A generated fact does not use the requested language.")
 
     class CheckedProvider:
         def complete(self, system, data):
@@ -98,12 +88,8 @@ def generate_presentation(job, evidence, settings, checkpoint, progress):
             checkpoint()
             return result
 
-    progress("critic", {"count": len(claims)})
-    accepted = verify_claims(CheckedProvider(), job["question"], claims, visible)
-    if len(accepted) != len(claims):
-        raise UnverifiedMaterial()
-    # The model critic is a rejection filter, not a factual certificate. It can
-    # accept scope/negation errors even when schema and citation checks pass.
+    progress("critic", {"count": len(facts)})
+    review_facts(CheckedProvider(), job["question"], facts, visible)
     for slide in slides:
         slide.evidence_ids = [references[label]["id"] for label in slide.evidence_ids]
     used = list(dict.fromkeys(key for slide in slides for key in slide.evidence_ids))
@@ -111,8 +97,9 @@ def generate_presentation(job, evidence, settings, checkpoint, progress):
     citations = [{**originals[key], "number": index} for index, key in enumerate(used, 1)]
     try:
         slides = canonicalize_generated_citations(slides, references, citations)
+        claims = _answer_claims(facts, references, citations)
     except ValueError as error:
-        raise UnverifiedMaterial() from error
+        raise PresentationProtocolError("A generated inline citation is not declared by its fact.") from error
     document = Presentation(
         title=job["title"],
         language=language,
@@ -121,7 +108,7 @@ def generate_presentation(job, evidence, settings, checkpoint, progress):
         slides=slides,
     )
     answer = {
-        "claims": _claims(slides),
+        "claims": claims,
         "citations": citations,
         "validated": False,
         "mode": "presentation",

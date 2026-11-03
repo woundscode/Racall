@@ -196,7 +196,7 @@ class LiveGuard:
             self.stop(f"Runtime/resource check failed: {error}")
 
     def phase(self, system):
-        if "evidence critic" in system:
+        if "evidence critic" in system or "presentation evidence auditor" in system:
             return "critic"
         return "planner" if "Plan research" in system else "writer"
 

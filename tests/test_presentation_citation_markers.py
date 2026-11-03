@@ -21,6 +21,7 @@ from on_knowledge.features.presentations.generator import generate_presentation
 from on_knowledge.features.presentations.schemas import Presentation, Slide
 from on_knowledge.features.studio.generator import UnverifiedMaterial
 from pptx import Presentation as PowerPoint
+from presentation_protocol_fixtures import audit_response, ledger_from_slides
 from pypdf import PdfReader
 
 
@@ -33,8 +34,9 @@ def test_recorded_en_writer_markers_are_canonical_in_outline_assembly_and_export
     class ReplayProvider:
         def complete(self, system, data):
             calls.append(copy.deepcopy(data))
-            key = "critic_response" if "evidence critic" in system else "writer_response"
-            return copy.deepcopy(recorded[key])
+            if "claims" in data:
+                return audit_response(data)
+            return ledger_from_slides(recorded["writer_response"], recorded["evidence"])
 
     monkeypatch.setattr(
         "on_knowledge.features.presentations.generator.completion_provider", lambda _: ReplayProvider()
@@ -162,9 +164,9 @@ def test_real_generator_rejects_unknown_or_other_slide_citation_after_critic(mon
     class Provider:
         def complete(self, system, data):
             calls.append(data)
-            if "evidence critic" in system:
-                return {"supported_claim_ids": [item["claim_id"] for item in data["claims"]]}
-            return {
+            if "claims" in data:
+                return audit_response(data)
+            raw = {
                 "slides": [
                     {
                         "layout": "bullets",
@@ -175,6 +177,7 @@ def test_real_generator_rejects_unknown_or_other_slide_citation_after_critic(mon
                     }
                 ]
             }
+            return ledger_from_slides(raw, data["evidence"])
 
     monkeypatch.setattr(
         "on_knowledge.features.presentations.generator.completion_provider", lambda _: Provider()

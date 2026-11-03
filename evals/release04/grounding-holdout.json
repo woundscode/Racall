@@ -1,0 +1,280 @@
+{
+  "cases": [
+    {
+      "id": "en-archive-publishing-power",
+      "question": "Check these statements against the supplied passages.",
+      "evidence": [
+        {
+          "id": "E1",
+          "title": "Archive pilot log",
+          "quote": "During the June pilot, no photographs were digitized. The archive's work outside that pilot is not described."
+        },
+        {
+          "id": "E2",
+          "title": "Publisher approval log",
+          "quote": "The publisher approved the revised cover artwork on May 5, 2031. The book's printing and release dates are not recorded."
+        },
+        {
+          "id": "E3",
+          "title": "Pump specification",
+          "quote": "The pump's rated power is 1250 W. Its daily operating time is not specified."
+        }
+      ],
+      "facts": [
+        {
+          "id": "F1",
+          "text": "The June pilot digitized no photographs.",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "During the June pilot, no photographs were digitized."
+            }
+          ]
+        },
+        {
+          "id": "F2",
+          "text": "The archive has never digitized any photographs.",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "During the June pilot, no photographs were digitized."
+            }
+          ]
+        },
+        {
+          "id": "F3",
+          "text": "The book with the revised cover was released on May 5, 2031.",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "The publisher approved the revised cover artwork on May 5, 2031."
+            }
+          ]
+        },
+        {
+          "id": "F4",
+          "text": "The revised cover artwork received the publisher's approval on May 5, 2031.",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "The publisher approved the revised cover artwork on May 5, 2031."
+            }
+          ]
+        },
+        {
+          "id": "F5",
+          "text": "The pump has a rated power of 1.25 kW.",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "The pump's rated power is 1250 W."
+            }
+          ]
+        },
+        {
+          "id": "F6",
+          "text": "The pump consumes 1.25 kWh of energy per day.",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "The pump's rated power is 1250 W."
+            }
+          ]
+        }
+      ],
+      "expected_supported_claim_ids": ["C1", "C4", "C5"],
+      "rationale": {
+        "C1": "Accept: an explicit absence of digitization supports the negative claim within the same June pilot.",
+        "C2": "Reject: the pilot-scoped absence does not establish the archive's entire history.",
+        "C3": "Reject: approval of artwork and release of a book are different events; the approval date cannot be reassigned.",
+        "C4": "Accept: paraphrase preserves the artwork, approval event, approving publisher and exact date.",
+        "C5": "Accept: 1250 W equals 1.25 kW; the rated-power predicate is unchanged.",
+        "C6": "Reject: rated power does not establish daily energy use, and no operating duration is supplied."
+      }
+    },
+    {
+      "id": "ru-firmware-forecast-permission",
+      "question": "Check these statements against the supplied passages.",
+      "evidence": [
+        {
+          "id": "E1",
+          "title": "Журнал испытания прошивки",
+          "quote": "После установки новой версии прошивки среднее зарегистрированное время отклика выросло. Причина роста не установлена."
+        },
+        {
+          "id": "E2",
+          "title": "Прогноз аналитика",
+          "quote": "По прогнозу аналитика Ли, число заявок в июле может достичь 200. Фактическое число заявок за июль пока неизвестно."
+        },
+        {
+          "id": "E3",
+          "title": "Разрешение на тестовый заезд",
+          "quote": "На тестовый заезд разрешили не более пяти электрокаров. В разрешении не указано, сколько электрокаров фактически участвовало в заезде."
+        }
+      ],
+      "facts": [
+        {
+          "id": "F1",
+          "text": "Установка новой прошивки вызвала рост среднего времени отклика.",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "После установки новой версии прошивки среднее зарегистрированное время отклика выросло. Причина роста не установлена."
+            }
+          ]
+        },
+        {
+          "id": "F2",
+          "text": "После обновления прошивки зафиксировали рост среднего времени отклика; причина роста не установлена.",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "После установки новой версии прошивки среднее зарегистрированное время отклика выросло. Причина роста не установлена."
+            }
+          ]
+        },
+        {
+          "id": "F3",
+          "text": "Аналитик Ли прогнозирует, что число заявок в июле может достигнуть 200.",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "По прогнозу аналитика Ли, число заявок в июле может достичь 200."
+            }
+          ]
+        },
+        {
+          "id": "F4",
+          "text": "В июле фактически поступило ровно 200 заявок.",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "По прогнозу аналитика Ли, число заявок в июле может достичь 200."
+            }
+          ]
+        },
+        {
+          "id": "F5",
+          "text": "В тестовом заезде участвовало ровно пять электрокаров.",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "На тестовый заезд разрешили не более пяти электрокаров."
+            }
+          ]
+        },
+        {
+          "id": "F6",
+          "text": "Для тестового заезда установили верхний разрешённый предел в пять электрокаров.",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "На тестовый заезд разрешили не более пяти электрокаров."
+            }
+          ]
+        }
+      ],
+      "expected_supported_claim_ids": ["C2", "C3", "C6"],
+      "rationale": {
+        "C1": "Reject: occurrence after the update does not establish causation; the source explicitly leaves the cause unknown.",
+        "C2": "Accept: paraphrase preserves observed succession and the lack of an established cause.",
+        "C3": "Accept: preserves Li's attribution, forecast modality, month and possible count.",
+        "C4": "Reject: a possible forecast is not an observed exact count.",
+        "C5": "Reject: an authorized upper bound does not establish actual participation or an exact count.",
+        "C6": "Accept: five remains the permitted maximum for this specific test drive."
+      }
+    },
+    {
+      "id": "cross-language-depot-oven-prototype",
+      "question": "Check these statements against the supplied passages.",
+      "evidence": [
+        {
+          "id": "E1",
+          "title": "Depot dispatch log",
+          "quote": "No boxes were dispatched from Depot C during the overnight shift. Shipments during other shifts are not covered by this record."
+        },
+        {
+          "id": "E2",
+          "title": "Паспорт печи",
+          "quote": "Номинальная мощность печи составляет 2400 Вт. Длительность рабочего цикла в паспорте не указана."
+        },
+        {
+          "id": "E3",
+          "title": "Prototype research note",
+          "quote": "Researcher Ana estimates that the prototype may reduce average processing time by about 10%. No measured reduction is reported."
+        }
+      ],
+      "facts": [
+        {
+          "id": "F1",
+          "text": "В ночную смену со склада C не отправили ни одной коробки.",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "No boxes were dispatched from Depot C during the overnight shift."
+            }
+          ]
+        },
+        {
+          "id": "F2",
+          "text": "Со склада C никогда не отправляли коробки.",
+          "evidence": [
+            {
+              "evidence_id": "E1",
+              "quote": "No boxes were dispatched from Depot C during the overnight shift."
+            }
+          ]
+        },
+        {
+          "id": "F3",
+          "text": "The oven consumes 2.4 kWh of energy per operating cycle.",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "Номинальная мощность печи составляет 2400 Вт."
+            }
+          ]
+        },
+        {
+          "id": "F4",
+          "text": "The oven's rated power is 2.4 kW.",
+          "evidence": [
+            {
+              "evidence_id": "E2",
+              "quote": "Номинальная мощность печи составляет 2400 Вт."
+            }
+          ]
+        },
+        {
+          "id": "F5",
+          "text": "Прототип сократил среднее время обработки ровно на 10%.",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "Researcher Ana estimates that the prototype may reduce average processing time by about 10%."
+            }
+          ]
+        },
+        {
+          "id": "F6",
+          "text": "По оценке Аны, прототип может уменьшить среднее время обработки примерно на 10%.",
+          "evidence": [
+            {
+              "evidence_id": "E3",
+              "quote": "Researcher Ana estimates that the prototype may reduce average processing time by about 10%."
+            }
+          ]
+        }
+      ],
+      "expected_supported_claim_ids": ["C1", "C4", "C6"],
+      "rationale": {
+        "C1": "Accept: English-to-Russian translation preserves the explicit absence of dispatches and the overnight-shift scope.",
+        "C2": "Reject: translation expands one shift to the depot's entire history.",
+        "C3": "Reject: power in watts does not establish energy per cycle; no cycle duration is supplied.",
+        "C4": "Accept: Russian-to-English translation preserves rated power, and 2400 W equals 2.4 kW.",
+        "C5": "Reject: a person's approximate possible estimate is promoted to an actual exact result, losing attribution and modality.",
+        "C6": "Accept: English-to-Russian translation preserves Ana's attribution, possibility, approximation and the average-time quantity."
+      }
+    }
+  ]
+}

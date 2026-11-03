@@ -78,6 +78,8 @@ jobs:
       - name: Verify native Node and Python architecture
         run: uv run python scripts/check_native_arch.py
       - run: node --test scripts/test-native-target.cjs scripts/upgrade/unit.test.cjs
+      - name: Check packaging glob compatibility and expansion limits
+        run: npm run test:packaging-globs
       - run: npm test -- -q
       - run: npm run lint
       - run: npm run format:check

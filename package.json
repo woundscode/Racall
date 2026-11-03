@@ -27,6 +27,7 @@
     "test:studio": "node scripts/smoke-studio.cjs",
     "test:presentations": "node scripts/smoke-presentations.cjs",
     "test:targets": "node --test scripts/test-native-target.cjs",
+    "test:packaging-globs": "node --test scripts/test-packaging-globs.cjs",
     "test:packaged": "node scripts/test-packaged.cjs",
     "test:persistence": "node scripts/smoke-persistence.cjs",
     "test:maintenance": "node scripts/smoke-maintenance.cjs",
@@ -54,6 +55,14 @@
     "remark-gfm": "^4.0.1",
     "tailwindcss": "4.3.3",
     "typescript": "^5.9.0"
+  },
+  "overrides": {
+    "app-builder-lib@26.15.6": {
+      "minimatch@10.2.6": "11.0.4"
+    },
+    "@electron/universal@2.0.3": {
+      "minimatch@9.0.9": "11.0.4"
+    }
   },
   "build": {
     "appId": "org.opennotebook.desktop",

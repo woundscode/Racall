@@ -199,3 +199,80 @@ Before publication, rerun the audit and check current upstream releases: the
 [Next 16.4.4 notes](https://github.com/vercel/next.js/releases/tag/v16.4.4) explicitly
 announce a separate November security release. The selected versions resolve the
 published findings reviewed here, not undisclosed or subsequently released ones.
+
+## Minimatch root-cause fix follow-up
+
+A further review fixes the two installed implementations that contain the
+preprocessing amplification described by **GHSA-g3hv-75wg-m249**. The earlier
+build-only disposition is no longer the only protection for these two consumers:
+
+| Consumer | Previous minimatch | Fixed minimatch |
+| --- | --- | --- |
+| `app-builder-lib@26.15.6` | 10.2.6 | 11.0.4 |
+| `@electron/universal@2.0.3` | 9.0.9 | 11.0.4 |
+
+The fixes use official npm packages, pinned by lockfile integrity, with two
+parent-scoped **and original-version-scoped** overrides. Matching only the parent
+and dependency name would also override incompatible descendants. The selectors
+therefore explicitly match `minimatch@10.2.6` and `minimatch@9.0.9`. The old
+callable implementations required by asar, dir-compare and glob remain unchanged.
+No local package fork, version relabeling, audit suppression or forced downgrade
+is involved. The selected version supports the existing Node 24 build runners.
+
+The [official changelog](https://github.com/isaacs/minimatch/blob/v11.0.4/changelog.md)
+documents real major-version API changes: `.set` contains `Matcher` objects
+instead of regular expressions, and `makeRe` and `matchOne` are removed. A global
+override would therefore be unsafe. The selected builder consumer uses named
+`Minimatch`, `.match` and a type check on `.set`; Universal uses the named
+`minimatch` function. Their consumed contracts were verified before applying the
+update. Glob 7 and consumers of the callable default export were not migrated.
+
+### Regression and compatibility evidence
+
+A bounded regression reproduces the cause: six globstar/parent segments create
+64 intermediate pattern rows in both installed 9.0.9 and 10.2.6 despite a
+configured expansion limit of four. Official 11.0.4 retains at most four rows.
+The test deliberately avoids large CPU or memory loads. It failed for both old
+consumers and passed against the fixed package in an isolated probe, then passed
+again against the actual clean-installed dependency tree.
+
+`npm run test:packaging-globs` covers the real builder file filter, parent
+directory traversal, dotfiles, negated paths, brace extensions, Windows pattern
+separators and Universal allowlists. It also checks the legacy callable APIs and
+an actual Glob 7 file expansion to prevent accidental migration of descendants.
+All nine contracts passed; the combined packaging/native-target run passed
+17 tests. `npm ls --all` also passed. The installer targets still need a fresh
+native matrix after this dependency change; earlier candidate binaries do not
+validate this updated build-tool tree. The native workflow now runs these glob
+contracts before building any platform's packages.
+
+### Why the full audit still reports 15 moderate findings
+
+The fresh full audit still exits 1 with **15 moderate, 0 high, 0 critical**. Its
+minimatch nodes now consist only of the unchanged 3.1.5 copies used by asar,
+dir-compare and Glob 7, plus 5.1.9 used by filelist. Neither 9.0.9 nor 10.2.6
+remains installed. Ancestor propagation keeps the same package finding count.
+
+The [primary advisory](https://github.com/isaacs/minimatch/security/advisories/GHSA-g3hv-75wg-m249)
+describes `firstPhasePreProcess` and `optimizationLevel >= 2`. Source inspection
+finds neither that preprocessing implementation nor the optimization option in
+the installed 3/5 branches. The upstream changelog dates preprocessing to 7.0
+and the option to 7.1. Thus the npm range `<11.0.1` is overbroad **for the specific
+mechanism described in this advisory**. This does not certify every behavior of
+these old packages or dismiss future advisories.
+
+The current official legacy tags remain 3.1.5, 5.1.9 and 9.0.9; no fixed backport
+was found. The [26.18.1 builder release](https://github.com/electron-userland/electron-builder/releases/tag/electron-builder@26.18.1)
+still declares minimatch 10, asar 3, Universal 2 and EJS 3. Its 27 alpha also
+retains vulnerable-version dependencies and introduces unrelated breaking
+changes. No fully updated compatible upstream chain was found. Accordingly,
+this follow-up closes the observed preprocessing implementation defect while
+retaining the unresolved upstream audit classification; it does **not** claim a
+zero-finding audit or removal of all 15 reported findings.
+
+Ignored evidence: `test-results/minimatch04-fresh-audit.json`,
+`minimatch04-registry.json`, `minimatch04-candidate-metadata.json`,
+`minimatch04-contract-before.txt`, `minimatch04-contract-probe.txt`,
+`minimatch04-contract-after.txt`, `minimatch04-installed-tree.json` and
+`minimatch04-audit-after.json`. The final audit is from the clean-installed,
+version-scoped dependency tree.

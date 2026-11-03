@@ -62,3 +62,15 @@ Recorded EN/RU writer/critic pairs reproduce false positive verification. Tests
 now require these outputs to remain uncertified; they do not establish that the
 unsupported paraphrases themselves have been corrected. Historical live factual
 failures remain failed, independently of the certification fix or export checks.
+
+## Fact-ledger and audit follow-up, 2026-11-03
+
+Initial generation now produces a source-anchored fact ledger. Slide titles,
+bullets and speaker notes refer to those exact fact texts, so notes do not receive
+an independent paraphrase. One structured audit checks every server-labelled
+claim against its full cited evidence passages, supplied once per evidence ID.
+Malformed responses and negative/uncertain verdicts fail without automatic repair
+or rewriting. These checks remain fallible and do not change `validated=false`,
+manual review or deterministic assembly. The bounded regression/holdout
+evaluation and current pending live status are documented in the
+[grounding follow-up](../GROUNDING_04_FOLLOWUP_2026-11-03.md).

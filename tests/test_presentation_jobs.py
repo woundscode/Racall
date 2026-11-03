@@ -1,14 +1,17 @@
 """Presentation generation contracts use synthetic providers, never real inference."""
 
 import copy
+import threading
 import time
 
 import pytest
 from on_knowledge.features.jobs.schemas import GenerationRequest
 from on_knowledge.features.jobs.service import GenerationService
+from on_knowledge.features.notebooks.repository import Notebooks
 from on_knowledge.features.presentations.assembly import assemble_presentation
 from on_knowledge.features.presentations.repository import PresentationRepository
 from on_knowledge.storage import ConflictError, Store, now, uid, write_json
+from presentation_protocol_fixtures import audit_response, ledger_from_slides
 from pydantic import ValidationError
 
 
@@ -34,14 +37,13 @@ class Provider:
 
     def complete(self, system, data):
         self.calls.append((system, copy.deepcopy(data)))
-        if "evidence critic" in system:
-            return {
-                "supported_claim_ids": [] if self.reject else [item["claim_id"] for item in data["claims"]]
-            }
+        if "claims" in data:
+            rejected = [item["claim_id"] for item in data["claims"]] if self.reject else []
+            return audit_response(data, rejected=rejected)
         if self.output is not None:
             return self.output
         russian = data["answer_language"] == "ru"
-        return {
+        raw = {
             "slides": [
                 {
                     "title": "Проект Marigold" if russian else "Project Marigold",
@@ -54,6 +56,7 @@ class Provider:
                 }
             ]
         }
+        return ledger_from_slides(raw, data["evidence"])
 
 
 @pytest.fixture
@@ -152,12 +155,46 @@ def test_outline_approval_generates_separate_deck_with_canonical_sources(setup, 
     assert deck["presentation"]["slides"][0]["evidence_ids"] == ["original-version-passage"]
     assert deck["answer"]["citations"][0]["version"] == "v1"
     assert deck["answer"]["citations"][0]["source_id"] == source["id"]
+    assert deck["answer"]["claims"] == outline["answer"]["claims"]
+    assert all(
+        anchor["evidence_id"] == "original-version-passage"
+        for claim in deck["answer"]["claims"]
+        for anchor in claim["source_anchors"]
+    )
     assert deck["id"] != outline["id"] and len(service.materials.list(notebook)) == 2
     assert deck["presentation"] == {**outline["presentation"], "stage": "slides", "revision": 1}
     assert len(provider.calls) == 2
     texts = [claim["text"] for claim in provider.calls[1][1]["claims"]]
     assert ("Проект Marigold" if language == "ru" else "Project Marigold") in texts
     assert ("Это план." if language == "ru" else "This is a plan.") in texts
+
+
+@pytest.mark.parametrize("outcome", ["completed", "failed"])
+def test_terminal_publication_releases_notebook_before_worker_finally(setup, monkeypatch, outcome):
+    store, notebook, source, service, provider = setup
+    provider.reject = outcome == "failed"
+    boundary = "_fail" if provider.reject else "_execute"
+    original = getattr(service, boundary)
+    published, resume = threading.Event(), threading.Event()
+
+    def pause_after_publication(*args):
+        original(*args)
+        published.set()
+        assert resume.wait(3), "Test did not release the worker's final-cleanup barrier"
+
+    monkeypatch.setattr(service, boundary, pause_after_publication)
+    service.start()
+    job = service.submit(notebook, request())
+    try:
+        assert published.wait(3), "Worker did not reach terminal publication"
+        assert service.get(notebook, job["id"])["status"] == outcome
+        # The worker has not reached its finally block. A visible terminal
+        # result must nevertheless have released this job's deletion guard.
+        assert notebook not in store.active_operations
+        assert job["id"] not in service._protected and job["id"] not in service._accepted
+        Notebooks(store).delete(notebook)
+    finally:
+        resume.set()
 
 
 def test_outline_restart_does_not_replay_and_worker_is_available(setup):
@@ -223,11 +260,22 @@ def test_invalid_or_unverified_presentation_does_not_publish(setup, bad):
     if bad == "rejected_title":
         provider.reject = True
     else:
-        output = Provider().complete("writer", {"answer_language": "en"})
+        output = Provider().complete(
+            "writer",
+            {
+                "answer_language": "en",
+                "evidence": [
+                    {
+                        "id": "E1",
+                        "quote": "Project Marigold's launch is planned for October 18. This is a plan.",
+                    }
+                ],
+            },
+        )
         if bad == "unknown_citation":
-            output["slides"][0]["evidence_ids"] = ["E999"]
+            output["claims"][0]["evidence"][0]["evidence_id"] = "E999"
         elif bad == "oversized":
-            output["slides"][0]["title"] = "x" * 161
+            output["claims"][0]["text"] = "x" * 161
         provider.output = output
     service.start()
     job = terminal(
@@ -404,3 +452,71 @@ def test_slide_request_cannot_silently_apply_or_ignore_rewrite_instructions(setu
     with pytest.raises(ValueError, match="Edit and save the outline"):
         service.submit(notebook, deck_request(outline, question="Rewrite every slide in a new style."))
     assert len(provider.calls) == 2 and len(service.list(notebook)) == 1
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        None,
+        "legacy_flag",
+        "material_id",
+        "job_id",
+        "kind",
+        "context",
+        "language",
+        "stage",
+        "invalid_slide",
+        "citation",
+        "empty_citations",
+        "duplicate_citations",
+        "citation_number",
+        "body",
+        "instructions",
+        "provider",
+    ],
+)
+def test_outline_recovery_uses_saved_integrity_instead_of_factual_flag(setup, change):
+    store, notebook, source, service, provider = setup
+    outline = create_outline(service, notebook)
+    service.close()
+    job = service.jobs.get(notebook, outline["job_id"])
+    job.update(status="running", stage="writer", result=None, finished_at=None)
+    service.jobs.save(notebook, job)
+    material = copy.deepcopy(outline)
+    if change is not None:
+        material["answer"]["validated"] = True  # A historical flag cannot bypass integrity checks.
+    if change in {"material_id", "job_id"}:
+        material["id" if change == "material_id" else "job_id"] = uid()
+    elif change == "kind":
+        material["kind"] = "summary"
+    elif change == "context":
+        material["context"] = {"sources": [], "notes": []}
+    elif change in {"language", "stage"}:
+        material["presentation"][change] = "ru" if change == "language" else "slides"
+    elif change == "invalid_slide":
+        material["presentation"]["slides"][0]["title"] = "x" * 161
+    elif change == "citation":
+        material["presentation"]["slides"][0]["evidence_ids"] = ["missing"]
+    elif change == "empty_citations":
+        material["answer"]["citations"] = []
+    elif change == "duplicate_citations":
+        material["answer"]["citations"] *= 2
+    elif change == "citation_number":
+        material["answer"]["citations"][0]["number"] = 9
+    elif change == "body":
+        material["body"] = "A different saved rendering"
+    elif change == "instructions":
+        material["instructions"] = "Changed instructions"
+    elif change == "provider":
+        material["provider"] = {}
+    path = service.materials.path(notebook, job["id"])
+    write_json(path, material)
+    saved_bytes = path.read_bytes()
+    reopened = GenerationService(store, object())
+    reopened.recover()
+    recovered = reopened.get(notebook, job["id"])
+    assert recovered["status"] == ("completed" if change in {None, "legacy_flag"} else "interrupted")
+    if recovered["status"] == "completed":
+        assert recovered["result"]["material_id"] == outline["id"]
+    assert len(provider.calls) == 2
+    assert path.read_bytes() == saved_bytes

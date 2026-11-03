@@ -74,7 +74,9 @@ class PresentationRepository:
                 updated_at=now(),
                 body=presentation_markdown(document, item["answer"]["citations"]),
             )
-            if any(slide.review_state == "edited" for slide in document.slides):
+            # _prepare forbids new identities, so a shorter list means deleted content.
+            removed_slides = len(document.slides) != len(item["presentation"]["slides"])
+            if removed_slides or any(slide.review_state == "edited" for slide in document.slides):
                 updated["answer"].update(validated=False, claims=[], mode="presentation_edited")
             history = self._history(notebook, material, previous_revision)
             if not history.exists():

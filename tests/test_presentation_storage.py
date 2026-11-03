@@ -2,6 +2,11 @@ from copy import deepcopy
 
 import pytest
 from on_knowledge.features.artifacts.repository import Materials
+from on_knowledge.features.presentations.assembly import (
+    approval_marker,
+    assemble_presentation,
+    outline_snapshot,
+)
 from on_knowledge.features.presentations.repository import PresentationRepository
 from on_knowledge.features.presentations.schemas import Presentation, PresentationUpdate
 from on_knowledge.storage import ConflictError, Store, now, uid, write_json
@@ -129,6 +134,42 @@ def test_template_and_order_change_preserve_new_and_legacy_answer_flags(stored, 
     result = PresentationRepository(store).update(nb, material["id"], request)
     assert result["answer"]["validated"] is validated
     assert all(s["review_state"] == "generated" for s in result["presentation"]["slides"])
+
+
+def test_delete_only_edit_clears_claims_from_removed_slides(stored):
+    store, nb, material = stored
+    material.update(kind="presentation_outline", context={})
+    material["presentation"]["stage"] = "outline"
+    material["answer"]["claims"] = [
+        {
+            "text": "Second",
+            "evidence_ids": ["source:v1"],
+            "source_anchors": [{"evidence_id": "source:v1", "quote": "A measured result."}],
+        }
+    ]
+    write_json(Materials(store).path(nb, material["id"]), material)
+    request = update(material)
+    request["presentation"]["slides"].pop()
+    saved = PresentationRepository(store).update(nb, material["id"], request)
+    assert saved["answer"]["claims"] == []
+    assert saved["answer"]["validated"] is False
+    assert saved["answer"]["citations"] == material["answer"]["citations"]
+    assert saved["presentation"]["slides"][0]["review_state"] == "generated"
+    assert PresentationRepository(store).revision(nb, material["id"], 1) == material
+    reopened = PresentationRepository(Store(store.root)).get(nb, material["id"])
+    assert reopened == saved
+    snapshot = outline_snapshot(reopened)
+    deck = assemble_presentation(
+        {
+            "_outline_snapshot": snapshot,
+            "assembly": approval_marker(snapshot),
+            "outline_id": material["id"],
+            "outline_revision": 2,
+            "context": {},
+        }
+    )
+    assert deck["answer"]["claims"] == [] and deck["answer"]["validated"] is False
+    assert len(deck["presentation"]["slides"]) == 1
 
 
 def test_crash_draft_and_explicit_save(stored):
