@@ -216,3 +216,39 @@ Neither the ledger nor the new audit protocol retroactively changes those
 results. Packaging, exports and upgrade preservation are separate checks. The
 [subsequent transport and native verification](VERIFICATION_04_GROUNDING_2026-11-03.md)
 records the new `629312e` candidate and keeps these semantic failures separate.
+
+## November 4: isolated-claim hypothesis rejected
+
+After the successful post-reboot EN/RU workflow, a separate bounded experiment
+tested whether checking claims individually would fix the observed false
+acceptances. Six cases were fixed before inference: each of the three known
+false positives followed by a positive control from the same original case.
+The stop rule was the first semantic or protocol failure, with no retries.
+
+Only the claims list changed. The original question, claim text, anchors and
+production audit instructions were retained. An experiment-only provider
+adapter restored the original batch's full passage list after production
+filtering, so reduced passage context did not become a second variable. The
+sole claim received server ID `C1`; its historical ID was `C8`.
+
+The first English historical claim again received **supported** with valid
+exact quotations. The auditor treated changes not approved at one meeting as
+support for a broader lack of adjustments. This response passed the application
+protocol, but failed the semantic criterion. The experiment stopped after
+**one call**; the other five cases were not run. The
+[unchanged response and input recording](../evals/release04/regressions/single-claim-audit-false-acceptance.json)
+preserves that failure and the prior selection. It does not replace the frozen
+34-claim score, and no claim-isolation code was added to the product.
+
+The temporary local runtime used the existing `gemma4:12b`, 44 GPU layers,
+8,192-token context, non-mmap loading and a disabled RAM prompt cache. Runtime
+and cleanup completed: original model manifest hashes and API tags were
+restored, the owned server stopped, and the normal server remained stopped.
+Memory stability therefore did not correct this semantic failure. The raw SSE,
+provider trace, resource samples and cleanup remain in the ignored directory
+`test-results/grounding04-20261104-isolated/`.
+
+The remaining design boundary is explicit: an AI critic cannot be the sole
+authority certifying an AI paraphrase. The product retains reviewable drafts,
+original evidence and deterministic assembly. A beta publication with this
+known limitation is a scope decision, not a passing automatic-quality result.

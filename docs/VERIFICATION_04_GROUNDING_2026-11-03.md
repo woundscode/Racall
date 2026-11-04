@@ -123,11 +123,111 @@ checks are in `test-results/upgrade04-run41840303042/`. This verifies installed
 Windows x64 preservation with synthetic responses, not real-model quality or
 installed upgrades on macOS/Linux.
 
+## November 4: memory-constrained runtime investigation
+
+Read-only Windows measurements found 17,079,209,984 bytes of physical RAM,
+automatic page-file management enabled, and a currently allocated 1,024 MiB
+page file on C:. The measured system commit limit was 18,152,951,808 bytes.
+Physical availability and commit headroom are different constraints: before
+the experiment they were approximately 8.3 GB and 6.0 GB respectively.
+
+One isolated experiment changed only the existing model alias's `use_mmap`
+option to `true`, keeping 44 GPU layers, 8,192 context, draft decoding and the
+disabled RAM prompt cache. The installed Ollama 0.40.14 runner confirmed
+`load_mode = mmap`. A new read-only Windows commit sampler supplemented the
+existing physical-memory guard; no normal Ollama settings changed.
+
+During loading, sampled commit headroom fell from 6,007,418,880 to
+2,325,217,280 bytes. Physical RAM availability was still 4,977,790,976 bytes.
+The 2.5 GB commit reserve stopped the owned runner before loading completed;
+its exit 15 followed the sampled stop by about 0.95 seconds. The log contains
+no CUDA 303 or `cudaFuncGetAttributes` error. No content inference ran.
+This is a guarded, incomplete experiment, not a successful model check,
+proof that mmap is ineffective, or a reproduction of the earlier CUDA error.
+The provisional 6 GB starting commit budget was not sufficient to complete
+this guarded experiment. Actual peak VRAM was not recorded.
+
+Cleanup verified that the temporary alias was removed, original model tags
+and manifest hashes were unchanged, and the owned server stopped. Raw evidence
+is retained in `test-results/live04-20261104-mmap/`; the native Windows sampler
+and page-file snapshot are in `test-results/runtime04-memory-20261104/`.
+
+The stop occurred around 87.2% of the commit limit, before the approximately
+90% automatic page-file growth threshold described by
+[Microsoft](https://learn.microsoft.com/en-us/troubleshoot/windows-client/performance/introduction-to-the-page-file).
+It does not establish that automatic growth is broken. The user explicitly
+approved preallocating an 8 GiB page file with a 16 GiB maximum. After saving
+the original WMI and registry values, an elevated, bounded script configured
+C:\pagefile.sys with InitialSize=8192 and MaximumSize=16384 MiB and disabled
+automatic size management. WMI readback confirmed those settings. A guarded
+restore action for the original automatic configuration was also prepared.
+
+After the user's manual restart at 17:41:11 Moscow time, WMI confirmed an
+allocated 8,192 MiB page file, configured initial/maximum sizes of
+8,192/16,384 MiB, and a live commit limit of 25,669,144,576 bytes. The original
+values, apply result, post-restart measurements and restore script remain in
+`test-results/runtime04-memory-20261104/`. This increases commit headroom,
+not GPU memory; it does not establish the cause of the earlier CUDA failure.
+
+A first post-restart harness attempt stopped before model loading because it
+looked for the new alias in legacy `manifests`, whereas Ollama writes it to
+`manifests-v2/ollama.com`. Its initial cleanup result was incomplete. The exact
+owned alias manifest was subsequently verified and removed; both original
+manifest hashes were preserved. Evidence is in
+`test-results/live04-20261104-postreboot/cleanup-recovery.json`. The corrected
+harness covers both manifest roots, captures ownership immediately after
+creation, and preserves independent cleanup failures.
+
+The corrected mmap run stopped at the physical-RAM guard: minimum sampled
+availability was 2,098,769,920 bytes, while commit headroom remained
+8,422,842,368 bytes and free VRAM at least 2,262 MiB. No CUDA 303 occurred.
+The alias was removed and both manifest roots restored. A diagnostic parsing
+error on Ollama's successful empty DELETE response was retained and corrected
+before the next run. Evidence: `test-results/live04-20261104-postreboot-v2/`.
+
+With only `use_mmap=false` changed, the native smoke test then passed on
+Ollama 0.40.14: 44 GPU layers, context 8,192, inherited draft length 3 and RAM
+prompt cache disabled. Model loading completed in 6.23 seconds; the one short
+request returned `READY`, six generated tokens and `done_reason=stop`.
+Minimum sampled available RAM was 6,983,331,840 bytes, commit headroom
+4,722,757,632 bytes and free VRAM 1,712 MiB. No CUDA/OOM error or resource-stop
+occurred. All cleanup steps passed, including the original API-tag comparison;
+independent file hashing confirmed both original manifest roots matched the
+baseline and the alias was absent. Evidence is in
+`test-results/live04-20261104-postreboot-nommap/`.
+
+The short test establishes a working run on this machine, not universal CUDA
+stability. A separate cold load then completed the fixed EN/RU presentation
+workflow with the same runtime settings. Its four production calls (writer
+and auditor per language) finished normally, without retries or output repair.
+Both outlines passed independent, exact-hash source review. The subsequent
+manual save, offline assembly, PPTX/PDF export and service restart passed in
+both languages. All eight rendered PDF pages were visually checked, including
+Cyrillic, notes and sources; PPTX text and speaker notes were also inspected.
+
+The Russian writer stream was 1,059,613 bytes, exceeding the former 1,048,576-byte
+wire cap and completing under the corrected transport limit. This exercises
+the transport fix with a real provider. Minimum sampled available RAM was
+6,246,252,544 bytes, commit headroom 3,459,768,320 bytes and free VRAM 1,703 MiB.
+There were no CUDA/OOM errors or resource stops in this run. Cleanup stopped
+the owned evaluator/server, removed the alias, and restored both original
+manifest inventories and API tags. Evidence, source hashes, four artifact
+reviews, exports and continuous measurements are retained in
+`test-results/live04-20261104-enru-postreboot/`.
+
+These two reviewed examples do not replace the frozen semantic audit. Its
+three false acceptances remain unresolved. The evaluator deliberately retains
+`quality_verdict=manual_pending` alongside the separate artifact-review verdicts;
+generated content remains `validated=false`. No production code or provider
+prompt was changed for these runtime experiments. The host-specific GPU/context
+parameters were temporary test-alias settings, not new defaults for all users.
+
 ## Remaining limits and publication
 
-The frozen semantic audit still fails, and the post-fix live EN/RU workflow was
-blocked before inference by Ollama CUDA initialization. The 15 assessed moderate
-legacy build-tool findings remain; the two affected newer consumers were fixed.
+The frozen semantic audit still fails. The post-fix live EN/RU workflow now
+passes the two separately reviewed scenarios on this host; the earlier blocked
+attempts remain recorded. The 15 assessed moderate legacy build-tool findings
+remain; the two affected newer consumers were fixed.
 Previous LibreOffice rendering evidence applies to unchanged rendering code;
 Microsoft PowerPoint was not tested. These limits remain in the checklist and
 release-note draft instead of being replaced by successful package results.

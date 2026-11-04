@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "kind": "single_claim_isolation_experiment_failure",
+  "quality_pass": false,
+  "date": "2026-11-04",
+  "hypothesis": "Batching claims can cause support to spill between adjacent claims.",
+  "intervention": "One original claim per request; all original full passages, question, anchors and production audit policy retained. Server labels sole claim C1.",
+  "policy": "Unchanged production review instructions. An experiment-only provider adapter restores all original batch passages after production filtering. No backend change was retained.",
+  "selection": [
+    {
+      "case": "meeting-approval-versus-global-change-isolated-C8",
+      "original_claim_id": "C8",
+      "gold_supported": false
+    },
+    {
+      "case": "meeting-approval-versus-global-change-isolated-C1",
+      "original_claim_id": "C1",
+      "gold_supported": true
+    },
+    {
+      "case": "results-not-received-versus-absent-isolated-C8",
+      "original_claim_id": "C8",
+      "gold_supported": false
+    },
+    {
+      "case": "results-not-received-versus-absent-isolated-C1",
+      "original_claim_id": "C1",
+      "gold_supported": true
+    },
+    {
+      "case": "ru-firmware-forecast-permission-isolated-C1",
+      "original_claim_id": "C1",
+      "gold_supported": false
+    },
+    {
+      "case": "ru-firmware-forecast-permission-isolated-C2",
+      "original_claim_id": "C2",
+      "gold_supported": true
+    }
+  ],
+  "stop_rule": "First semantic or protocol failure ends this experiment. No retries.",
+  "actual_calls": 1,
+  "semantic_retries": 0,
+  "unrun_controls": 5,
+  "runtime": {
+    "ollama": "0.40.14",
+    "model": "gemma4:12b",
+    "source_digest": "6114515d63c17436a7c0417d82820ac65ad643e2806c5a3c89cb62846436ed0b",
+    "num_gpu": 44,
+    "num_ctx": 8192,
+    "use_mmap": false,
+    "process_prompt_cache_ram_mib": 0,
+    "generation_overrides": {}
+  },
+  "case": {
+    "id": "meeting-approval-versus-global-change-isolated-C8",
+    "original_claim_id": "C8",
+    "server_claim_id": "C1",
+    "request": {
+      "question": "Create exactly two short slides in English, with at most two bullets per slide. Slide 1: the station plan approval, scheduled opening, planned sensors and capacity. Slide 2: what the records say about actual results, measured temperatures and the meeting's decision on schedule or budget changes. Keep speaker notes short.",
+      "claims": [
+        {
+          "claim_id": "C1",
+          "text": "Overview of the status of data reporting and the lack of schedule or budget adjustments-at this stage.",
+          "evidence_ids": [
+            "E1",
+            "E2"
+          ],
+          "anchors": []
+        }
+      ],
+      "evidence": [
+        {
+          "id": "E1",
+          "title": "station-en.md",
+          "quote": "The Marigold station plan was approved on September 21, 2030. Its opening is scheduled for November 12, 2030. The plan specifies seven sensors and a planned capacity of 40 kW. The station's actual results have not yet been received.",
+          "location": {
+            "type": "paragraph",
+            "page": null,
+            "section": "",
+            "line_start": 1,
+            "line_end": 1,
+            "element": 0,
+            "offset_start": 0,
+            "offset_end": 232
+          }
+        },
+        {
+          "id": "E2",
+          "title": "Meeting record",
+          "quote": "At the review meeting, measured temperatures were not reported. Changes to the schedule or budget were not approved at this meeting.",
+          "location": {
+            "element": 0,
+            "type": "note",
+            "section": "Meeting record",
+            "line_start": 1,
+            "line_end": 1,
+            "offset_start": 0,
+            "offset_end": 132
+          }
+        }
+      ]
+    },
+    "actual_response": {
+      "reviews": [
+        {
+          "claim_id": "C1",
+          "verdict": "supported",
+          "support": [
+            {
+              "evidence_id": "E1",
+              "quote": "The station's actual results have not yet been received."
+            },
+            {
+              "evidence_id": "E2",
+              "quote": "Changes to the schedule or budget were not approved at this meeting."
+            }
+          ],
+          "reason": "E1 establishes that actual results have not been received, and E2 confirms that changes to the schedule or budget were not approved at the review meeting, supporting the status of data reporting and the lack of adjustments at this stage."
+        }
+      ]
+    },
+    "expected_supported": false,
+    "reason": "Not approving schedule/budget changes at this meeting does not establish a broader lack of adjustments. Exact quotes and a single-claim request did not prevent the stronger interpretation.",
+    "application_protocol_outcome": "accepted"
+  },
+  "outcome": "Isolation did not correct the first known false acceptance. Stop; do not add per-claim calls to the product on this evidence. This is not a rescore of the frozen 34-claim audit.",
+  "evidence_directory": "test-results/grounding04-20261104-isolated",
+  "hashes": {
+    "apps/api/on_knowledge/features/presentations/review.py": "1f36f8f135e16a6c3aeb8f612d712e3aa60ba41867a79e4fa8b520e59aab2319",
+    "apps/api/on_knowledge/evidence_policy.py": "7086567d9f806dc73dd5fc6ba9ddcac3d56afcfb8e3ed1a01a9ebca528b1291f",
+    "evals/release04/grounding-holdout.json": "ec464432ecbc68dd5ead4221d049fcbe6807778c1b4434d08604bcd92f2f95ce",
+    "test-results/grounding04-20261104-isolated/run_owned.py": "4464099c5708492e18f95e2d055b0e49057025b66b068820d79616fbb874f1a8",
+    "test-results/grounding04-20261104-isolated/observe_acceptance.py": "2667f9c8b70fff0eeb89bf8e0dfe9a889ca8964b8d755264e9b7c0471ab6b406",
+    "test-results/grounding04-20261104-isolated/acceptance/environment.json": "ba80044268ca8695a16da00969088baf8dd155bf595c0a760ade300cd4a94968",
+    "test-results/grounding04-20261104-isolated/acceptance/provider-trace.json": "64afeda793fd1c1f26f787efa0f8dc9cfc4b5eba4166ab60b2933b2340a1d7ab",
+    "test-results/grounding04-20261104-isolated/acceptance/result.json": "3e67586c9575eb5a3ab07f5aa0ea5d72b13b11438167c5a4fd5ac2dbe97f8421",
+    "test-results/grounding04-20261104-isolated/response-1.sse": "b7b514f34d30c576397206cfe1e928d76ad20bcab37fab4baad240efb9e7d549"
+  }
+}
