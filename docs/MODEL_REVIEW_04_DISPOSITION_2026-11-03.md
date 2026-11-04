@@ -58,3 +58,17 @@ quality criterion. Any decision to release with this limitation must be explicit
 and separate from that still-open criterion. This document supplies neither that
 decision nor owner publication approval. Other release checks retain their own
 evidence and status; publication remains on hold.
+
+## Owner decision — November 4
+
+After reviewing the successful EN/RU application workflow and the repeated
+single-claim audit failure, the owner chose: **keep 0.4 in development until
+automatic factual checking becomes more reliable**. The offered release with
+AI drafts and manual source review was declined. The earlier proposal above is
+historical, not an accepted release scope. No tag, public release or quality-gate
+waiver follows from the completed workflow or packaging tests.
+
+The slide-local source interface remains a useful editing feature, but it does
+not satisfy this retained automatic-quality requirement. Further work must test
+a different verification mechanism against the preserved failures and fresh
+controls; repeating prompts or relabelling the failing benchmark is not a fix.

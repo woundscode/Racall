@@ -3,6 +3,11 @@
 Publication: **hold**. Public 0.3 assets remain unchanged.
 [Plan](PLAN_04.md) · [Presentation guide](PRESENTATIONS.md)
 
+**Owner decision, November 4:** keep 0.4 in development until automatic factual
+checking becomes more reliable. The owner declined publication as an AI-draft
+beta relying on manual review. Passing builds and the source-review interface
+do not waive the unresolved semantic-quality gate.
+
 ## Implemented and checked locally
 
 The last [packaged follow-up](VERIFICATION_04_GROUNDING_2026-11-03.md) is source
@@ -87,7 +92,9 @@ and [grounding evaluation](GROUNDING_04_FOLLOWUP_2026-11-03.md).
 - [x] Previous-candidate installed-upgrade evidence recorded, including exact package
       identity, original-file hashes and review of all four captured screenshots
       ([verification](VERIFICATION_04_GROUNDING_2026-11-03.md)).
-- [ ] Owner publication decision, including the documented model-quality limitation.
+- [x] Owner scope decision: retain development status until automatic factual
+      checking improves; do not publish with manual review as the substitute.
+- [ ] Later publication authorization after the retained quality requirement is met.
 
 ## Model-quality limits
 

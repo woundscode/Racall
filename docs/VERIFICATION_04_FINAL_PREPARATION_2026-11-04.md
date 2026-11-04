@@ -62,6 +62,49 @@ remains unchanged. The source-review UI improves manual checking, not the
 automatic semantic score.
 
 A fresh six-target candidate and its exact installed Windows 0.3 → 0.4 upgrade
-must complete before tagging. The release scope also needs an explicit decision
-about shipping AI drafts with this documented model-quality limitation. Do not
-silently convert that decision into a passing factual-reliability claim.
+must complete before tagging. On November 4, the owner explicitly chose to keep
+0.4 in development until automatic factual checking becomes more reliable. The
+offered AI-draft beta with manual review was declined. This retains the semantic
+quality requirement; passing interface or packaging checks cannot waive it.
+
+The fresh [native workflow 41859887109](https://github.com/woundscode/Racall/actions/runs/41859887109)
+was dispatched from `codex/0.4-presentations`, exact source
+`1c4408dd4b8d68dfed28921c1382623c74154d77`. The branch push did not change `main`
+or create a release tag. The Windows x64 artifact is `13341090588`; its EXE is
+159,038,980 bytes, SHA-256
+`4dc333eb0097f627b035e8a46699bf5ab4851199105ea34d60ff4e831cf1aef3`.
+These identities prepare the upgrade inputs; they do not mean the six-target
+workflow or installed-upgrade gate has passed. The upgrade is not dispatched
+until GitHub confirms the complete native run succeeded.
+
+The first native attempt completed unsuccessfully because neither macOS job
+acquired a hosted runner. Both had runner ID 0 and no executed steps; GitHub's
+annotation was "The job was not acquired by Runner of type hosted even after
+multiple attempts." This is an infrastructure failure, not a passed macOS build
+or a demonstrated application defect. Windows and Linux x64/ARM64 completed
+successfully, including their 685 Python tests and packaging checks.
+
+One retry of the failed jobs started at 16:23:14 UTC on the same source and run.
+It also finished with a failed run: both macOS jobs were cancelled without a
+runner or any executed steps, with the same acquisition annotation. The four
+successful Windows/Linux results were carried forward; their full logs each
+confirm 685 Python tests, 14 native/upgrade contracts, nine glob contracts and
+eight packaged test groups. Four artifacts containing six packages were saved.
+
+The six-platform gate remains **not passed**. No final six-platform candidate
+manifest was created, no installed-upgrade workflow was dispatched and no more
+automatic retries are scheduled. No tests, target requirements or upgrade
+preconditions were relaxed. Raw attempt history, annotations, artifact identities
+and the final `audit.final.json` are retained in
+`test-results/native04-final-41859887109/`.
+
+The owner also declined downloading the separately proposed NLI fact-checker
+and its CPU dependencies. That [experiment](FACT_CHECK_04_EXPERIMENT.md) is
+shelved before inference and is not an application requirement. The unresolved
+semantic-quality work must be considered separately from both that optional
+experiment and the macOS hosted-runner issue.
+
+Proposed public README and documentation wording is prepared separately in the
+ignored `test-results/release04-publication-draft/` directory, with original and
+draft file hashes. Public download links still point to the published 0.3. The
+preview is not a claim that 0.4 is already available.
