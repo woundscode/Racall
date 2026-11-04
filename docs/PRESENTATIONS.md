@@ -79,6 +79,13 @@ unvalidated. The structured protocol checks provenance, not truth.
 The preview shows the saved revision. Save current edits before export. Decks
 remain in Reports independently of the originating chat.
 
+Outline generation keeps complete blocks from saved sources and notes. If no
+whole block fits the context limit, choose shorter material or prepare a shorter
+note that retains the relevant conditions; the app does not send a cut-off
+prefix instead. Missing saved source text requires reimport. Other blocks may
+still be omitted, so the partial-context warning does not imply that the entire
+document was reviewed. These input checks do not verify a model's paraphrase.
+
 ## Export
 
 PPTX contains editable text and shapes. PDF and SVG preview use the same Python

@@ -24,6 +24,13 @@ Next.js/Electron patches. The earlier package hashes remain valid only for
 upgrade before tagging. [Local final checks](VERIFICATION_04_FINAL_PREPARATION_2026-11-04.md)
 passed; publication remains on hold.
 
+The subsequent [context-preservation repair](VERIFICATION_04_CONTEXT_2026-11-04.md)
+passes 722 Python tests and 183-file Ruff checks using existing dependencies.
+It removes budget/note clipping, supplies canonical whole source blocks to
+presentation outlines, reports unavailable/oversized context before inference
+and fixes Unicode citation highlighting. It does not close the frozen semantic
+audit. This production change also requires fresh packages before release.
+
 - [x] Python-owned typed deck, bounded output and canonical source references.
 - [x] Source-anchored fact ledger shared by titles, bullets and speaker notes;
       structured, fallible evidence audit with no automatic repair.

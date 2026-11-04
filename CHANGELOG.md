@@ -20,6 +20,11 @@ in progress; [0.3 Beta remains the public release](https://github.com/woundscode
 
 ### Fixed and hardened
 
+- Preserve complete note/source blocks for presentation context instead of
+  clipping off qualifications; report missing or oversized context before
+  inference. Evidence budgets omit whole passages and disclose partial coverage.
+- Keep Markdown fenced blocks intact and correctly highlight source quotations
+  with emoji using the saved Python text offsets.
 - Reuse one source-anchored fact ledger for titles, bullets and notes. A structured
   audit checks quoted support but remains a fallible model judgment.
 - Recover saved outlines after interrupted bookkeeping, remove obsolete claims
