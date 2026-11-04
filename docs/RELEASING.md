@@ -55,8 +55,8 @@ The [release verification](VERIFICATION_04_RELEASE_2026-11-04.md) records the te
 packages, public checksums and unchanged 0.3 assets. The separate exact
 published-installer upgrade [passed](https://github.com/woundscode/Racall/actions/runs/41895993036)
 eight checks and retained all 21 original fixture files; four screenshots passed
-review. The public release page also passed review. Only the final main-branch
-README review remains pending.
+review. The public release page and updated main-branch README also passed
+browser review, including the Latest presentation, images and download links.
 The earlier held candidate remains historical evidence, not the released packages.
 
 Supported platform identifiers are `win-x64`, `win-arm64`, `mac-arm64`, `mac-x64`,

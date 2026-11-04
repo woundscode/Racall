@@ -1,7 +1,7 @@
 # 0.4 Beta acceptance checklist
 
-Publication: **published; exact released-installer upgrade passed; final main-page
-review pending**. The approved-source checks and fresh tag build passed. Existing
+Publication: **published; final build, released-installer upgrade and GitHub
+presentation checks passed**. The approved-source checks and fresh tag build passed. Existing
 0.3 release assets remain unchanged. [Published verification](VERIFICATION_04_RELEASE_2026-11-04.md).
 [Plan](PLAN_04.md) · [Presentation guide](PRESENTATIONS.md)
 
@@ -101,7 +101,8 @@ is retained as evidence, not counted as acceptance.
 - [x] Public release page shows the correct title and Latest marker; three
       brand/screenshot images loaded and passed visual review. Its 13 asset entries
       comprise eleven uploads and GitHub's two automatic source archives.
-- [ ] Review the final main README's links, images and GitHub presentation.
+- [x] Review the final main README's links, five brand/sample images, source-image
+      disclosure, platform table, updated About and 0.4 Beta Latest presentation.
 
 The [earlier candidate verification](VERIFICATION_04_CANDIDATE_2026-11-04.md)
 records six successful native targets, package identity and the exact successful

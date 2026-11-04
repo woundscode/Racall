@@ -2,8 +2,8 @@
 
 **[Racall 0.4 Beta](https://github.com/woundscode/Racall/releases/tag/v0.4.0-beta.1)
 was published at `2026-11-04T19:18:51Z` and is GitHub Latest.**
-The exact released-installer upgrade and release-page review passed. Only the
-final main-branch page review remains pending.
+The exact released-installer upgrade, release-page review and final main-branch
+page review passed.
 
 ## Released source and public integrity
 
@@ -84,16 +84,22 @@ not real-model quality or installed upgrades on other operating systems.
 The earlier candidate upgrade used a separately built package and retains its
 own independent result.
 
-## Main-page review — pending
+## GitHub presentation review
 
 The public release page passed review: correct title, Latest marker and all
 three brand/screenshot images loaded and were visually inspected. GitHub shows
 13 asset entries: the eleven uploaded files plus its two automatic source archives.
 Those automatic archives are not extra uploaded distribution packages.
 
-Final main-branch README navigation and image rendering remain pending until
-the main update. The hero and presentation images are actual Racall 0.4 UI
-captures with sample content.
+The main-branch README passed a public browser review after commit `1709822`:
+the raccoon logo, wordmark, orange hero and both presentation images loaded;
+the source-image disclosure expanded; Quickstart reached the download table;
+the verification link resolved to this report. The table contains all six
+platform targets and ten package links. The sidebar shows **Racall 0.4 Beta —
+Latest**, and About describes the NotebookLM + Obsidian positioning and editable
+presentations. The hero and presentation images are actual Racall 0.4 UI captures
+with sample content. The English README retains the English label
+**Russian documentation**.
 
 ## Known limits
 
