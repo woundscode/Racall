@@ -38,15 +38,43 @@ pass. The subsequent full suite passed **680 tests** in **44.01 seconds**, with
 one existing Starlette/httpx deprecation warning. Ruff and formatting passed for
 178 Python files. No mocked response is presented as a factual-quality result.
 
-Live evaluation has not produced a scored semantic result yet. A RAM preflight
-and two isolated runtime startup attempts stopped before model questions. A
-third attempt with 44 GPU layers successfully loaded and made one audit request,
-but its 1,354 input and 2,742 generated tokens exhausted the 4,096-token context.
-The provider correctly rejected the truncated stream. The same frozen cases
-are being evaluated with an isolated 8,192-token alias and unchanged resource
-guards. The logs and cleanup are recorded in the grounding follow-up. Neither
-mocked responses nor package builds substitute for real-provider evaluation.
+The completed frozen audit made five calls and scored 34 claims: **3 false
+acceptances, 0 false rejections, 2/5 passing cases**. All 23 valid claims were
+accepted; eight of eleven invalid controls were rejected. The Russian
+receipt-versus-absence failure still satisfies the structural protocol and
+reaches application acceptance. Exact quotations do not prove entailment.
+The [complete record](GROUNDING_04_FOLLOWUP_2026-11-03.md) preserves the scores,
+raw parsed responses, independent review and earlier startup/context failures.
 
+The separate ledger-generation check passed English source review, offline
+assembly, PDF/PPTX export and restart. All four English PDF pages were visually
+reviewed. The Russian writer stopped before producing an outline. A subsequent
+single-request diagnostic reproduced the failure and captured its actual cause:
+the one-MiB HTTP-body limit counted repeated SSE metadata and stopped the stream
+after 4,123 recorded events, before any answer text. The recording contains
+1,048,339 wire bytes but only 21,197 bytes of reasoning text. The next chunk
+exceeded the wire limit. This is a transport failure, separate from semantic
+quality. The new transport regression and follow-up results are recorded below.
+
+## November 4 transport correction
+
+SSE now has a separate eight-MiB wire budget for both OpenAI-compatible and
+Anthropic streams. Ordinary JSON retains one MiB; decoded content, lines/events,
+deadlines, cancellation and required completion markers are unchanged. Two
+realistic streams over one MiB failed before the correction and pass afterward.
+The final focused suite passes 126 tests, including exact eight-MiB acceptance,
+one-byte-over rejection and retained JSON bounds. The complete suite passed
+684 tests before the final extra boundary case was added; that case is included
+in the focused result. All 66 statements in the changed event decoder/chunk
+module are covered. The configured Ruff scope passes for 178 Python files.
+
+The post-correction live evaluation and new native candidate are pending. No
+model prompt, frozen gold label or recorded failure changed for this fix.
+
+Native run 41673421566 tested source `4fd974d`: five targets succeeded, while
+macOS ARM64 never acquired a hosted runner. Its infrastructure cancellation is
+not a passing sixth target or a code-test failure. That source is superseded by
+the transport correction; it is not used for a new installed-upgrade claim.
 The changed candidate still requires a fresh six-target native build and
 installed Windows upgrade verification. No merge, tag or public release is part
 of this follow-up.

@@ -2,7 +2,7 @@
 
 import httpx
 
-from .events import EventDecoder, response_chunks
+from .events import STREAM_WIRE_LIMIT, EventDecoder, response_chunks
 from .payloads import CONTENT_LIMIT, CompletionProtocolError, content_object, json_object, utf8_size
 
 
@@ -38,7 +38,7 @@ async def stream_response(response: httpx.Response) -> dict:
     content: list[str] = []
     content_size = 0
     finished = False
-    async for chunk in response_chunks(response):
+    async for chunk in response_chunks(response, wire_limit=STREAM_WIRE_LIMIT):
         for event in parser.feed(chunk):
             if event == "[DONE]":
                 if not finished:

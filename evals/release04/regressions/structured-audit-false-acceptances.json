@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "kind": "recorded_structured_audit_false_acceptances",
+  "quality_pass": false,
+  "recording_note": "Failure evidence, not a passing regression test. Claims, evidence, fact anchors and actual_review values are copied unchanged from the frozen environment and recorded provider response. The trace stores parsed JSON responses, not original HTTP bytes; no raw byte-preservation claim is made. Only the three false-supported rows are selected here, without repairing their content.",
+  "run": {
+    "date": "2026-11-03",
+    "local_evidence_directory": "test-results/grounding04-20261103T1928-gpu44-8k",
+    "runtime": "Ollama 0.40.14",
+    "source_model": "gemma4:12b",
+    "source_model_digest": "6114515d63c17436a7c0417d82820ac65ad643e2806c5a3c89cb62846436ed0b",
+    "num_gpu": 44,
+    "num_ctx": 8192,
+    "audit_calls": 5,
+    "writer_calls": 0,
+    "semantic_retries": 0,
+    "production_generation_overrides": {}
+  },
+  "aggregate": {
+    "cases": 5,
+    "passing_cases": 2,
+    "claims": 34,
+    "gold_supported": 23,
+    "gold_not_supported": 11,
+    "false_supported_verdicts": 3,
+    "false_rejections": 0
+  },
+  "source": {
+    "recorded_git_head_at_start": "6527ac23a18b0a6d9b120480bac4ddd81e339cf1",
+    "subsequent_source_commit": "4fd974d80e326cfcde5aecb663696e67e804e7f5",
+    "provenance_check": {
+      "recorded_files_checked": 123,
+      "exact_git_blob_sha256_matches": 61,
+      "windows_crlf_checkout_sha256_matches": 62,
+      "unexplained_mismatches": [],
+      "cases_match_frozen_loader_and_gold": true,
+      "note": "The run began before the source commit. All recorded actual working-file hashes match that later commit either directly or after Git LF-to-Windows-CRLF checkout conversion."
+    },
+    "source_file_sha256": {
+      "apps/api/on_knowledge/features/presentations/claims.py": "b91963ccee4b225701c4c350917c28c1d08a8c39eb653b3535ad9d39a3a484dd",
+      "apps/api/on_knowledge/features/presentations/review.py": "1f36f8f135e16a6c3aeb8f612d712e3aa60ba41867a79e4fa8b520e59aab2319",
+      "apps/api/on_knowledge/features/presentations/generator.py": "f7cd880b131f92ffd052b48aa6277ed65c9408c61fe4a0be17b5ebd8cdf4d4c4",
+      "apps/api/on_knowledge/features/presentations/errors.py": "48c2a2a3e197290ac33be2b05160a6be00c413cd0fab406a496ccb73ee60e993",
+      "scripts/evaluate_grounding04.py": "1755e50ed8a2dba73027b5807bb35fdc17b4f268ec866c8b09eff0fab6c1f4b8",
+      "evals/release04/grounding-holdout.json": "ec464432ecbc68dd5ead4221d049fcbe6807778c1b4434d08604bcd92f2f95ce"
+    },
+    "recording_file_sha256": {
+      "acceptance/environment.json": "89e1eb76eb5495bcb7a5c027f08049913c92fda74f6ddd2226ccc0667f6690fd",
+      "acceptance/provider-trace.json": "f027a04e443955d71208a106eaf7988f10b91633842835d9c46914a05bf2a918",
+      "acceptance/result.json": "ed28b2f63867f102569d4995f59c19d4f47261f07169ff7da5dad6d379249d33"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "meeting-approval-versus-global-change",
+      "question": "Create exactly two short slides in English, with at most two bullets per slide. Slide 1: the station plan approval, scheduled opening, planned sensors and capacity. Slide 2: what the records say about actual results, measured temperatures and the meeting's decision on schedule or budget changes. Keep speaker notes short.",
+      "claim_id": "C8",
+      "claim_text": "Overview of the status of data reporting and the lack of schedule or budget adjustments-at this stage.",
+      "full_cited_evidence": [
+        {
+          "id": "E1",
+          "title": "station-en.md",
+          "quote": "The Marigold station plan was approved on September 21, 2030. Its opening is scheduled for November 12, 2030. The plan specifies seven sensors and a planned capacity of 40 kW. The station's actual results have not yet been received.",
+          "location": {
+            "type": "paragraph",
+            "page": null,
+            "section": "",
+            "line_start": 1,
+            "line_end": 1,
+            "element": 0,
+            "offset_start": 0,
+            "offset_end": 232
+          }
+        },
+        {
+          "id": "E2",
+          "title": "Meeting record",
+          "quote": "At the review meeting, measured temperatures were not reported. Changes to the schedule or budget were not approved at this meeting.",
+          "location": {
+            "element": 0,
+            "type": "note",
+            "section": "Meeting record",
+            "line_start": 1,
+            "line_end": 1,
+            "offset_start": 0,
+            "offset_end": 132
+          }
+        }
+      ],
+      "writer_anchors": [
+        {
+          "evidence_id": "E1",
+          "quote": "The Marigold station plan was approved on September 21, 2030. Its opening is scheduled for November 12, 2030. The plan specifies seven sensors and a planned capacity of 40 kW. The station's actual results have not yet been received."
+        },
+        {
+          "evidence_id": "E2",
+          "quote": "At the review meeting, measured temperatures were not reported. Changes to the schedule or budget were not approved at this meeting."
+        }
+      ],
+      "anchor_origin": "Frozen evaluator fact anchors; this run did not invoke a writer. Historical cases retain original recorded claim text and use full-passage fact anchors; the holdout anchors were authored before inference.",
+      "audit_request_anchors": [],
+      "actual_review": {
+        "claim_id": "C8",
+        "verdict": "supported",
+        "support": [],
+        "reason": "This is a descriptive summary of the reporting status and lack of adjustments found in E1 and E2."
+      },
+      "expected": {
+        "verdict": "unsupported",
+        "acceptable_rejection_verdicts": [
+          "unsupported",
+          "uncertain"
+        ],
+        "reason": "The source says schedule or budget changes were not approved at this meeting. It does not establish that no adjustments occurred more generally. The claim broadens event scope and changes lack of approval into lack of changes.",
+        "gold_supported": false
+      },
+      "application_protocol_outcome": "protocol_error",
+      "outcome_note": "The model falsely supported this claim, but its empty support list violated the protocol. C1, C4 and C5 also had empty support. The application rejected the batch as a protocol error; that does not turn the incorrect semantic verdict into a quality pass."
+    },
+    {
+      "case_id": "results-not-received-versus-absent",
+      "question": "Создай ровно два коротких слайда на русском, не более двух тезисов на каждом. Слайд 1: утверждение плана, запланированное открытие, предусмотренные датчики и мощность. Слайд 2: что известно из записей о результатах, измеренных температурах и решении совещания об изменениях графика или бюджета. Заметки докладчика короткие.",
+      "claim_id": "C8",
+      "claim_text": "На текущий момент результаты работы отсутствуют, а изменения графика или бюджета не были утверждены.",
+      "full_cited_evidence": [
+        {
+          "id": "E1",
+          "title": "station-ru.md",
+          "quote": "План станции «Лис» утверждён 21 сентября 2030 года. Открытие станции запланировано на 12 ноября 2030 года. По плану предусмотрены семь датчиков и плановая мощность 40 кВт. Фактические результаты работы станции пока не получены.",
+          "location": {
+            "type": "paragraph",
+            "page": null,
+            "section": "",
+            "line_start": 1,
+            "line_end": 1,
+            "element": 0,
+            "offset_start": 0,
+            "offset_end": 227
+          }
+        },
+        {
+          "id": "E2",
+          "title": "Meeting record",
+          "quote": "На совещании измеренные температуры не сообщались. Изменения графика или бюджета на этом совещании не утверждались.",
+          "location": {
+            "element": 0,
+            "type": "note",
+            "section": "Meeting record",
+            "line_start": 1,
+            "line_end": 1,
+            "offset_start": 0,
+            "offset_end": 115
+          }
+        }
+      ],
+      "writer_anchors": [
+        {
+          "evidence_id": "E1",
+          "quote": "План станции «Лис» утверждён 21 сентября 2030 года. Открытие станции запланировано на 12 ноября 2030 года. По плану предусмотрены семь датчиков и плановая мощность 40 кВт. Фактические результаты работы станции пока не получены."
+        },
+        {
+          "evidence_id": "E2",
+          "quote": "На совещании измеренные температуры не сообщались. Изменения графика или бюджета на этом совещании не утверждались."
+        }
+      ],
+      "anchor_origin": "Frozen evaluator fact anchors; this run did not invoke a writer. Historical cases retain original recorded claim text and use full-passage fact anchors; the holdout anchors were authored before inference.",
+      "audit_request_anchors": [],
+      "actual_review": {
+        "claim_id": "C8",
+        "verdict": "supported",
+        "support": [
+          {
+            "evidence_id": "E1",
+            "quote": "Фактические результаты работы станции пока не получены."
+          },
+          {
+            "evidence_id": "E2",
+            "quote": "Изменения графика или бюджета на этом совещании не утверждались."
+          }
+        ],
+        "reason": "E1 confirms results are currently unavailable, and E2 confirms that changes to the schedule or budget were not approved."
+      },
+      "expected": {
+        "verdict": "unsupported",
+        "acceptable_rejection_verdicts": [
+          "unsupported",
+          "uncertain"
+        ],
+        "reason": "Results not yet received does not establish that results do not exist. The source also restricts the lack of approval to this meeting, whereas the claim omits that scope.",
+        "gold_supported": false
+      },
+      "application_protocol_outcome": "accepted",
+      "outcome_note": "The supported verdict had exact source quotations and a structurally valid explanation. The application accepted the batch despite the unsupported strengthening and scope change."
+    },
+    {
+      "case_id": "ru-firmware-forecast-permission",
+      "question": "Check these statements against the supplied passages.",
+      "claim_id": "C1",
+      "claim_text": "Установка новой прошивки вызвала рост среднего времени отклика.",
+      "full_cited_evidence": [
+        {
+          "id": "E1",
+          "title": "Журнал испытания прошивки",
+          "quote": "После установки новой версии прошивки среднее зарегистрированное время отклика выросло. Причина роста не установлена."
+        }
+      ],
+      "writer_anchors": [
+        {
+          "evidence_id": "E1",
+          "quote": "После установки новой версии прошивки среднее зарегистрированное время отклика выросло. Причина роста не установлена."
+        }
+      ],
+      "anchor_origin": "Frozen evaluator fact anchors; this run did not invoke a writer. Historical cases retain original recorded claim text and use full-passage fact anchors; the holdout anchors were authored before inference.",
+      "audit_request_anchors": [],
+      "actual_review": {
+        "claim_id": "C1",
+        "verdict": "supported",
+        "support": [
+          {
+            "evidence_id": "E1",
+            "quote": "После установки новой версии прошивки среднее зарегистрированное время отклика выросло."
+          }
+        ],
+        "reason": "The passage confirms that the average response time increased following the installation of the new firmware version."
+      },
+      "expected": {
+        "verdict": "unsupported",
+        "acceptable_rejection_verdicts": [
+          "unsupported",
+          "uncertain"
+        ],
+        "reason": "An increase after an update does not establish that the update caused it. The full cited passage explicitly says the cause is unknown.",
+        "gold_supported": false
+      },
+      "application_protocol_outcome": "semantic_rejection",
+      "outcome_note": "The application rejected the batch because C4 and C5 were unsupported. That batch rejection does not hide the false supported verdict for causal claim C1."
+    }
+  ]
+}

@@ -98,6 +98,26 @@ def test_multiline_sse_fields_and_usage_are_not_content(monkeypatch):
     assert call() == {"claims": []}
 
 
+def test_small_answer_survives_repeated_reasoning_and_metadata_above_one_megabyte(monkeypatch):
+    # Ollama repeats its response envelope for every short reasoning token.
+    payload = {
+        "id": "chatcmpl-fixture",
+        "object": "chat.completion.chunk",
+        "created": 1_793_721_900,
+        "model": "fixture-model",
+        "system_fingerprint": "fp_fixture",
+        "choices": [{"index": 0, "delta": {"reasoning": "word "}, "finish_reason": None}],
+    }
+    reasoning = ("data: " + json.dumps(payload) + "\n\n").encode()
+    chunks = [reasoning] * 5000 + [completed('{"answer": "Готово"}')]
+    assert 1024 * 1024 < sum(map(len, chunks)) < 8 * 1024 * 1024
+    stream = Chunks(chunks)
+    requests = transport(monkeypatch, stream)
+
+    assert call() == {"answer": "Готово"}
+    assert len(requests) == 1 and stream.closed
+
+
 @pytest.mark.parametrize("refusal", ["Provider refused the request.", "", False, {}])
 @pytest.mark.parametrize("streaming", [True, False], ids=["sse", "json"])
 def test_explicit_refusal_never_accepts_otherwise_valid_json(monkeypatch, refusal, streaming):
@@ -170,10 +190,19 @@ def test_limits_comment_line_even_when_no_generated_content(monkeypatch):
         call()
 
 
-def test_limits_wire_bytes_even_for_heartbeats(monkeypatch):
-    transport(monkeypatch, Chunks([b": heartbeat\n\n" * 90_000, completed()]))
-    with pytest.raises(completion_stream.CompletionProtocolError):
-        call()
+@pytest.mark.parametrize("over_limit", [False, True], ids=["exact-limit", "one-byte-over"])
+def test_limits_wire_bytes_even_for_heartbeats(monkeypatch, over_limit):
+    heartbeat = b":" + b" " * 4093 + b"\n\n"
+    answer = completed()
+    padding = b":" + b" " * (4096 - len(answer) - 3 + int(over_limit)) + b"\n\n"
+    stream = Chunks([heartbeat] * 2047 + [padding, answer])
+    requests = transport(monkeypatch, stream)
+    if over_limit:
+        with pytest.raises(completion_stream.CompletionProtocolError, match="response is too large"):
+            call()
+    else:
+        assert call() == {"claims": []}
+    assert len(requests) == 1 and stream.closed
 
 
 def test_limits_content_across_small_events(monkeypatch):
@@ -226,6 +255,17 @@ def test_full_json_fallback_has_wire_and_content_limits(monkeypatch):
     transport(monkeypatch, Chunks([body]), content_type="application/json")
     with pytest.raises(completion_stream.CompletionProtocolError):
         call()
+
+
+def test_full_json_fallback_keeps_one_megabyte_wire_limit_for_small_answer(monkeypatch):
+    body = json.dumps(
+        {"choices": [{"message": {"content": '{"claims": []}'}}], "metadata": "x" * (1024 * 1024)}
+    ).encode()
+    stream = Chunks([body])
+    requests = transport(monkeypatch, stream, content_type="application/json")
+    with pytest.raises(completion_stream.CompletionProtocolError, match="response is too large"):
+        call()
+    assert len(requests) == 1 and stream.closed
 
 
 def test_unsupported_content_type_or_encoding_rejected(monkeypatch):

@@ -1,8 +1,8 @@
 # Presentation grounding follow-up — 2026-11-03
 
-Status: protocol changes implemented locally; live evaluation blocked by runtime readiness.
-No new live quality pass is claimed. A fresh native candidate matrix is pending;
-publication remains on hold.
+Status: the bounded live audit evaluation completed and failed its quality gate.
+Two of five cases passed; three unsupported claims received a supported verdict.
+Fresh native candidate verification is separate; publication remains on hold.
 
 ## One fact ledger for visible text and speaker notes
 
@@ -109,18 +109,105 @@ GPU alias loaded successfully with the same model and a 4,096-token context.
 Its one audit request exhausted that context (1,354 input + 2,742 generated
 tokens); the production provider rejected the incomplete stream. No case was
 scored. Cleanup again stopped the owned server and removed only its alias.
-The same frozen five cases are now being checked with 8,192 context tokens in
-an isolated alias. This is a context-capacity comparison, not a change to the
-claims, gold labels or audit prompt. Runtime guards and user-service isolation
-remain in force. No factual-quality pass has been established yet.
+The same frozen five cases then completed with 8,192 context tokens in an
+isolated alias. Only the alias context changed after the 4,096-token truncation;
+the claims, gold labels and audit prompt were unchanged. This was a separate
+context-capacity comparison, not an automatic repair of a failed answer.
 
-Local evidence for the current attempt is retained under ignored
+Local evidence for these attempts is retained under ignored
 `test-results/grounding04-20261103T1920/` and
 `test-results/grounding04-20261103T1915-eager/`, plus
-`test-results/grounding04-20261103T1925-gpu44/` and the pending
-`test-results/grounding04-20261103T1928-gpu44-8k/`. The start threshold is separate from the existing continuous
-available-RAM stop guard during inference. No completed quality run or new
-factual-quality pass is claimed.
+`test-results/grounding04-20261103T1925-gpu44/` and
+`test-results/grounding04-20261103T1928-gpu44-8k/`. The start threshold is separate
+from the existing continuous available-RAM stop guard during inference. The
+earlier runtime failures and truncated attempt remain recorded; they were not
+converted into quality scores.
+
+## Completed 8,192-token audit result
+
+Ollama 0.40.14 ran the existing `gemma4:12b` model through an isolated alias with
+44 GPU layers and an 8,192-token context. The bounded run made exactly five audit
+calls, one per frozen case, with no production generation overrides, semantic
+retries or repair calls. Raw provider messages contain only the audit instructions
+and the question, server-labelled claims and cited evidence; gold labels and
+rationale were not sent.
+
+| Case | False supported verdicts | False rejections | Application protocol outcome | Case passed |
+| --- | ---: | ---: | --- | --- |
+| Meeting approval versus global change | 1 (`C8`) | 0 | Protocol error: missing support | No |
+| Results not received versus absent | 1 (`C8`) | 0 | Accepted despite the unsupported claim | No |
+| Archive, publishing and power | 0 | 0 | Semantic rejection of invalid controls | Yes |
+| Firmware, forecast and permission | 1 (`C1`) | 0 | Batch rejected other invalid controls | No |
+| Cross-language depot, oven and prototype | 0 | 0 | Semantic rejection of invalid controls | Yes |
+
+All **23 gold-positive claims received a supported verdict**. Of 11 negative
+controls, eight received unsupported/uncertain verdicts and three were falsely
+supported. Thus the result is **3 false acceptances out of 34 claims, zero false
+rejections and 2/5 passing cases**. These are per-claim model verdicts, not a claim
+that every positively labelled draft was accepted by the application.
+
+Independent review of all 34 claim/verdict/explanation rows confirmed:
+
+- English historical `C8` turns the lack of approval at one meeting into a
+  broader lack of schedule/budget adjustments. The model called it supported but
+  supplied no quotation. `C1`, `C4` and `C5` also had empty support, so the
+  application rejected this response as a protocol error. That rejection does
+  not make the incorrect semantic verdict a quality pass.
+- Russian historical `C8` changes results not yet received into results being
+  absent and broadens the meeting-specific approval statement. The response
+  satisfies the structural quotation contract, but its cited text does not
+  support that stronger meaning. This case reached application acceptance and
+  remains a factual-support failure.
+- Russian holdout `C1` turns an increase after a firmware update into an increase
+  caused by that update. The full passage explicitly says the cause is unknown.
+  The model's quote omits that qualification and its explanation confirms only
+  temporal ordering. The batch rejected other claims, but scoring correctly
+  retains this false acceptance.
+
+All 25 supplied quotation spans were exact substrings of the corresponding
+claim's declared evidence, and all 34 explanations were nonempty and within the
+protocol bound. Exact quotation validity therefore did not prevent semantic
+false positives. The four empty supported-claim quotation lists in the English
+case were separately retained as protocol failures.
+
+The continuous monitor recorded a minimum available RAM of 4,785,389,568 bytes,
+above its 2,500,000,000-byte stop floor, and stopped normally. Sampled per-call
+free VRAM reached a minimum of 1,265 MiB; this is a sampled minimum, not a guarantee
+about unobserved moments. Cleanup confirms the owned server stopped, only the
+temporary alias was removed, original/user tags remained unchanged, and the
+owner's loaded-model list was empty. Evaluator exit 1 represents the failed
+quality gate, not failed cleanup.
+
+### Provenance and limits
+
+The run started before the source commit, so `environment.json` records Git HEAD
+`6527ac23a18b0a6d9b120480bac4ddd81e339cf1` plus hashes of the actual working files.
+Independent comparison binds that recorded snapshot to the later source commit
+`4fd974d80e326cfcde5aecb663696e67e804e7f5`: 61 of 123 recorded file hashes match
+Git blobs exactly; the other 62 match their Windows CRLF checkouts, with no
+unexplained content mismatch. The evaluated cases equal the frozen loader output.
+The audit implementation and evaluator match exactly:
+
+- `review.py`: `1f36f8f135e16a6c3aeb8f612d712e3aa60ba41867a79e4fa8b520e59aab2319`.
+- `evaluate_grounding04.py`: `1755e50ed8a2dba73027b5807bb35fdc17b4f268ec866c8b09eff0fab6c1f4b8`.
+
+The ignored run directory retains `acceptance/environment.json`,
+`acceptance/provider-trace.json`, `acceptance/result.json`, resource-monitor and
+cleanup records, plus `independent-review.json`. A compact
+[tracked failure recording](../evals/release04/regressions/structured-audit-false-acceptances.json)
+preserves the three false-supported claims, full cited passages, frozen fact
+anchors, unchanged recorded review rows and source hashes. It is failure evidence,
+not a passing test; the provider trace stores parsed JSON rather than original
+HTTP bytes. This check exercised the audit
+on fixed claims; it did not establish successful end-to-end outline generation.
+The separate EN/RU ledger-generation check remains subject to its own review.
+No result from that separate check is inferred here.
+
+**Semantic quality remains failed.** The ledger prevents a second independent
+paraphrase when assembling notes, and protocol checks reject malformed support;
+neither establishes that the writer or auditor always preserves source meaning.
+Manual review and `validated=false` remain required. No unsupported claim or old
+recording was rewritten to improve these scores.
 
 The earlier [live failure](MODEL_EVALUATION_04_2026-11-03.md) and
 [follow-up failure](MODEL_EVALUATION_04_FOLLOWUP_2026-11-03.md) remain historical

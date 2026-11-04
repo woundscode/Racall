@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import httpx
 
-from .completion.events import EventDecoder, response_chunks
+from .completion.events import STREAM_WIRE_LIMIT, EventDecoder, response_chunks
 from .completion.payloads import (
     CONTENT_LIMIT,
     CompletionProtocolError,
@@ -90,7 +90,7 @@ async def stream_response(response: httpx.Response) -> dict:
     next_index = 0
     active_index = None
     active_kind = None
-    async for chunk in response_chunks(response):
+    async for chunk in response_chunks(response, wire_limit=STREAM_WIRE_LIMIT):
         for event_name, event in parser.feed_named(chunk):
             payload = json_object(event)
             event_type = payload.get("type")

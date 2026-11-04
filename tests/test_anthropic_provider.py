@@ -163,6 +163,28 @@ def test_thinking_signatures_redacted_blocks_and_metadata_never_become_answer(mo
     assert stream.closed
 
 
+def test_small_answer_survives_thinking_stream_above_one_megabyte(monkeypatch):
+    thinking = event("content_block_delta", index=0, delta={"type": "thinking_delta", "thinking": "word "})
+    chunks = [
+        start(),
+        event(
+            "content_block_start",
+            index=0,
+            content_block={"type": "thinking", "thinking": "", "signature": ""},
+        ),
+        *([thinking] * 9000),
+        event("content_block_stop", index=0),
+        block('{"answer": "Готово"}', index=1),
+        finish(),
+    ]
+    assert 1024 * 1024 < sum(map(len, chunks)) < 8 * 1024 * 1024
+    stream = Chunks(chunks)
+    requests = transport(monkeypatch, stream)
+
+    assert call() == {"answer": "Готово"}
+    assert len(requests) == 1 and stream.closed
+
+
 @pytest.mark.parametrize(
     "wire",
     [
@@ -253,6 +275,16 @@ def test_json_fallback_extracts_only_text_from_complete_message(monkeypatch):
     assert call() == {"claims": []}
 
 
+def test_json_fallback_keeps_one_megabyte_wire_limit_for_small_answer(monkeypatch):
+    body = full()
+    body["metadata"] = "x" * (1024 * 1024)
+    stream = Chunks([json.dumps(body).encode()])
+    requests = transport(monkeypatch, stream, content_type="application/json")
+    with pytest.raises(CompletionProtocolError, match="response is too large"):
+        call()
+    assert len(requests) == 1 and stream.closed
+
+
 @pytest.mark.parametrize(
     "body",
     [
@@ -280,15 +312,23 @@ def test_json_fallback_rejects_incomplete_message_or_non_text_answer(monkeypatch
     [
         b":" + b"x" * (64 * 1024) + b"\n\n",
         b"data: " + b"x" * 40_000 + b"\ndata: " + b"y" * 40_000 + b"\n\n",
-        b": heartbeat\n\n" * 90_000,
         start() + b"".join(block("x" * 8192, index=i) for i in range(33)) + finish(),
     ],
-    ids=["line", "event", "wire", "text"],
+    ids=["line", "event", "text"],
 )
 def test_response_limits_apply_to_anthropic_protocol(monkeypatch, wire):
     transport(monkeypatch, Chunks([wire]))
     with pytest.raises(CompletionProtocolError):
         call()
+
+
+def test_stream_wire_limit_still_rejects_endless_pings(monkeypatch):
+    ping = event("ping")
+    stream = Chunks([ping] * (8 * 1024 * 1024 // len(ping) + 1) + [completed()])
+    requests = transport(monkeypatch, stream)
+    with pytest.raises(CompletionProtocolError, match="response is too large"):
+        call()
+    assert len(requests) == 1 and stream.closed
 
 
 @pytest.mark.parametrize(

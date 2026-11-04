@@ -63,9 +63,11 @@ not rewritten.
 The [grounding protocol follow-up](GROUNDING_04_FOLLOWUP_2026-11-03.md) introduces
 one source-anchored fact ledger reused by titles, bullets and speaker notes, plus
 a structured evidence audit. It removes the second paraphrase of a fact in notes
-and rejects malformed or unsupported drafts without automatic repair. Its bounded
-real-model evaluation is pending runtime readiness; the historical failures remain
-recorded and generated content remains unvalidated.
+and rejects drafts with malformed support or negative audit verdicts without
+automatic repair. In a bounded real-model evaluation the auditor nevertheless
+falsely accepted three of eleven invalid controls; all 23 valid claims were
+accepted. These failures remain recorded and generated content remains
+unvalidated. The structured protocol checks provenance, not truth.
 
 The preview shows the saved revision. Save current edits before export. Decks
 remain in Reports independently of the originating chat.

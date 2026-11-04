@@ -9,6 +9,9 @@ import httpx
 from .payloads import CompletionProtocolError
 
 WIRE_LIMIT = 1024 * 1024
+# Streams repeat metadata per token, including reasoning that is not answer text.
+# Bound that wire overhead separately from ordinary JSON and decoded content.
+STREAM_WIRE_LIMIT = 8 * 1024 * 1024
 LINE_LIMIT = 64 * 1024
 EVENT_LIMIT = 64 * 1024
 
@@ -70,10 +73,10 @@ class EventDecoder:
                 self.event_name = value.removeprefix(" ") if separator else ""
 
 
-async def response_chunks(response: httpx.Response):
+async def response_chunks(response: httpx.Response, *, wire_limit: int = WIRE_LIMIT):
     size = 0
     async for chunk in response.aiter_raw():
         size += len(chunk)
-        if size > WIRE_LIMIT:
+        if size > wire_limit:
             raise CompletionProtocolError("The provider response is too large.")
         yield chunk
