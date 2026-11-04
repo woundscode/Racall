@@ -21,10 +21,19 @@ build, presentation desktop checks and persistence checks also passed for that
 change. Synthetic provider checks do not establish real-model factual quality.
 
 The final AI-draft notice also passes TypeScript, 488-key EN/RU parity, Prettier
-and the production web build. Its local presentation desktop run passes 19 checks
+and the production web build. Its local presentation desktop run passes 20 checks
 with zero model calls and two synthetic job submissions; the notice was visually
 reviewed in English/Light and Russian/Dark. Evidence:
-`test-results/presentations-desktop-1793812642386/result.json`.
+`test-results/presentations-desktop-1793813738440/result.json`.
+
+The first disclosure candidate, `a3d43cb`, exposed a smoke-fixture error on macOS
+ARM64 after all 722 Python tests passed: the Russian no-extra-confirmation check
+expected assembly to be enabled on an outline that already had a completed job.
+A deterministic local reproduction preserved that failure. The corrected smoke
+uses an independent unused outline while retaining the completed-job duplicate
+guard and accessible result checks; no production generation guard was changed.
+The [failed native run](https://github.com/woundscode/Racall/actions/runs/41877368860)
+is retained as evidence, not counted as acceptance.
 
 - [x] Python-owned outline generation, typed deck, bounded output and canonical citations.
 - [x] One source-anchored fact ledger for titles, bullets and notes, with a

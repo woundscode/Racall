@@ -197,6 +197,11 @@ function seed(notebook, note, unrelatedNote) {
   outline.presentation.stage = 'outline';
   outline.title = outline.presentation.title = 'Outline fixture';
   fs.writeFileSync(path.join(directory, outline.id + '.json'), JSON.stringify(outline));
+  const unusedOutline = structuredClone(outline);
+  unusedOutline.id = randomUUID();
+  unusedOutline.job_id = unusedOutline.id;
+  unusedOutline.title = unusedOutline.presentation.title = 'Unused outline';
+  fs.writeFileSync(path.join(directory, unusedOutline.id + '.json'), JSON.stringify(unusedOutline));
   return material;
 }
 async function download(page, format) {
@@ -444,7 +449,6 @@ async function download(page, format) {
     await expect(
       page.locator(`.presentation-editor [data-job-id="${fixtureJobs[0].id}"]`),
     ).toHaveAttribute('data-status', 'completed');
-    await page.unroute(`**/api${base}/jobs`);
     await page.getByRole('button', { name: 'Settings', exact: true }).click();
     await page.getByLabel('Interface language').selectOption('ru');
     await page.getByRole('radio', { name: ru['settings.themeDark'], exact: true }).click();
@@ -487,8 +491,21 @@ async function download(page, format) {
     await page.locator('.presentation-preview').scrollIntoViewIfNeeded();
     await captureWindow(app, path.join(run, 'presentation-dark-ru.png'));
     await openMaterial(page, 'Revised outline', ru);
+    const completedJob = page.locator(`.presentation-editor [data-job-id="${fixtureJobs[0].id}"]`);
+    await expect(completedJob).toHaveAttribute('data-status', 'completed');
+    await expect(
+      page.getByRole('button', { name: ru['presentation.generateSlides'], exact: true }),
+    ).toBeDisabled();
+    await expect(
+      completedJob.getByRole('button', { name: ru['jobs.openResult'], exact: true }),
+    ).toBeEnabled();
+    // A completed revision is reserved. Check the warning's lack of an approval
+    // gate on a separate saved outline that has never submitted an assembly job.
+    await openMaterial(page, 'Unused outline', ru);
     await expectDraftNotice(page, ru, 'outline');
+    assert.equal(submissions.length, 2, 'Opening an unused outline must not submit a job');
     assert.deepEqual(errors, []);
+    await page.unroute(`**/api${base}/jobs`);
     assert.equal(
       (await api(page, base + '/jobs')).length,
       0,
@@ -517,6 +534,7 @@ async function download(page, format) {
             'immediate Reports tab exit persists changes',
             'immediate job-result exit persists changes',
             'existing generation job recovers on outline reopen',
+            'completed outline keeps duplicate assembly disabled and its result accessible',
             'reopening does not duplicate generation',
             'explicit revised outline submission (mock response)',
             'EN/light and RU/dark',
