@@ -30,8 +30,8 @@ preparing an **AI-draft beta with disclosed semantic limitations** and requested
 fresh builds for every platform plus the installed upgrade check. The recorded
 model errors remain unresolved; accepting this beta scope does not convert that
 evaluation into a pass. No additional model or local dependency downloads were
-authorized. Publication remains on hold during technical acceptance. Candidate
-branch push and hosted checks are authorized; that does not publish a release.
+authorized. Publication remained on hold during that technical acceptance.
+Candidate branch push and hosted checks alone did not publish a release.
 Finish the exact candidate's installed 0.3 → 0.4 upgrade **before pushing its
 tag**: that separate workflow is not a prerequisite of the automatic tag
 publication job.
@@ -39,17 +39,25 @@ publication job.
 The fresh `9acf6f4` candidate subsequently passed all six native targets and its
 exact installed Windows 0.3 → 0.4 upgrade. The
 [candidate report](VERIFICATION_04_CANDIDATE_2026-11-04.md) records package hashes,
-preservation checks and known limits. Publication remains on hold; these results
-do not choose a release time or create a tag.
+preservation checks and known limits. Publication remained on hold at that stage;
+those results did not choose a release time or create a tag.
 
 Later on **November 4, 2026**, after reviewing that successful candidate, the
 owner explicitly requested publishing **Racall 0.4 Beta** with the established
 GitHub presentation. The 0.4 policy is now `publication: "approved"`, with all
 six platforms and `github_latest: true`. This authorizes the release tag,
-publication and the main-branch update. The known AI-draft limitation remains;
-the final approved-policy source still requires its native/installed-upgrade
-acceptance and fresh tag build. The tested held candidate is historical evidence,
-not a substitute for the approved packages.
+publication and the main-branch update. The known AI-draft limitation remains.
+Approved source `c6f828ea1a17fde50b0133125c2b12a9616165f7` passed its six-target
+candidate build and installed upgrade before the annotated tag was pushed.
+The fresh [tag build 41890925811](https://github.com/woundscode/Racall/actions/runs/41890925811)
+then passed all six targets and published 0.4 at 19:18:51 UTC as GitHub Latest.
+The [release verification](VERIFICATION_04_RELEASE_2026-11-04.md) records the ten
+packages, public checksums and unchanged 0.3 assets. The separate exact
+published-installer upgrade [passed](https://github.com/woundscode/Racall/actions/runs/41895993036)
+eight checks and retained all 21 original fixture files; four screenshots passed
+review. The public release page also passed review. Only the final main-branch
+README review remains pending.
+The earlier held candidate remains historical evidence, not the released packages.
 
 Supported platform identifiers are `win-x64`, `win-arm64`, `mac-arm64`, `mac-x64`,
 `linux-x64` and `linux-arm64`. The nonempty, unique list is validated by

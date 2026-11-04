@@ -1,8 +1,8 @@
 # 0.4 Beta acceptance checklist
 
-Publication: **authorized; final approved-policy source checks pending**.
-The held candidate's native acceptance and installed upgrade passed. Existing
-0.3 release assets remain unchanged.
+Publication: **published; exact released-installer upgrade passed; final main-page
+review pending**. The approved-source checks and fresh tag build passed. Existing
+0.3 release assets remain unchanged. [Published verification](VERIFICATION_04_RELEASE_2026-11-04.md).
 [Plan](PLAN_04.md) · [Presentation guide](PRESENTATIONS.md)
 
 **Latest owner decision, November 4:** publish 0.4 Beta with the documented AI
@@ -11,9 +11,9 @@ This supersedes the earlier decision to keep development open until automatic
 factual checking improves. It changes the accepted beta scope, not the failed
 model-quality result. Both decisions remain in the
 [model-review record](MODEL_REVIEW_04_DISPOSITION_2026-11-03.md).
-The owner has now chosen publication timing. The approved-policy final source
-still needs the package/upgrade and tag-build checks below; the earlier held
-candidate's hashes are not relabelled as final release hashes.
+The owner's publication request was completed on November 4 at 19:18:51 UTC.
+The final tagged source has its own package identities and checks below; the
+earlier held candidate's hashes are not relabelled as release hashes.
 
 ## Implemented and checked locally
 
@@ -82,17 +82,31 @@ is retained as evidence, not counted as acceptance.
       passed eight checks with the exact Windows x64 artifact. All 21 original
       fixture files remained byte-identical after uninstall; four screenshots
       passed visual review.
-- [ ] Final approved-policy source passes all six native targets and its exact
-      installed Windows 0.3 → 0.4 upgrade before tagging.
-- [ ] Fresh tagged source passes all six builds and publishes all ten packages
-      plus checksums with the approved notes and Latest presentation.
-- [ ] Verify public asset hashes, tag/source identity, preserved 0.3 assets and
-      the main README's links and rendering.
+- [x] Final approved-policy source `c6f828ea1a17fde50b0133125c2b12a9616165f7`
+      passes all six native targets in [run 41885468361](https://github.com/woundscode/Racall/actions/runs/41885468361)
+      and its exact installed Windows 0.3 → 0.4 upgrade in
+      [run 41890361060](https://github.com/woundscode/Racall/actions/runs/41890361060)
+      before tagging. The upgrade passed eight checks and preserved all 21 originals.
+- [x] Fresh tagged source passes all six builds and publishes all ten packages
+      plus checksums with the approved notes and Latest presentation in
+      [run 41890925811](https://github.com/woundscode/Racall/actions/runs/41890925811).
+- [x] Public asset names/sizes/digests, tag/source identity and preserved 0.3 assets
+      verified. All eleven anonymous download URLs return HTTP 200.
+      [Release manifest](releases/0.4.0-beta.1-release.json) ·
+      [Exact public checksums](releases/0.4.0-beta.1-SHA256SUMS.txt).
+- [x] Exact published Windows x64 EXE passes the separate installed upgrade in
+      [run 41895993036](https://github.com/woundscode/Racall/actions/runs/41895993036):
+      eight checks, all 21 original files unchanged after uninstall, two expected
+      additions and nine synthetic provider calls. All four screenshots passed review.
+- [x] Public release page shows the correct title and Latest marker; three
+      brand/screenshot images loaded and passed visual review. Its 13 asset entries
+      comprise eleven uploads and GitHub's two automatic source archives.
+- [ ] Review the final main README's links, images and GitHub presentation.
 
-The [current candidate verification](VERIFICATION_04_CANDIDATE_2026-11-04.md)
+The [earlier candidate verification](VERIFICATION_04_CANDIDATE_2026-11-04.md)
 records six successful native targets, package identity and the exact successful
-installed upgrade for the held `9acf6f4` candidate. The owner has subsequently
-authorized publication; the final approved-policy source has separate checks above.
+installed upgrade for the held `9acf6f4` candidate. Publication used the separately
+verified approved source and fresh tagged packages recorded above.
 The earlier
 [native run 41859887109](https://github.com/woundscode/Racall/actions/runs/41859887109)
 passed Windows and Linux x64/ARM64, but neither macOS job acquired a hosted runner.

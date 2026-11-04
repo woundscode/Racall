@@ -34,7 +34,7 @@
 
 Packages include their runtime: no Python, Node.js or Docker installation is required. Windows and macOS packages are unsigned; macOS packages are not notarized. See the [installation notes](docs/releases/0.4.0-beta.1.md) for platform details.
 
-Upgrading from 0.3? Close Racall and back up your knowledge folder first. The installed Windows x64 0.3 → 0.4 candidate upgrade preserved all 21 original test files, including after uninstall. This does not establish every upgrade path on other platforms. [Data and backup guide →](docs/GETTING_STARTED.md#data-and-backups)
+Upgrading from 0.3? Close Racall and back up your knowledge folder first. The published Windows x64 installer passed the 0.3 → 0.4 upgrade check and preserved all 21 original test files, including after uninstall. This does not establish every upgrade path on other platforms. [Data and backup guide →](docs/GETTING_STARTED.md#data-and-backups)
 
 1. Open Racall and create a notebook.
 2. Open **Sources** and import a document.
@@ -101,7 +101,7 @@ Back up your knowledge folder with Racall closed. The exact location is shown in
 
 AI can produce unsupported claims even with correct citation text. The preserved presentation audit falsely accepted three of 11 invalid claims; the full set contained 34 claims. Those failures remain an open limitation, not a passed quality check. The bounded Ollama workflow covers one local Windows/model configuration. [Model-review record →](docs/MODEL_REVIEW_04_DISPOSITION_2026-11-03.md)
 
-The pre-release candidate passed **722 Python tests on each of six native targets**, packaged application and installer checks, and an installed Windows x64 0.3 → 0.4 upgrade. This does not cover every device or OS version. Linux AppImage checks use extracted contents rather than FUSE mounting. Microsoft PowerPoint itself was not tested; PPTX fonts may be substituted. [Verification scope →](docs/VERIFICATION_04_CANDIDATE_2026-11-04.md)
+The released source passed **722 Python tests on each of six native targets**, packaged application and installer checks. All public package hashes were verified, and the published Windows x64 installer passed a separate 0.3 → 0.4 upgrade check. This does not cover every device or OS version. Linux AppImage checks use extracted contents rather than FUSE mounting. Microsoft PowerPoint itself was not tested; PPTX fonts may be substituted. [Verification scope →](docs/VERIFICATION_04_RELEASE_2026-11-04.md)
 
 ## Built with
 
