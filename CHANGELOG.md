@@ -1,11 +1,10 @@
 # Changelog
 
-## 0.4.0-beta.1 — 0.4 Beta — unreleased
+## 0.4.0-beta.1 — 0.4 Beta — 2026-11-04
 
-Editable presentations from selected sources and notes. Release preparation is
-in progress; [0.3 Beta remains the public release](https://github.com/woundscode/Racall/releases/tag/v0.3.0-beta.1).
-The owner approved this beta with the known AI semantic limitation, subject to
-fresh technical release checks. Generated slides need source review before sharing.
+Editable presentations from selected sources and notes, with native x64/ARM64
+packages for Windows, macOS and Linux. Generated slides are AI drafts and need
+source review before sharing; the known semantic limitation remains open.
 
 ### Added
 
@@ -57,7 +56,8 @@ fresh technical release checks. Generated slides need source review before shari
   unsigned, and macOS packages are not notarized. Images, generated audio/video,
   arbitrary slide imports and AI revision of individual slides are outside 0.4.
 
-See the [draft release notes](docs/releases/0.4.0-beta.1.md) for the current status.
+See the [release notes](docs/releases/0.4.0-beta.1.md) for downloads, upgrade guidance
+and the full verification scope.
 
 ## 0.3.0-beta.1 — 0.3 Beta — 2026-10-25
 

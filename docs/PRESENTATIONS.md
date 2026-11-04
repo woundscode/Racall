@@ -1,9 +1,8 @@
-# Editable presentations — 0.4 Beta preparation
+# Editable presentations — 0.4 Beta
 
-The presentation workflow is implemented for 0.4 Beta. The owner accepts its
-known AI limitation. Native packaging and the exact Windows upgrade passed the
-[acceptance checklist](RELEASE_04_CHECKLIST.md); publication timing remains a
-separate decision. This is not a published release.
+Create editable presentations from selected sources and saved notes in Racall
+0.4 Beta. See the [release notes](releases/0.4.0-beta.1.md) and
+[acceptance checklist](RELEASE_04_CHECKLIST.md) for the tested scope.
 
 **Treat generated slides as drafts.** The evidence critic can accept unsupported
 claims. Review titles, bullets and speaker notes against their saved sources

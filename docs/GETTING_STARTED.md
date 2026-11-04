@@ -1,13 +1,14 @@
 # Getting started
 
-[Documentation](README.md) · [Download releases](https://github.com/woundscode/Racall/releases)
+[Documentation](README.md) · [Download 0.4 Beta](https://github.com/woundscode/Racall/releases/tag/v0.4.0-beta.1)
 
 ## Install
 
-**0.3 Beta** has separate x64 and ARM64 downloads for Windows, macOS and Linux.
+**0.4 Beta** has separate x64 and ARM64 downloads for Windows, macOS and Linux.
 Choose the package matching your operating system and processor: Windows uses an
 EXE installer, macOS a DMG/ZIP, and Linux a DEB/AppImage. The [download table](../README.md#-get-started)
-links to every package. Python, Node.js and Docker are not required to run them.
+links to all ten packages across the six platform/architecture targets. Python,
+Node.js and Docker are not required to run them.
 
 The Windows installer is unsigned and macOS packages are not signed/notarized.
 Use the checksums attached to the release to verify your download. There is no
@@ -36,10 +37,36 @@ Use **Context** in Chat, Research or Studio to select ready sources and saved no
 An empty selection stays empty; unsaved note drafts are not included. Note citations
 retain the revision used for that answer, and a reopened chat restores its selection.
 
-Studio creates a summary, study guide or review questions with answers. Research
-and Studio show generation stages, support cancellation and require an explicit
-retry after interruption. Completed outputs stay in **Reports**; export Markdown
-or save an editable copy to **Notes**. See the [full workflow guide](STUDIO.md).
+Studio creates a summary, study guide, review questions with answers, or a
+presentation outline. Research and Studio show generation stages, support
+cancellation and require an explicit
+retry after interruption. Completed outputs stay in **Reports**. Text reports
+can be exported as Markdown or saved as an editable copy to **Notes**. See the
+[context and text workflow guide](STUDIO.md).
+
+## Create a presentation
+
+**AI drafts can contain factual errors.** The automatic evidence critic can
+accept unsupported claims. Check titles, bullet points and speaker notes against
+their sources before use or export.
+
+1. In **Studio**, choose **Presentation**, select ready sources and saved notes,
+   and generate an outline with your configured text model.
+2. Open the saved outline in **Reports**. Expand **Sources for this slide** to
+   read the saved passages and open their source or note revisions. A limited-context
+   notice means some material was omitted; it does not mean every page was reviewed.
+3. Edit titles, points and speaker notes, reorder or delete slides, and choose a
+   Light or Dark slide template. Save changes, then select **Create slides**.
+   Python assembles the saved text without another model request; the outline
+   remains a separate material.
+4. Check the saved-revision preview, then export **PPTX** or **PDF**. Unsaved edits
+   must be saved first. Exports retain speaker notes and source quotations.
+
+Editing, slide assembly, preview and export work with the model disconnected.
+Microsoft Office is not required to create the files. PPTX text is editable;
+its font may be substituted by the receiving editor, so check the layout there
+or use PDF for fixed appearance. See the [presentation guide](PRESENTATIONS.md)
+for draft recovery, source-context limits and export details.
 
 ## Connect AI
 
@@ -65,7 +92,7 @@ The old working name in the directory is intentional and avoids moving existing 
 
 ## Connect another AI client
 
-Select a notebook and open Connect AI to copy its MCP configuration. The stdio server provides read-only access to that notebook. It cannot edit notes or access another notebook. Remote HTTP MCP and OAuth are not included in 0.3.
+Select a notebook and open Connect AI to copy its MCP configuration. The stdio server provides read-only access to that notebook. It cannot edit notes or access another notebook. Remote HTTP MCP and OAuth are not included in 0.4.
 
 ## Troubleshooting
 
@@ -78,8 +105,8 @@ Use the menu beside a notebook name to rename it or move it to trash. The confir
 
 Open a source and use **Replace file** for an imported document or **Refresh from website** for a web source. Its current working version remains usable while the replacement is processed; a failed replacement shows an error and can be retried. The version selector opens retained originals and passages. Clicking an old answer's citation selects the version used by that answer.
 
-See the [0.3 release notes](releases/0.3.0-beta.1.md) for verification scope and limits.
-The [model evaluation guide](MODEL_EVALUATION.md) and [recorded Ollama results](MODEL_EVALUATION_03_2026-10-25.md)
+See the [0.4 release notes](releases/0.4.0-beta.1.md) for verification scope and limits.
+The [model evaluation guide](MODEL_EVALUATION.md) and [recorded model-review limits](MODEL_REVIEW_04_DISPOSITION_2026-11-03.md)
 are available for voluntary testing. Model verification can miss unsupported claims;
 review the cited passages. Reports from other hardware, operating systems and models
 are welcome through [GitHub Issues](https://github.com/woundscode/Racall/issues).

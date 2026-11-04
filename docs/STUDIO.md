@@ -1,8 +1,9 @@
-# Context and Studio in 0.3 Beta
+# Context and Studio
 
 Choose materials, continue a conversation and turn the result into a reusable
-learning document. See the [0.3 release notes](releases/0.3.0-beta.1.md) and
-[verification checklist](RELEASE_03_CHECKLIST.md).
+learning document or editable presentation. See the
+[0.4 release notes](releases/0.4.0-beta.1.md) and
+[verification checklist](RELEASE_04_CHECKLIST.md).
 
 ## Choose the material
 
@@ -24,8 +25,10 @@ Use a focused selection and review the citations for broad or long documents.
 
 ## Generate and retain a result
 
-Studio offers Summary, Study guide and Review questions with answers. The last
-format is a saved text document, without quiz scoring or spaced repetition.
+Studio offers Summary, Study guide, Review questions with answers and Presentation.
+Review questions are a saved text document, without quiz scoring or spaced repetition.
+Presentations use a saved AI outline, source review, editing and offline Python
+assembly before PPTX/PDF export. See the [presentation guide](PRESENTATIONS.md).
 Research retains its multi-step search workflow and uses the same generation
 queue. The language of a new Studio/Research job follows the current English or
 Russian interface choice.
@@ -48,8 +51,8 @@ interrupted jobs cannot publish a late result. Restart does not automatically
 replay an unfinished model request. Retry is explicit and creates a new attempt
 using current settings and current versions of the original selected materials.
 
-Completed materials stay in Reports, independently of the chat. They include
-verified citation references, Markdown export and Save copy to Notes. The copy is
+Completed materials stay in Reports, independently of the chat. Text materials
+include checked citation references, Markdown export and Save copy to Notes. The copy is
 editable; the original material and any existing editor draft stay separate.
 Opening a note citation displays the saved passage and revision. Older 0.2
 Research reports remain available without a destructive data migration.

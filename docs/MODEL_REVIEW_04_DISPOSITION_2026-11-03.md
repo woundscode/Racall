@@ -5,7 +5,8 @@ semantic limitation, subject to fresh technical release checks.** The automatic
 factual-quality criterion remains unmet. This acceptance supersedes the earlier
 refusal recorded below; it does not turn failed model results into passes.
 The [final native packages and installed upgrade](VERIFICATION_04_CANDIDATE_2026-11-04.md)
-passed. Publication remains on hold until the owner chooses its timing.
+passed. The owner subsequently authorized publication; that decision and the
+remaining final-source checks are recorded below and in the release checklist.
 
 ## Workflow decision and references
 
@@ -60,7 +61,7 @@ Completing the bounded evaluation is not the same as satisfying its factual
 quality criterion. The latest owner decision accepts the limitation separately
 from that still-open criterion. Other release checks retain their own evidence
 and status; the [release checklist](RELEASE_04_CHECKLIST.md) records the completed
-technical acceptance separately from the remaining publication decision.
+technical acceptance separately from publication authorization.
 
 ## Earlier owner decision — November 4 (superseded)
 
@@ -76,7 +77,7 @@ automatic-quality requirement. Repeating prompts or relabelling the failing
 benchmark was not accepted as a fix. This remains the history of that decision;
 the subsequent decision below changes the permitted beta scope.
 
-## Latest owner decision — November 4
+## Candidate-scope decision — November 4
 
 The owner subsequently authorized preparing **0.4 Beta with the known AI
 semantic limitation** and rerunning the technical gates. This supersedes the
@@ -84,8 +85,8 @@ earlier refusal to ship an AI-draft beta. It does not require another model or a
 independent verifier: the proposed NLI experiment remains shelved, and the owner
 has not authorized new downloads.
 
-This work prepares a release candidate. The current action does not publish,
-tag or merge it; publication timing remains a separate owner decision.
+At that stage, the action prepared a release candidate without publishing,
+tagging or merging it; publication timing remained a separate owner decision.
 
 The [frozen audit](GROUNDING_04_FOLLOWUP_2026-11-03.md) remains unchanged: 34 claims,
 23 valid and 11 invalid, three false acceptances, no false rejections, and two of
@@ -101,3 +102,14 @@ quality, but neither hardware nor a model change guarantees factual correctness.
 Generated content remains unvalidated, and the interface and release notes must
 retain clear source-review guidance. Historical failed artifacts and labels stay
 intact while factual reliability remains an open improvement area.
+
+## Publication authorization — November 4
+
+After the six-platform candidate and its exact Windows upgrade passed, the owner
+explicitly requested publication of **Racall 0.4 Beta**, with the established
+GitHub presentation. Publication, the release tag and updating the main branch
+are now authorized. The release retains the known semantic limitation and the
+previous releases' Latest presentation while clearly keeping the Beta name.
+The approved-policy source must complete its own package/upgrade checks and the
+fresh tagged build before publication. This authorization changes neither the
+frozen audit nor its failed factual-quality criterion.

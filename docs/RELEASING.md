@@ -42,6 +42,15 @@ exact installed Windows 0.3 → 0.4 upgrade. The
 preservation checks and known limits. Publication remains on hold; these results
 do not choose a release time or create a tag.
 
+Later on **November 4, 2026**, after reviewing that successful candidate, the
+owner explicitly requested publishing **Racall 0.4 Beta** with the established
+GitHub presentation. The 0.4 policy is now `publication: "approved"`, with all
+six platforms and `github_latest: true`. This authorizes the release tag,
+publication and the main-branch update. The known AI-draft limitation remains;
+the final approved-policy source still requires its native/installed-upgrade
+acceptance and fresh tag build. The tested held candidate is historical evidence,
+not a substitute for the approved packages.
+
 Supported platform identifiers are `win-x64`, `win-arm64`, `mac-arm64`, `mac-x64`,
 `linux-x64` and `linux-arm64`. The nonempty, unique list is validated by
 `scripts/release_policy.py` and drives the CI matrix, required native jobs,

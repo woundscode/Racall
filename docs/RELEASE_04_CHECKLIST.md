@@ -1,17 +1,19 @@
 # 0.4 Beta acceptance checklist
 
-Publication: **hold; native acceptance and installed upgrade passed**.
-Public 0.3 assets remain unchanged.
+Publication: **authorized; final approved-policy source checks pending**.
+The held candidate's native acceptance and installed upgrade passed. Existing
+0.3 release assets remain unchanged.
 [Plan](PLAN_04.md) · [Presentation guide](PRESENTATIONS.md)
 
-**Latest owner decision, November 4:** prepare 0.4 Beta with the documented AI
-semantic limitation and rerun the final candidate's technical gates below.
+**Latest owner decision, November 4:** publish 0.4 Beta with the documented AI
+semantic limitation and the established GitHub presentation.
 This supersedes the earlier decision to keep development open until automatic
 factual checking improves. It changes the accepted beta scope, not the failed
 model-quality result. Both decisions remain in the
 [model-review record](MODEL_REVIEW_04_DISPOSITION_2026-11-03.md).
-Publication timing remains a separate owner decision; passing these checks does
-not itself publish or tag the candidate.
+The owner has now chosen publication timing. The approved-policy final source
+still needs the package/upgrade and tag-build checks below; the earlier held
+candidate's hashes are not relabelled as final release hashes.
 
 ## Implemented and checked locally
 
@@ -63,6 +65,8 @@ is retained as evidence, not counted as acceptance.
 
 - [x] Owner accepts the known semantic limitation for this beta, with honest
       source-review guidance and no factual-certification claim.
+- [x] Owner explicitly authorizes 0.4 publication, its release tag, the main-branch
+      update and the established Latest presentation.
 - [x] Release-note draft, presentation guide and model-review disposition record
       that decision without changing historical failed scores.
 - [x] Fresh Windows/macOS/Linux x64 and ARM64 matrix passes for source
@@ -78,12 +82,17 @@ is retained as evidence, not counted as acceptance.
       passed eight checks with the exact Windows x64 artifact. All 21 original
       fixture files remained byte-identical after uninstall; four screenshots
       passed visual review.
-- [ ] Confirm the release tag, notes and uploaded assets all identify that tested
-      candidate before publishing 0.4 Beta at the owner's chosen time.
+- [ ] Final approved-policy source passes all six native targets and its exact
+      installed Windows 0.3 → 0.4 upgrade before tagging.
+- [ ] Fresh tagged source passes all six builds and publishes all ten packages
+      plus checksums with the approved notes and Latest presentation.
+- [ ] Verify public asset hashes, tag/source identity, preserved 0.3 assets and
+      the main README's links and rendering.
 
 The [current candidate verification](VERIFICATION_04_CANDIDATE_2026-11-04.md)
 records six successful native targets, package identity and the exact successful
-installed upgrade. Publication remains a separate action at the owner's chosen time.
+installed upgrade for the held `9acf6f4` candidate. The owner has subsequently
+authorized publication; the final approved-policy source has separate checks above.
 The earlier
 [native run 41859887109](https://github.com/woundscode/Racall/actions/runs/41859887109)
 passed Windows and Linux x64/ARM64, but neither macOS job acquired a hosted runner.

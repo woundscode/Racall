@@ -42,9 +42,9 @@ The implemented checks cover thread/notebook isolation, source selection, bounde
 
 Flashcards, interactive quizzes/scoring, richer retrieval/reranking, PDF/OCR improvements, extra languages, subscription/CLI backends and larger UI changes remain follow-up candidates. Presentations and audio keep their own later milestones. No new bundled GPU model is needed for this text-only slice; it uses the owner's configured local or cloud connection.
 
-## 0.4 Beta target — Editable presentations from sources
+## 0.4 Beta — Editable presentations from sources
 
-The [November 3 reference review](REFERENCE_PROJECTS.md#refresh-2026-11-03) supports keeping presentations as the next milestone. Implementation is now underway locally under the [0.4 plan](PLAN_04.md); the [acceptance checklist](RELEASE_04_CHECKLIST.md) distinguishes local checks from release readiness. Publication remains on hold.
+Implemented after the [November 3 reference review](REFERENCE_PROJECTS.md#refresh-2026-11-03), with publication approved by the owner. The [presentation guide](PRESENTATIONS.md), [release notes](releases/0.4.0-beta.1.md) and [acceptance checklist](RELEASE_04_CHECKLIST.md) describe the workflow, packages and known AI limitations. Generated outlines remain drafts that need source review.
 
 - Selected sources/saved notes → model-generated outline → review/save → Python slide assembly → editable saved deck → PPTX/PDF.
 - Edit titles, bullets and speaker notes; reorder/delete slides and preserve revisions, drafts and source-version references.
