@@ -82,11 +82,11 @@ English is the default. Settings → Interface language changes English / Рус
 
 The exact data path appears in Settings. Defaults:
 
-| OS | Data directory |
-| --- | --- |
-| Windows | `%APPDATA%/OpenNotebook/knowledge` |
-| macOS | `~/Library/Application Support/OpenNotebook/knowledge` |
-| Linux | `~/.config/OpenNotebook/knowledge` |
+| OS      | Data directory                                         |
+| ------- | ------------------------------------------------------ |
+| Windows | `%APPDATA%/OpenNotebook/knowledge`                     |
+| macOS   | `~/Library/Application Support/OpenNotebook/knowledge` |
+| Linux   | `~/.config/OpenNotebook/knowledge`                     |
 
 The old working name in the directory is intentional and avoids moving existing data. Close Racall before copying the whole knowledge directory. Original documents, Markdown notes, reports and metadata are stored there; `index.sqlite3` is a rebuildable index. API keys are in the OS keychain and must be entered again after restoring on another computer. Keep backups private.
 
@@ -97,7 +97,6 @@ Select a notebook and open Connect AI to copy its MCP configuration. The stdio s
 ## Troubleshooting
 
 If AI is unavailable, check the endpoint, model ID, API key or local Ollama process. Import, notes and text search remain usable without a model. For a startup failure, check `backend.log` in the data directory. Before attaching logs to an issue, remove document contents, paths, tokens and other private information. [Report a bug](https://github.com/woundscode/Racall/issues/new/choose).
-
 
 ## Notebook and source maintenance
 
