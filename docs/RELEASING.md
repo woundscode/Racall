@@ -10,7 +10,7 @@ Update `package.json`, the root entries in `package-lock.json`, `pyproject.toml`
 
 `apps/shared/release.json` declares publication approval and the exact native platform scope. Both publication scripts refuse to proceed while `publication` is `"hold"`. Building, testing and saving candidate installers do not by themselves approve publication.
 
-Only after the owner explicitly chooses the release timing may the maintainer change the value to `"approved"`, complete the final checklist and create a release tag. Do not infer a date or minimum interval, schedule automatic publication, or clear the hold merely because CI passed. Return the next development version to `"hold"`. See the [current release checklist](RELEASE_03_CHECKLIST.md).
+Only after the owner explicitly chooses the release timing may the maintainer change the value to `"approved"`, complete the final checklist and create a release tag. Do not infer a date or minimum interval, schedule automatic publication, or clear the hold merely because CI passed. Return the next development version to `"hold"`. See the [current development checklist](RELEASE_04_CHECKLIST.md).
 
 On **October 19, 2026**, the owner explicitly approved publishing **Racall 0.2 Beta for Windows x64**. Its policy is `publication: "approved"`, `platforms: ["win-x64"]`, `github_latest: true`. macOS and Linux are not included in this release's packages or acceptance claim. The required fresh native build and publication passed in [run 39257810891](https://github.com/woundscode/Racall/actions/runs/39257810891), from the exact tagged source `70fd79bd69cef06d88c03e1fa5ff88929fc1fa3e`; old native CI and the earlier local candidate were not reused as the released build.
 
@@ -23,6 +23,13 @@ into a passed test. Preserve the [evaluation results](MODEL_EVALUATION_03_2026-1
 and the release's known limitations.
 
 The matching tag `v0.3.0-beta.1` at `839d5219d9269071c07e61497061905cc3f707e9` passed its fresh six-target build and publication in [run 40223957296](https://github.com/woundscode/Racall/actions/runs/40223957296). The [published release report](VERIFICATION_03_RELEASE_2026-10-25.md) records all eleven uploaded asset checks and the exact released-installer upgrade.
+
+The 0.4 development policy declares the same six native targets, with publication
+on hold while final checks and the model-quality scope are resolved. Candidate
+branch push and hosted checks are authorized; that does not publish a release.
+Finish the exact candidate's installed 0.3 → 0.4 upgrade **before pushing its
+tag**: that separate workflow is not a prerequisite of the automatic tag
+publication job.
 
 Supported platform identifiers are `win-x64`, `win-arm64`, `mac-arm64`, `mac-x64`,
 `linux-x64` and `linux-arm64`. The nonempty, unique list is validated by

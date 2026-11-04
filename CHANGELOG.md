@@ -1,5 +1,51 @@
 # Changelog
 
+## 0.4.0-beta.1 — 0.4 Beta — unreleased
+
+Editable presentations from selected sources and notes. Release preparation is
+in progress; [0.3 Beta remains the public release](https://github.com/woundscode/Racall/releases/tag/v0.3.0-beta.1).
+
+### Added
+
+- A saved AI outline in Studio, with editable titles, bullet points and speaker
+  notes, slide reordering/deletion, and Light/Dark presentation templates.
+- Full saved evidence beside each slide, with source opening and a reminder to
+  recheck the original references after changing the text.
+- Python assembly of the reviewed outline into slides without another model
+  request. Approved text, slide IDs, citations and edit states are preserved.
+- Offline PDF/PPTX export and SVG preview. PPTX text and notes remain editable;
+  PDF/SVG embed Cyrillic fonts. No Office installation is required to export.
+- Revision-aware saves and recovery drafts that preserve the generated original
+  and reject stale updates, with English/Russian interface controls.
+
+### Fixed and hardened
+
+- Reuse one source-anchored fact ledger for titles, bullets and notes. A structured
+  audit checks quoted support but remains a fallible model judgment.
+- Recover saved outlines after interrupted bookkeeping, remove obsolete claims
+  after slide deletion and release completed job reservations atomically.
+- Allow eight MiB of streaming protocol overhead while retaining the one-MiB
+  ordinary JSON limit, answer/event bounds, deadlines and completion checks.
+- Include PPTX speaker-note templates in native packages and apply scoped
+  dependency security fixes, including Electron 44.10.2 and Next.js 16.4.5.
+
+### Verification and limits
+
+- Candidate source `629312e` passed 685 Python tests, six native x64/ARM64 targets
+  and an installed Windows 0.3 → 0.4 upgrade. Subsequent changes require the
+  corresponding fresh checks; see the [release checklist](docs/RELEASE_04_CHECKLIST.md).
+- A bounded local Ollama run completed English/Russian outline review, manual
+  editing, offline assembly, export and restart. All eight rendered PDF pages
+  were inspected. This covers one Windows/model/hardware configuration.
+- The separate frozen audit still contains three falsely accepted unsupported
+  claims. Review generated titles, bullets and notes against their sources;
+  neither model acceptance nor user approval certifies factual accuracy.
+- Microsoft PowerPoint itself was not tested. Windows/macOS packages remain
+  unsigned, and macOS packages are not notarized. Images, generated audio/video,
+  arbitrary slide imports and AI revision of individual slides are outside 0.4.
+
+See the [draft release notes](docs/releases/0.4.0-beta.1.md) for the current status.
+
 ## 0.3.0-beta.1 — 0.3 Beta — 2026-10-25
 
 Selected evidence, conversational context and reusable text materials, with native x64/ARM64 packages for Windows, macOS and Linux.

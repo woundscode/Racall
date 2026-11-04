@@ -5,13 +5,19 @@ Publication: **hold**. Public 0.3 assets remain unchanged.
 
 ## Implemented and checked locally
 
-The [current follow-up](VERIFICATION_04_GROUNDING_2026-11-03.md) is source
+The last [packaged follow-up](VERIFICATION_04_GROUNDING_2026-11-03.md) is source
 `629312ebf4f385445cd9026ea0278f42fe50957c`. The complete local suite passed
 685 tests in 48.91 seconds with one existing deprecation warning; the final
 focused transport suite passed 126 tests. Configured Ruff checks passed for
 178 Python files. The earlier
 [604-test candidate](VERIFICATION_04_CLOSURE_2026-11-03.md) remains historical
 evidence and does not identify the current packages.
+
+November 4 final preparation adds slide-local source review and updates the
+Next.js/Electron patches. The earlier package hashes remain valid only for
+`629312e`; the changed candidate needs a fresh native matrix and installed
+upgrade before tagging. [Local final checks](VERIFICATION_04_FINAL_PREPARATION_2026-11-04.md)
+passed; publication remains on hold.
 
 - [x] Python-owned typed deck, bounded output and canonical source references.
 - [x] Source-anchored fact ledger shared by titles, bullets and speaker notes;
@@ -37,11 +43,11 @@ and [grounding evaluation](GROUNDING_04_FOLLOWUP_2026-11-03.md).
 - [x] Final deterministic-assembly checks: exact approved text, slide IDs and
       citations, preserved edited review states, no provider/embedding calls, and
       offline **Create slides / Оформить слайды** followed by export.
-- [x] Current-source automated desktop and installer acceptance across all six
+- [x] Previous-candidate automated desktop and installer acceptance across all six
       Windows/macOS/Linux x64 and ARM64 targets, including packaged resources
       and export smoke checks. [Native run 41836749757](https://github.com/woundscode/Racall/actions/runs/41836749757)
       passed on source `629312e`.
-- [x] Current-source installed Windows x64 0.3 → 0.4 upgrade preserves original
+- [x] Previous-candidate installed Windows x64 0.3 → 0.4 upgrade preserves original
       notebooks/materials/revisions and knowledge after uninstall.
       [Upgrade run 41840303042](https://github.com/woundscode/Racall/actions/runs/41840303042)
       passed eight checks against the verified Windows x64 artifact from the
@@ -53,18 +59,32 @@ and [grounding evaluation](GROUNDING_04_FOLLOWUP_2026-11-03.md).
       [compatibility evidence](PRESENTATION_COMPATIBILITY_04.md).
 - [x] Frozen real-provider audit scored and independently reviewed: 34 claims,
       three false acceptances, no false rejections, two of five cases passing.
-- [ ] Post-transport-fix EN/RU end-to-end live evaluation. The latest attempt
-      stopped during Ollama CUDA initialization, before content requests.
+- [x] Post-transport-fix EN/RU end-to-end live evaluation on the current Windows
+      host: four production calls, separate outline/deck reviews, manual save,
+      offline assembly, PPTX/PDF export and restart. All eight rendered PDF pages
+      passed visual review. The Russian stream exceeded the former wire cap
+      and completed. [Runtime evidence](VERIFICATION_04_GROUNDING_2026-11-03.md)
+      records the host-specific settings and preserved earlier failures.
 - [ ] Original automatic factual-quality criterion: source-faithful initial
       outlines in both languages. Recorded writer and auditor counterexamples
       remain unresolved.
+- [x] A bounded single-claim isolation experiment evaluated the first known
+      false acceptance and stopped on its repeated semantic failure. No
+      per-claim inference change was added; the frozen audit score is unchanged.
+- [x] Final slide-local source review passes desktop checks, including complete
+      passages, source opening, edited states, restart and EN/RU themes.
+- [x] Final Next.js/Electron security patches pass the local web build and
+      presentation desktop checks;
+      dependency review records remaining findings separately.
+- [ ] Fresh six-target candidate and exact installed Windows upgrade include the
+      final source-review interface and dependency versions.
 - [x] Two affected minimatch consumers fixed using exact parent-scoped overrides;
       15 remaining moderate build-tool findings assessed without suppression or a
       zero-finding claim ([dependency assessment](DEPENDENCY_REVIEW_04_2026-11-03.md)).
 - [x] Candidate release-note draft updated with implemented features and known limits.
-- [x] Current-source ten-package [manifest](releases/0.4.0-beta.1-candidate-629312e.json)
+- [x] Previous-candidate ten-package [manifest](releases/0.4.0-beta.1-candidate-629312e.json)
       and [SHA-256 checksums](releases/0.4.0-beta.1-candidate-629312e-SHA256SUMS.txt).
-- [x] Current-source installed-upgrade evidence recorded, including exact package
+- [x] Previous-candidate installed-upgrade evidence recorded, including exact package
       identity, original-file hashes and review of all four captured screenshots
       ([verification](VERIFICATION_04_GROUNDING_2026-11-03.md)).
 - [ ] Owner publication decision, including the documented model-quality limitation.
@@ -82,8 +102,12 @@ all 23 valid claims were accepted, but only eight of eleven invalid controls wer
 rejected. The Russian receipt-versus-absence false acceptance persists even with
 structurally valid exact quotations. The separate pre-correction ledger run
 passed English review, exports and restart; Russian stopped at the SSE wire limit.
-The post-correction run stopped earlier at external CUDA initialization. Neither
-failed attempt supplies a semantic score.
+The first post-correction run stopped earlier at external CUDA initialization.
+Neither failed attempt supplies a semantic score. After increasing the Windows
+page file and using ordinary non-mmap loading, a new cold-load EN/RU workflow
+passed four production calls and separate reviews of both saved outlines/decks.
+Those two examples establish the checked workflow, not a replacement score for
+the frozen audit or a general factual-reliability claim.
 
 The [reference workflow](PRESENTATION_REFERENCE_REVIEW_04.md) retains AI outlines
 and manual correction. Python assembly preserves the approved text without a
