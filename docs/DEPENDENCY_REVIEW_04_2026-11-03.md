@@ -1,8 +1,9 @@
 # 0.4 Beta dependency review — 2026-11-03
 
 The original review below is retained as historical evidence. See the
-[compatible-update follow-up](#compatible-update-follow-up) for the current
-dependency versions and remaining release assessment.
+[compatible-update follow-up](#compatible-update-follow-up) for the patched
+dependency baseline and the [November 4 recheck](#prepublication-recheck--2026-11-04)
+for subsequent upstream releases and the remaining release assessment.
 
 The targeted Electron update to **44.9.1** in `d38bbf9` addresses the compromised
 CA advisory described below. **This is not a clean dependency audit.** npm reported
@@ -276,3 +277,80 @@ Ignored evidence: `test-results/minimatch04-fresh-audit.json`,
 `minimatch04-contract-after.txt`, `minimatch04-installed-tree.json` and
 `minimatch04-audit-after.json`. The final audit is from the clean-installed,
 version-scoped dependency tree.
+
+## Prepublication recheck — 2026-11-04
+
+A fresh full `npm audit --json` against the npm registry returned exit 1 with
+**15 moderate, 0 high and 0 critical** findings. Its vulnerable package names
+and single advisory, GHSA-g3hv-75wg-m249, match the previous audit. No category,
+severity or advisory was suppressed. The first attempt could not resolve the
+registry inside the restricted environment; a separate network-enabled retry
+completed successfully. The failed attempt is preserved, not counted as a scan.
+
+The registry count is not a complete upstream security assessment. The official
+[Next 16.4.5 release](https://github.com/vercel/next.js/releases/tag/v16.4.5),
+published on November 3 after the earlier review, announces seven moderate fixes
+that are absent from this npm audit response:
+
+- [Forwarded-response framing](https://github.com/vercel/next.js/security/advisories/GHSA-pc58-hwjq-p385).
+- [`use cache` binary argument keys](https://github.com/vercel/next.js/security/advisories/GHSA-rhh4-g77r-r9qj).
+- [Cache Components fallback shells](https://github.com/vercel/next.js/security/advisories/GHSA-vvgp-ww4w-46vf).
+- [SVG image-optimizer rejection](https://github.com/vercel/next.js/security/advisories/GHSA-7qx7-33qx-rqx2).
+- [`unstable_cache` and root parameters](https://github.com/vercel/next.js/security/advisories/GHSA-mfr8-8qww-v76h).
+- [Nested cache stream metadata](https://github.com/vercel/next.js/security/advisories/GHSA-vc7v-qv4w-wrv8).
+- [Edge route cookie response headers](https://github.com/vercel/next.js/security/advisories/GHSA-f3mh-rxg3-f5g2).
+
+Some advisory pages currently list no patched version or ranges inconsistent
+with the release announcement. The patch decision therefore uses the maintainers'
+explicit 16.4.5 release statement; it does not infer that every described path is
+reachable in Racall. Reinspection confirms static export and unoptimized images,
+with no `use cache`, `unstable_cache`, `cacheComponents`, Next response handlers or
+Edge routes in the application. The packaged Python-served UI has none of these
+live Next server paths. Development still uses Next and should receive the patch.
+
+[Electron 44.10.2](https://github.com/electron/electron/releases/tag/v44.10.2),
+also released on November 3 after the earlier review, includes Node 24.22.2,
+a Wayland parent-window crash fix and a
+[security-backport batch](https://github.com/electron/electron/pull/55515) for
+Chromium and its embedded libraries. This supports a patch update within the
+existing 44 branch rather than moving to a new Electron major. npm audit alone
+does not assess those native backports.
+
+The exact targeted updates are now installed and pinned: **Next 16.4.5** and
+**Electron 44.10.2**. Lockfile comparison changed only those two packages and
+Next's version-bound `@next/env` and eight optional SWC platform packages. No
+other dependency version, override or application version changed. `npm ls --all`
+passed. A second completed full audit after installation still reported
+**15 moderate, 0 high and 0 critical** findings; nine real packaging glob contracts
+and the release-metadata consistency check passed.
+
+The six native Electron checksum entries in its npm package match the official
+release `SHASUMS256.txt`. The downloaded Windows x64 archive independently hashed
+to `7af18e85a1537b832924ae3b0e5146602f2f4f4b0c77c74e4ae0dc251ca338f9`
+at 158,203,656 bytes. A hidden Node-mode probe of the installed official binary
+confirmed Electron **44.10.2**, Node **24.22.2**, Chromium **152.0.7977.169** and
+Undici **7.30.1**. Other architectures received checksum metadata checks, not
+local execution. The earlier 629312e application packages cannot validate this
+changed dependency tree: fresh web, desktop and six-target native package checks
+remain required before release.
+
+The registry's minimatch legacy tags remain 3.1.5 and 5.1.9, with latest 11.0.4;
+the existing scoped overrides and bounded legacy assessment remain unchanged.
+No broad dependency update was made.
+
+Ignored evidence: `test-results/dependency04-prepublish-audit-20261104.json`
+(failed DNS attempt), `dependency04-prepublish-audit-20261104-online.json`
+(completed scan), corresponding stderr files,
+`dependency04-prepublish-registry-20261104.json`,
+`dependency04-next16-versions-20261104.json` and
+`dependency04-prepublish-review-20261104.json` (timestamp, tool versions and
+pre-update package/lock SHA-256 hashes). Post-update evidence is retained in
+`dependency04-prepublish-install-20261104.txt`,
+`dependency04-prepublish-lock-delta-20261104.json`,
+`dependency04-prepublish-installed-tree-20261104.json`,
+`dependency04-prepublish-audit-after-20261104.json`,
+`dependency04-prepublish-globs-20261104.txt`,
+`dependency04-prepublish-runtime-20261104.json` and
+`dependency04-prepublish-runtime-archive-20261104.json`, alongside
+`electron-v44.10.2-SHASUMS256.txt` and
+`electron-v44.10.2-manifest-entries.json`.
