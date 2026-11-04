@@ -10,6 +10,12 @@ const en = JSON.parse(fs.readFileSync(path.join(root, 'apps/shared/locales/en.js
 const ru = JSON.parse(fs.readFileSync(path.join(root, 'apps/shared/locales/ru.json'), 'utf8'));
 fs.mkdirSync(data, { recursive: true });
 const errors = [];
+const sourceBody =
+  '🦝 ' +
+  'Archive background. '.repeat(180) +
+  'Marigold 🚀 launches on October 18. ' +
+  'The planned launch remains subject to review. '.repeat(60) +
+  'End of report.';
 let app, server;
 async function launch() {
   const env = {
@@ -131,20 +137,19 @@ async function capture(name) {
       model: 'deterministic-test',
       embedding_model: '',
     });
-    const source = await page.evaluate(async (id) => {
-      const form = new FormData();
-      form.append(
-        'file',
-        new Blob(['# Marigold\n\nMarigold launches on October 18.']),
-        'mission.md',
-      );
-      return (
-        await fetch(`/api/notebooks/${id}/sources`, {
-          method: 'POST',
-          body: form,
-        })
-      ).json();
-    }, notebook.id);
+    const source = await page.evaluate(
+      async ({ id, body }) => {
+        const form = new FormData();
+        form.append('file', new Blob(['# Marigold\n\n' + body]), 'mission.md');
+        return (
+          await fetch(`/api/notebooks/${id}/sources`, {
+            method: 'POST',
+            body: form,
+          })
+        ).json();
+      },
+      { id: notebook.id, body: sourceBody },
+    );
     await expect
       .poll(
         async () =>
@@ -189,7 +194,30 @@ async function capture(name) {
       .getByText('Marigold launches on October 18.', { exact: false })
       .waitFor();
     await page.locator('.citation-buttons button').first().click();
-    await page.locator('mark').filter({ hasText: 'October 18' }).waitFor();
+    const restored = await api(page, `/notebooks/${notebook.id}/chats/${firstThread}`);
+    const citation = restored.turns[0].answer.citations[0];
+    // These offsets come from Python ingestion, not a JavaScript fixture calculation.
+    const points = Array.from(sourceBody);
+    const before = points.slice(0, citation.location.offset_start).join('');
+    const after = points.slice(citation.location.offset_end).join('');
+    assert.ok(before.includes('🦝') && citation.quote.includes('🚀') && after.length > 0);
+    assert.equal(
+      points.slice(citation.location.offset_start, citation.location.offset_end).join(''),
+      citation.quote,
+    );
+    const highlighted = page.locator('.source-element.highlighted p');
+    await expect(highlighted.locator('mark')).toHaveText(citation.quote);
+    assert.deepEqual(
+      await highlighted.evaluate((element) => {
+        const mark = element.querySelector('mark');
+        return {
+          full: element.textContent,
+          before: mark.previousSibling?.textContent,
+          after: mark.nextSibling?.textContent,
+        };
+      }),
+      { full: sourceBody, before, after },
+    );
     assert.equal(modelCalls, 2, 'Restart must not call the model again');
     await capture('01-restored-chat.png');
     await page.getByRole('button', { name: 'Close source', exact: true }).click();
@@ -419,6 +447,7 @@ async function capture(name) {
           errors,
           scenarios: [
             'persisted answers and citation snapshots',
+            'Python code-point citation offsets preserve emoji and surrounding source text',
             'multiple chats and rename',
             'full service restart',
             'interrupted research recovery and English/Russian details without replay',

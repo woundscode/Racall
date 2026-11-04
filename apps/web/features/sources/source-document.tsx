@@ -25,12 +25,15 @@ export function SourceDocument({
             <p className="muted">{tr('source.processingNotice')}</p>
           ) : (
             document.data.document.elements.map((element, i) => {
+              // Stored Python offsets count Unicode code points, not UTF-16 units.
+              const characters = evidence?.location.element === i ? Array.from(element.text) : [];
               const highlighted =
                 !!evidence &&
                 evidence.version === shown.version &&
                 evidence.location.element === i &&
-                element.text.slice(evidence.location.offset_start, evidence.location.offset_end) ===
-                  evidence.quote;
+                characters
+                  .slice(evidence.location.offset_start, evidence.location.offset_end)
+                  .join('') === evidence.quote;
               return (
                 <div
                   key={i}
@@ -45,9 +48,9 @@ export function SourceDocument({
                   <p>
                     {highlighted && evidence ? (
                       <>
-                        {element.text.slice(0, evidence.location.offset_start)}
+                        {characters.slice(0, evidence.location.offset_start).join('')}
                         <mark>{evidence.quote}</mark>
-                        {element.text.slice(evidence.location.offset_end)}
+                        {characters.slice(evidence.location.offset_end).join('')}
                       </>
                     ) : (
                       element.text
