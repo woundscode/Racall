@@ -1,8 +1,9 @@
 # Editable presentations — 0.4 Beta preparation
 
 The presentation workflow is implemented for 0.4 Beta. The owner accepts its
-known AI limitation; publication still awaits final technical checks in the
-[acceptance checklist](RELEASE_04_CHECKLIST.md). This is not a published release.
+known AI limitation. Native packaging and the exact Windows upgrade passed the
+[acceptance checklist](RELEASE_04_CHECKLIST.md); publication timing remains a
+separate decision. This is not a published release.
 
 **Treat generated slides as drafts.** The evidence critic can accept unsupported
 claims. Review titles, bullets and speaker notes against their saved sources

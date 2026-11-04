@@ -4,7 +4,8 @@
 semantic limitation, subject to fresh technical release checks.** The automatic
 factual-quality criterion remains unmet. This acceptance supersedes the earlier
 refusal recorded below; it does not turn failed model results into passes.
-Publication remains on hold for the final native packages and installed upgrade.
+The [final native packages and installed upgrade](VERIFICATION_04_CANDIDATE_2026-11-04.md)
+passed. Publication remains on hold until the owner chooses its timing.
 
 ## Workflow decision and references
 
@@ -58,8 +59,8 @@ can also miss errors; it is an available correction step, not a guarantee.
 Completing the bounded evaluation is not the same as satisfying its factual
 quality criterion. The latest owner decision accepts the limitation separately
 from that still-open criterion. Other release checks retain their own evidence
-and status; the [release checklist](RELEASE_04_CHECKLIST.md) holds publication
-until the final candidate passes technical acceptance.
+and status; the [release checklist](RELEASE_04_CHECKLIST.md) records the completed
+technical acceptance separately from the remaining publication decision.
 
 ## Earlier owner decision — November 4 (superseded)
 

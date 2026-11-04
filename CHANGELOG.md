@@ -38,10 +38,12 @@ fresh technical release checks. Generated slides need source review before shari
 
 ### Verification and limits
 
-- The context-preservation update passed 722 Python tests, 183-file Ruff checks,
-  local web build and desktop presentation/persistence checks. Fresh six-target
-  native packages and the exact installed Windows 0.3 → 0.4 upgrade are still
-  required; see the [release checklist](docs/RELEASE_04_CHECKLIST.md).
+- Candidate `9acf6f4` passed all six native Windows/macOS/Linux x64/ARM64 targets,
+  with 722 Python tests per target, packaged application and installer checks,
+  and ten verified packages. Local web and desktop checks also passed. The exact
+  installed Windows 0.3 → 0.4 upgrade passed eight checks and preserved all 21
+  original fixture files after uninstall; see the
+  [candidate verification](docs/VERIFICATION_04_CANDIDATE_2026-11-04.md).
 - A bounded local Ollama run completed English/Russian outline review, manual
   editing, offline assembly, export and restart. All eight rendered PDF pages
   were inspected. This covers one Windows/model/hardware configuration.

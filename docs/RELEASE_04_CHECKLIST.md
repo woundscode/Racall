@@ -1,7 +1,8 @@
 # 0.4 Beta acceptance checklist
 
-Publication: **hold for fresh technical acceptance**. Public 0.3 assets remain
-unchanged. [Plan](PLAN_04.md) · [Presentation guide](PRESENTATIONS.md)
+Publication: **hold; native acceptance and installed upgrade passed**.
+Public 0.3 assets remain unchanged.
+[Plan](PLAN_04.md) · [Presentation guide](PRESENTATIONS.md)
 
 **Latest owner decision, November 4:** prepare 0.4 Beta with the documented AI
 semantic limitation and rerun the final candidate's technical gates below.
@@ -64,21 +65,30 @@ is retained as evidence, not counted as acceptance.
       source-review guidance and no factual-certification claim.
 - [x] Release-note draft, presentation guide and model-review disposition record
       that decision without changing historical failed scores.
-- [ ] Fresh Windows/macOS/Linux x64 and ARM64 matrix passes for the final source,
-      including packaged resources, desktop acceptance and export checks.
-- [ ] Verify the final ten packages and record their exact source identity,
-      manifest and SHA-256 checksums.
-- [ ] Installed Windows x64 0.3 → 0.4 acceptance uses the exact verified candidate
+- [x] Fresh Windows/macOS/Linux x64 and ARM64 matrix passes for source
+      `9acf6f4050f72fd6c627d2df816ac6b2163c9a2e`, including packaged resources,
+      desktop acceptance, exports and native installer checks.
+      [Native run 41879150536](https://github.com/woundscode/Racall/actions/runs/41879150536).
+- [x] All ten candidate packages verified with exact source identity,
+      [manifest](releases/0.4.0-beta.1-candidate-9acf6f4.json) and
+      [SHA-256 checksums](releases/0.4.0-beta.1-candidate-9acf6f4-SHA256SUMS.txt).
+- [x] Installed Windows x64 0.3 → 0.4 acceptance uses the exact verified candidate
       package and preserves notebooks, materials, revisions and historical citations,
-      including after uninstall.
+      including after uninstall. [Run 41882758598](https://github.com/woundscode/Racall/actions/runs/41882758598)
+      passed eight checks with the exact Windows x64 artifact. All 21 original
+      fixture files remained byte-identical after uninstall; four screenshots
+      passed visual review.
 - [ ] Confirm the release tag, notes and uploaded assets all identify that tested
       candidate before publishing 0.4 Beta at the owner's chosen time.
 
-Earlier native/upgrade successes do not satisfy these unchecked gates. The later
+The [current candidate verification](VERIFICATION_04_CANDIDATE_2026-11-04.md)
+records six successful native targets, package identity and the exact successful
+installed upgrade. Publication remains a separate action at the owner's chosen time.
+The earlier
 [native run 41859887109](https://github.com/woundscode/Racall/actions/runs/41859887109)
 passed Windows and Linux x64/ARM64, but neither macOS job acquired a hosted runner.
-It did not pass the six-target gate. Current context and interface changes require
-new candidate acceptance; see the
+It did not pass the six-target gate and is not substituted for the current
+successful run; see the
 [preparation record](VERIFICATION_04_FINAL_PREPARATION_2026-11-04.md).
 
 ## Open model-quality issue — accepted beta limitation

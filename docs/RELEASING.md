@@ -36,6 +36,12 @@ Finish the exact candidate's installed 0.3 → 0.4 upgrade **before pushing its
 tag**: that separate workflow is not a prerequisite of the automatic tag
 publication job.
 
+The fresh `9acf6f4` candidate subsequently passed all six native targets and its
+exact installed Windows 0.3 → 0.4 upgrade. The
+[candidate report](VERIFICATION_04_CANDIDATE_2026-11-04.md) records package hashes,
+preservation checks and known limits. Publication remains on hold; these results
+do not choose a release time or create a tag.
+
 Supported platform identifiers are `win-x64`, `win-arm64`, `mac-arm64`, `mac-x64`,
 `linux-x64` and `linux-arm64`. The nonempty, unique list is validated by
 `scripts/release_policy.py` and drives the CI matrix, required native jobs,
