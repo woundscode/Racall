@@ -63,18 +63,75 @@ Anthropic streams. Ordinary JSON retains one MiB; decoded content, lines/events,
 deadlines, cancellation and required completion markers are unchanged. Two
 realistic streams over one MiB failed before the correction and pass afterward.
 The final focused suite passes 126 tests, including exact eight-MiB acceptance,
-one-byte-over rejection and retained JSON bounds. The complete suite passed
-684 tests before the final extra boundary case was added; that case is included
-in the focused result. All 66 statements in the changed event decoder/chunk
-module are covered. The configured Ruff scope passes for 178 Python files.
+one-byte-over rejection and retained JSON bounds. The complete suite on the
+committed source passes **685 tests in 48.91 seconds**, with one existing
+Starlette/httpx deprecation warning. The preceding 684-test run also passed,
+before the final extra boundary case. All 66 statements in the changed event
+decoder/chunk module are covered. The configured Ruff scope passes for 178
+Python files. The changed chunk function has CRAP 3; the unchanged decoder's
+pre-existing CRAP 17 is recorded rather than presented as a new refactor.
 
-The post-correction live evaluation and new native candidate are pending. No
-model prompt, frozen gold label or recorded failure changed for this fix.
+The post-correction live attempt stopped during empty-prompt model loading,
+before the evaluator or any content request. Ollama returned HTTP 500 with
+`CUDA error: shared object initialization failed` at `cudaFuncGetAttributes`,
+then exited its runner with `0xc0000409`. Starting available RAM was
+9,022,394,368 bytes and free VRAM was 9,327 MiB; the continuous minimum available
+RAM was 6,911,864,832 bytes. The memory stop guard did not trigger. The cause of
+this external CUDA initialization failure is not established by these numbers.
+No further inference retry was made.
+
+Cleanup verified the temporary alias was removed, the owned server stopped,
+original API model tags and all manifest hashes were unchanged, and the normal
+Ollama port remained stopped. Evidence is in
+`test-results/live04-20261104-streamfix/`; its initial short socket preflight
+also remains recorded. This is an incomplete live check, not a semantic or
+transport pass. No model prompt, frozen gold label or recorded failure changed
+for this fix.
 
 Native run 41673421566 tested source `4fd974d`: five targets succeeded, while
 macOS ARM64 never acquired a hosted runner. Its infrastructure cancellation is
 not a passing sixth target or a code-test failure. That source is superseded by
 the transport correction; it is not used for a new installed-upgrade claim.
-The changed candidate still requires a fresh six-target native build and
-installed Windows upgrade verification. No merge, tag or public release is part
-of this follow-up.
+## Current native candidate
+
+Fresh native [run 41836749757](https://github.com/woundscode/Racall/actions/runs/41836749757)
+completed successfully on source `629312ebf4f385445cd9026ea0278f42fe50957c`.
+Windows/macOS/Linux x64 and ARM64 each passed 685 Python tests, fourteen native
+target/upgrade unit tests, nine packaging-glob contracts, eight packaged app
+suites, frozen backend/provider checks and the platform's installer checks.
+The publish job was skipped.
+
+The [candidate manifest](releases/0.4.0-beta.1-candidate-629312e.json) and
+[SHA-256 list](releases/0.4.0-beta.1-candidate-629312e-SHA256SUMS.txt) bind ten
+packages from six artifacts to this exact source. Raw job logs and independent
+audit are retained in `test-results/native04-transport-41836749757/`.
+
+Installed Windows [upgrade run 41840303042](https://github.com/woundscode/Racall/actions/runs/41840303042)
+passed all eight scenarios. It uses artifact `13328365048`, EXE size 158,845,729 bytes and SHA-256
+`5d00085d4835478989fb77a96e4cf27e0d47369787dc7b8cf4f5ce9b0a461de7`.
+Independent comparison found all 21 original fixture files unchanged in size
+and SHA-256 after uninstall, with two expected new job/material files. The
+installed executable and profile paths stayed the same. Nine synthetic provider
+calls exercised the old/new workflows; restart did not replay generation.
+All four upgrade screenshots were visually reviewed, including the old source
+version and preserved conversation after restart.
+
+Evidence artifact `13328955744` is 248,209 bytes, SHA-256
+`bd34db666923ed863648b85d1179d54d9c9c860a015252597950c4f3b1bd93a1`.
+Its downloaded archive hash was verified; raw logs, snapshots and independent
+checks are in `test-results/upgrade04-run41840303042/`. This verifies installed
+Windows x64 preservation with synthetic responses, not real-model quality or
+installed upgrades on macOS/Linux.
+
+## Remaining limits and publication
+
+The frozen semantic audit still fails, and the post-fix live EN/RU workflow was
+blocked before inference by Ollama CUDA initialization. The 15 assessed moderate
+legacy build-tool findings remain; the two affected newer consumers were fixed.
+Previous LibreOffice rendering evidence applies to unchanged rendering code;
+Microsoft PowerPoint was not tested. These limits remain in the checklist and
+release-note draft instead of being replaced by successful package results.
+
+Only the authorized development branch was pushed. A final read confirmed
+`main` at `68d81b15c365dd8f6daa20166e0aafc391a3b340` and the latest public release
+still `v0.3.0-beta.1`. No merge, tag or public release was performed.

@@ -213,5 +213,6 @@ The earlier [live failure](MODEL_EVALUATION_04_2026-11-03.md) and
 [follow-up failure](MODEL_EVALUATION_04_FOLLOWUP_2026-11-03.md) remain historical
 failures. Their recordings are preserved under [regressions](../evals/release04/regressions/).
 Neither the ledger nor the new audit protocol retroactively changes those
-results. Packaging, exports and upgrade preservation are separate checks; the
-changed source and dependency set still require a fresh native candidate matrix.
+results. Packaging, exports and upgrade preservation are separate checks. The
+[subsequent transport and native verification](VERIFICATION_04_GROUNDING_2026-11-03.md)
+records the new `629312e` candidate and keeps these semantic failures separate.

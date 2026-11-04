@@ -10,6 +10,12 @@ The updated Electron 44.10.1 candidate also passed the
 [follow-up installed upgrade](VERIFICATION_04_CLOSURE_2026-11-03.md), run
 `41666757073`, after native run `41662836801` completed on source `3c22f580`.
 
+The grounding/transport candidate `629312e` passed all six native targets in
+run `41836749757`. Its separate installed-upgrade run `41840303042` also
+completed successfully; the [current follow-up record](VERIFICATION_04_GROUNDING_2026-11-03.md)
+binds the exact installer and retained evidence. Earlier installer hashes remain
+historical and are not reused for this candidate.
+
 Repository identity is pinned to GitHub repository ID **1385819102**, currently
 `woundscode/Racall`, in `apps/shared/repository.json`. Provenance checks both the
 build repository and its head repository IDs; the hosted-runner guard checks
