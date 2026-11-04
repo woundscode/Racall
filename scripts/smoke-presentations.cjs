@@ -12,6 +12,10 @@ fs.mkdirSync(data, { recursive: true });
 const en = require('../apps/shared/locales/en.json');
 const ru = require('../apps/shared/locales/ru.json');
 const errors = [];
+const sourceQuote =
+  'Marigold launches on October 18. The pilot has three stations.\n' +
+  'The increase followed a firmware update. The cause has not been established.';
+const unrelatedQuote = 'The archive uses a separate retention policy.';
 let app;
 async function launch() {
   const env = {
@@ -85,8 +89,8 @@ async function openMaterial(page, title, locale = en, editable = true) {
   if (editable)
     await expect(page.getByLabel(locale['presentation.deckTitle'], { exact: true })).toBeEnabled();
 }
-function seed(notebook, note) {
-  const quote = 'Marigold launches on October 18. The pilot has three stations.';
+function seed(notebook, note, unrelatedNote) {
+  const quote = sourceQuote;
   const citation = {
     id: 'fixture-evidence',
     source_id: note.id,
@@ -100,10 +104,21 @@ function seed(notebook, note) {
       element: 0,
       type: 'text',
       line_start: 1,
-      line_end: 1,
+      line_end: 2,
       offset_start: 0,
       offset_end: quote.length,
     },
+  };
+  const unrelatedCitation = {
+    ...citation,
+    id: 'unrelated-evidence',
+    source_id: unrelatedNote.id,
+    note_id: unrelatedNote.id,
+    version: unrelatedNote.revision,
+    title: unrelatedNote.title,
+    quote: unrelatedQuote,
+    number: 2,
+    location: { ...citation.location, line_end: 1, offset_end: unrelatedQuote.length },
   };
   const presentation = {
     schema_version: 1,
@@ -137,7 +152,7 @@ function seed(notebook, note) {
         title: 'Next steps',
         bullets: [],
         notes: '',
-        evidence_ids: [citation.id],
+        evidence_ids: [unrelatedCitation.id],
         review_state: 'generated',
       },
     ],
@@ -154,7 +169,7 @@ function seed(notebook, note) {
     body: '# Marigold',
     answer: {
       claims: [],
-      citations: [citation],
+      citations: [citation, unrelatedCitation],
       validated: true,
       mode: 'presentation',
       message: '',
@@ -216,12 +231,43 @@ async function download(page, format) {
     const base = `/notebooks/${notebook.id}`;
     const note = await api(page, base + '/notes', 'POST', {
       title: 'Pilot source',
-      body: 'Marigold launches on October 18. The pilot has three stations.',
+      body: sourceQuote,
     });
-    const material = seed(notebook, note);
+    const unrelatedNote = await api(page, base + '/notes', 'POST', {
+      title: 'Unrelated archive source',
+      body: unrelatedQuote,
+    });
+    const material = seed(notebook, note, unrelatedNote);
     const endpoint = base + `/materials/${material.id}/presentation`;
     await page.reload();
     await openMaterial(page, material.title);
+    const firstSources = page.locator('[data-slide-id="slide-one"] .presentation-slide-evidence');
+    await expect(firstSources.locator('summary')).toHaveText('Sources for this slide');
+    await firstSources.locator('summary').click();
+    await expect(firstSources.locator('blockquote')).toHaveText(sourceQuote);
+    await expect(firstSources.locator('blockquote')).toBeVisible();
+    await expect(firstSources.getByRole('button', { name: /Pilot source/ })).toContainText(
+      en['source.lines'].replace('{start}', '1').replace('{end}', '2'),
+    );
+    await expect(firstSources).not.toContainText(unrelatedQuote);
+    await expect(firstSources.locator('.presentation-evidence-note')).toHaveCount(0);
+    await firstSources.getByRole('button', { name: /Pilot source/ }).click();
+    await expect(page.getByRole('dialog')).toContainText(sourceQuote);
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: en['common.close'], exact: true })
+      .click();
+    await expect(
+      page.getByRole('button', { name: en['presentation.save'], exact: true }),
+    ).toBeDisabled();
+    await firstSources.scrollIntoViewIfNeeded();
+    await captureWindow(app, path.join(run, 'presentation-sources-light-en.png'));
+    await firstSources.locator('summary').click();
+    const otherSources = page.locator('[data-slide-id="slide-three"] .presentation-slide-evidence');
+    await otherSources.locator('summary').click();
+    await expect(otherSources.locator('blockquote')).toHaveText(unrelatedQuote);
+    await expect(otherSources).not.toContainText(sourceQuote);
+    await otherSources.locator('summary').click();
     await expect(page.locator('.presentation-preview img')).toBeVisible();
     await expect
       .poll(() =>
@@ -230,11 +276,23 @@ async function download(page, format) {
           .evaluate((img) => img.complete && img.naturalWidth > 0),
       )
       .toBe(true);
-    await page.getByLabel(en['presentation.deckTitle'], { exact: true }).fill('Edited Marigold');
+    await page
+      .getByLabel(en['presentation.slideTitle'], { exact: true })
+      .first()
+      .fill('Temporary edit');
+    await expect(firstSources.locator('.presentation-evidence-note')).toHaveText(
+      en['presentation.editedSources'],
+    );
+    await expect(
+      page.locator('[data-slide-id="slide-two"] .presentation-evidence-note'),
+    ).toHaveCount(0);
+    await page.getByLabel(en['presentation.slideTitle'], { exact: true }).first().fill('Marigold');
+    await expect(firstSources.locator('.presentation-evidence-note')).toHaveCount(0);
     await page
       .getByLabel(en['presentation.slideTitle'], { exact: true })
       .first()
       .fill('Launch overview');
+    await page.getByLabel(en['presentation.deckTitle'], { exact: true }).fill('Edited Marigold');
     await expect
       .poll(async () => (await api(page, endpoint + '/draft'))?.presentation.title)
       .toBe('Edited Marigold');
@@ -246,6 +304,7 @@ async function download(page, format) {
     await expect(page.getByLabel(en['presentation.deckTitle'], { exact: true })).toHaveValue(
       'Edited Marigold',
     );
+    await expect(page.locator('.presentation-evidence-note')).toHaveCount(3);
     await page.getByRole('button', { name: en['presentation.save'], exact: true }).click();
     await expect
       .poll(async () => (await api(page, base + `/materials/${material.id}`)).presentation.revision)
@@ -254,6 +313,8 @@ async function download(page, format) {
     const saved = await api(page, base + `/materials/${material.id}`);
     assert.equal(saved.presentation.slides[0].review_state, 'edited');
     assert.equal(saved.answer.validated, false);
+    assert.deepEqual(saved.answer.claims, []);
+    await expect(page.locator('.presentation-evidence-note')).toHaveCount(3);
     // Leave Reports immediately, before the 500 ms draft debounce can run.
     await page
       .locator('[data-slide-id="slide-one"]')
@@ -374,6 +435,13 @@ async function download(page, format) {
     await page.getByRole('radio', { name: ru['settings.themeDark'], exact: true }).click();
     await page.getByRole('button', { name: ru['common.back'], exact: true }).click();
     await openMaterial(page, 'Edited Marigold', ru);
+    const russianSources = page.locator('[data-slide-id="slide-one"] .presentation-slide-evidence');
+    await expect(russianSources.locator('summary')).toHaveText(ru['presentation.slideSources']);
+    await expect(russianSources.locator('.presentation-evidence-note')).toHaveText(
+      ru['presentation.editedSources'],
+    );
+    await russianSources.locator('summary').click();
+    await expect(russianSources.locator('blockquote')).toHaveText(sourceQuote);
     await page
       .getByLabel(ru['presentation.deckTitle'], { exact: true })
       .fill('Презентация «Мэриголд»');
@@ -396,6 +464,8 @@ async function download(page, format) {
       .toBe(true);
     await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setSize(1000, 680));
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
+    await russianSources.scrollIntoViewIfNeeded();
+    await captureWindow(app, path.join(run, 'presentation-sources-dark-ru.png'));
     await page.locator('.presentation-editor .material-heading').scrollIntoViewIfNeeded();
     await captureWindow(app, path.join(run, 'presentation-editor-dark-ru.png'));
     await page.locator('.presentation-preview').scrollIntoViewIfNeeded();
@@ -418,6 +488,9 @@ async function download(page, format) {
             'real Python saved revisions',
             'draft survives restart',
             'edited claims invalidate verification',
+            'slide-local sources exclude unrelated citations and preserve full qualification',
+            'source button opens the saved passage without submitting edits',
+            'original-reference notice follows unsaved, recovered and saved edits',
             'reorder/delete',
             'discard restores saved revision',
             'PPTX/PDF binary download',

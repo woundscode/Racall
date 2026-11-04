@@ -197,6 +197,10 @@ export function PresentationEditor({
               index={index}
               count={editor.document.slides.length}
               disabled={locked}
+              saved={editor.saved.slides.find((item) => item.id === slide.id)}
+              titleEdited={editor.document.title !== editor.saved.title}
+              citations={material.answer.citations}
+              cite={cite}
               change={(next) =>
                 editor.edit({
                   ...editor.document,

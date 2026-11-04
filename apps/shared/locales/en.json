@@ -465,6 +465,8 @@
   "presentation.addBullet": "Add a point",
   "presentation.notes": "Speaker notes",
   "presentation.edited": "Edited by you. Review the content and source references.",
+  "presentation.slideSources": "Sources for this slide",
+  "presentation.editedSources": "These sources were selected for the original AI draft. Check that they still support your edited text.",
   "presentation.discardConfirm": "Discard your unsaved edits and reopen the saved presentation?",
   "presentation.exporting": "Exporting…",
   "presentation.exportFormat": "Export {format}",

@@ -70,6 +70,51 @@
   flex: 1;
   min-width: 0;
 }
+.presentation-slide-evidence {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  min-width: 0;
+}
+.presentation-slide-evidence summary {
+  cursor: pointer;
+  font-size: 13px;
+}
+.presentation-slide-evidence ul {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+.presentation-slide-evidence li + li {
+  margin-top: 16px;
+}
+.presentation-slide-evidence button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.presentation-slide-evidence button span {
+  min-width: 0;
+}
+.presentation-slide-evidence small {
+  display: block;
+  color: var(--text-secondary);
+}
+.presentation-slide-evidence blockquote {
+  margin: 10px 0 0;
+  padding: 0 0 0 12px;
+  border-left: 2px solid var(--line);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.presentation-evidence-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+}
 .presentation-save-actions {
   margin: 20px 0;
 }

@@ -465,6 +465,8 @@
   "presentation.addBullet": "Добавить тезис",
   "presentation.notes": "Заметки докладчика",
   "presentation.edited": "Вы изменили текст. Проверьте содержание и ссылки на источники.",
+  "presentation.slideSources": "Источники этого слайда",
+  "presentation.editedSources": "Эти источники были выбраны для исходного AI-плана. Проверьте, подтверждают ли они изменённый текст.",
   "presentation.discardConfirm": "Удалить несохранённые правки и открыть сохранённую презентацию?",
   "presentation.exporting": "Экспорт…",
   "presentation.exportFormat": "Экспорт {format}",

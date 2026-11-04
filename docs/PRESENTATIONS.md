@@ -10,6 +10,13 @@ outline. Generation uses the configured text connection. Once the outline is
 ready, the generation worker is free for other work; the outline stays saved
 while you review it or close the app.
 
+Open **Sources for this slide** (**Источники этого слайда**) beneath a slide to
+read its full saved passages and their locations. Select a source title to open
+the retained source or note revision. These references belong to the original
+AI outline: after editing, check that they still support your wording. The
+notice appears for unsaved changes as well as saved or recovered edits; source
+quotations are not shortened to a model-selected highlight.
+
 Edit slide titles, bullet points and speaker notes, reorder/delete slides, and
 choose Light or Dark as the presentation template. This template is independent
 of the application theme. Save changes before selecting **Create slides**

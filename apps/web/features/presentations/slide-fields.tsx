@@ -1,12 +1,17 @@
 'use client';
-import type { PresentationSlide } from '../../lib/api';
+import type { Evidence, PresentationSlide } from '../../lib/api';
 import { useI18n } from '../../lib/i18n';
+import { SlideEvidence } from './slide-evidence';
 
 export function SlideFields({
   slide,
   index,
   count,
   disabled,
+  saved,
+  titleEdited,
+  citations,
+  cite,
   change,
   move,
   remove,
@@ -15,11 +20,22 @@ export function SlideFields({
   index: number;
   count: number;
   disabled: boolean;
+  saved: PresentationSlide | undefined;
+  titleEdited: boolean;
+  citations: Evidence[];
+  cite: (evidence: Evidence) => void;
   change: (slide: PresentationSlide) => void;
   move: (direction: -1 | 1) => void;
   remove: () => void;
 }) {
   const { tr } = useI18n();
+  const edited =
+    slide.review_state === 'edited' ||
+    titleEdited ||
+    !saved ||
+    slide.title !== saved.title ||
+    slide.notes !== saved.notes ||
+    JSON.stringify(slide.bullets) !== JSON.stringify(saved.bullets);
   return (
     <fieldset className="presentation-slide" disabled={disabled} data-slide-id={slide.id}>
       <legend>{tr('presentation.slide', { number: index + 1 })}</legend>
@@ -103,7 +119,12 @@ export function SlideFields({
           onChange={(e) => change({ ...slide, notes: e.target.value })}
         />
       </label>
-      {slide.review_state === 'edited' && <p className="muted">{tr('presentation.edited')}</p>}
+      <SlideEvidence
+        evidenceIds={slide.evidence_ids}
+        citations={citations}
+        edited={edited}
+        cite={cite}
+      />
     </fieldset>
   );
 }

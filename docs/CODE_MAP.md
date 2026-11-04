@@ -16,7 +16,10 @@ For 0.4 presentations, Python [schemas](../apps/api/on_knowledge/features/presen
 [revision/draft storage](../apps/api/on_knowledge/features/presentations/repository.py),
 [shared layout](../apps/api/on_knowledge/features/presentations/layout.py) and
 [exporters](../apps/api/on_knowledge/features/presentations/exports.py) own behavior.
-The [editor](../apps/web/features/presentations/presentation-editor.tsx) and its
+The [slide evidence view](../apps/web/features/presentations/slide-evidence.tsx)
+shows full saved passages beside the edited slide and opens the existing source
+viewer; it does not perform a factual audit. The
+[editor](../apps/web/features/presentations/presentation-editor.tsx) and its
 [state hook](../apps/web/features/presentations/use-presentation-editor.ts) call
 the [API](../apps/api/on_knowledge/features/presentations/router.py).
 [Approved outline handling](../apps/api/on_knowledge/features/jobs/presentations.py)
