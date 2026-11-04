@@ -1,7 +1,12 @@
-# Editable presentations — 0.4 development
+# Editable presentations — 0.4 Beta preparation
 
-The presentation workflow is implemented locally for 0.4 Beta. See the
-[acceptance checklist](RELEASE_04_CHECKLIST.md); this is not a published release.
+The presentation workflow is implemented for 0.4 Beta. The owner accepts its
+known AI limitation; publication still awaits final technical checks in the
+[acceptance checklist](RELEASE_04_CHECKLIST.md). This is not a published release.
+
+**Treat generated slides as drafts.** The evidence critic can accept unsupported
+claims. Review titles, bullets and speaker notes against their saved sources
+before sharing. More memory or a stronger model is not a factual guarantee.
 
 ## Create and review
 
@@ -51,30 +56,19 @@ always have `validated=false`. Creating slides does not promote that status.
 Manually edited content stays marked as edited. Review facts and citations before
 sharing a deck, including the speaker notes.
 
-The [first live 0.4 Ollama check](MODEL_EVALUATION_04_2026-11-03.md) found a
-speaker-note inference that the critic incorrectly accepted in the earlier
-two-generation workflow. Python assembly now preserves the approved content
-without a second model rewrite. Initial outline generation can still make factual
-errors, and approval does not verify them. Review speaker notes as well as visible
-bullets; they are included in PPTX and PDF exports.
+One source-anchored fact ledger supplies titles, bullets and speaker notes. The
+structured evidence audit rejects malformed support or negative verdicts without
+automatic repair, but remains a model judgment. In the preserved
+[34-claim evaluation](GROUNDING_04_FOLLOWUP_2026-11-03.md), all 23 valid claims
+were accepted and three of eleven invalid controls were also accepted. The
+[model-review record](MODEL_REVIEW_04_DISPOSITION_2026-11-03.md) retains those
+failures and the owner's decision to accept this limitation for the beta.
 
-The [follow-up check](MODEL_EVALUATION_04_FOLLOWUP_2026-11-03.md) completed both
-language requests without a RAM stop. English passed independent review, while
-the Russian outline incorrectly changed "results have not been received" into
-"results are absent". That model-quality gate remains failed. A separate,
-explicitly corrected copy passed offline assembly, export and restart checks.
-Generated evidence markers such as `[E1, E2]` are now formatted using the saved
-source numbers before outline review; user edits and original quotations are
-not rewritten.
-
-The [grounding protocol follow-up](GROUNDING_04_FOLLOWUP_2026-11-03.md) introduces
-one source-anchored fact ledger reused by titles, bullets and speaker notes, plus
-a structured evidence audit. It removes the second paraphrase of a fact in notes
-and rejects drafts with malformed support or negative audit verdicts without
-automatic repair. In a bounded real-model evaluation the auditor nevertheless
-falsely accepted three of eleven invalid controls; all 23 valid claims were
-accepted. These failures remain recorded and generated content remains
-unvalidated. The structured protocol checks provenance, not truth.
+Python assembly prevents a second model rewrite; it does not verify the initial
+outline. Review speaker notes as well as visible bullets, because both appear in
+exports. Generated evidence markers such as `[E1, E2]` use the saved source
+numbers; user edits and original quotations are not rewritten. The workflow
+uses your configured model and does not require an additional verifier download.
 
 The preview shows the saved revision. Save current edits before export. Decks
 remain in Reports independently of the originating chat.
@@ -109,5 +103,5 @@ preview; it does not build presentations or execute model-generated code.
 
 Checks: `npm run test:presentations` for isolated desktop editing, restart and
 exports; `tests/test_presentation_*.py` for schema, storage, generation, API and
-file contracts. Real-model quality and six-platform packaging are separate
-acceptance gates.
+file contracts. Native packaging has separate release gates; the unresolved
+real-model factual-quality criterion remains a documented beta limitation.

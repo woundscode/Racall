@@ -24,8 +24,13 @@ and the release's known limitations.
 
 The matching tag `v0.3.0-beta.1` at `839d5219d9269071c07e61497061905cc3f707e9` passed its fresh six-target build and publication in [run 40223957296](https://github.com/woundscode/Racall/actions/runs/40223957296). The [published release report](VERIFICATION_03_RELEASE_2026-10-25.md) records all eleven uploaded asset checks and the exact released-installer upgrade.
 
-The 0.4 development policy declares the same six native targets, with publication
-on hold while final checks and the model-quality scope are resolved. Candidate
+The 0.4 development policy declares the same six native targets. On November 4,
+after initially retaining the automatic factual-quality gate, the owner accepted
+preparing an **AI-draft beta with disclosed semantic limitations** and requested
+fresh builds for every platform plus the installed upgrade check. The recorded
+model errors remain unresolved; accepting this beta scope does not convert that
+evaluation into a pass. No additional model or local dependency downloads were
+authorized. Publication remains on hold during technical acceptance. Candidate
 branch push and hosted checks are authorized; that does not publish a release.
 Finish the exact candidate's installed 0.3 → 0.4 upgrade **before pushing its
 tag**: that separate workflow is not a prerequisite of the automatic tag

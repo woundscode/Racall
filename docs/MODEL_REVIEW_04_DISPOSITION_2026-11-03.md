@@ -1,8 +1,10 @@
 # 0.4 model-review disposition — November 3, 2026
 
-**Publication remains on hold. The automatic factual-quality criterion remains
-unmet; this record does not close it or record owner acceptance.** Completed
-evaluation and workflow checks are distinguished from model-quality results below.
+**Latest disposition, November 4: the owner accepts 0.4 Beta with the known AI
+semantic limitation, subject to fresh technical release checks.** The automatic
+factual-quality criterion remains unmet. This acceptance supersedes the earlier
+refusal recorded below; it does not turn failed model results into passes.
+Publication remains on hold for the final native packages and installed upgrade.
 
 ## Workflow decision and references
 
@@ -47,28 +49,54 @@ post-fix live quality pass is claimed.
 
 ## Release interpretation
 
-0.4 may be proposed as an **AI-draft beta with explicit known limitations**:
+0.4 is accepted in scope as an **AI-draft beta with explicit known limitations**:
 generated facts, negation, uncertainty and speaker notes require review before
 sharing. One local model and bounded synthetic EN/RU cases do not establish
 performance across models, languages, hardware or real documents. Manual review
 can also miss errors; it is an available correction step, not a guarantee.
 
 Completing the bounded evaluation is not the same as satisfying its factual
-quality criterion. Any decision to release with this limitation must be explicit
-and separate from that still-open criterion. This document supplies neither that
-decision nor owner publication approval. Other release checks retain their own
-evidence and status; publication remains on hold.
+quality criterion. The latest owner decision accepts the limitation separately
+from that still-open criterion. Other release checks retain their own evidence
+and status; the [release checklist](RELEASE_04_CHECKLIST.md) holds publication
+until the final candidate passes technical acceptance.
 
-## Owner decision — November 4
+## Earlier owner decision — November 4 (superseded)
 
 After reviewing the successful EN/RU application workflow and the repeated
 single-claim audit failure, the owner chose: **keep 0.4 in development until
 automatic factual checking becomes more reliable**. The offered release with
-AI drafts and manual source review was declined. The earlier proposal above is
-historical, not an accepted release scope. No tag, public release or quality-gate
-waiver follows from the completed workflow or packaging tests.
+AI drafts and manual source review was declined. At that time, the proposed
+AI-draft scope was not accepted. No tag, public release or quality-gate waiver
+followed from the completed workflow or packaging tests.
 
-The slide-local source interface remains a useful editing feature, but it does
-not satisfy this retained automatic-quality requirement. Further work must test
-a different verification mechanism against the preserved failures and fresh
-controls; repeating prompts or relabelling the failing benchmark is not a fix.
+At that stage, the slide-local source interface did not satisfy the retained
+automatic-quality requirement. Repeating prompts or relabelling the failing
+benchmark was not accepted as a fix. This remains the history of that decision;
+the subsequent decision below changes the permitted beta scope.
+
+## Latest owner decision — November 4
+
+The owner subsequently authorized preparing **0.4 Beta with the known AI
+semantic limitation** and rerunning the technical gates. This supersedes the
+earlier refusal to ship an AI-draft beta. It does not require another model or an
+independent verifier: the proposed NLI experiment remains shelved, and the owner
+has not authorized new downloads.
+
+This work prepares a release candidate. The current action does not publish,
+tag or merge it; publication timing remains a separate owner decision.
+
+The [frozen audit](GROUNDING_04_FOLLOWUP_2026-11-03.md) remains unchanged: 34 claims,
+23 valid and 11 invalid, three false acceptances, no false rejections, and two of
+five cases passing. A later isolated single-claim request repeated its first
+known failure with complete evidence. The
+[context-preservation fixes](VERIFICATION_04_CONTEXT_2026-11-04.md) address real
+application truncation defects; they do not establish a fix for these semantic
+mistakes or a new live-model quality pass.
+
+Additional memory helped model loading on the tested host. It does not correct
+the demonstrated full-context reasoning failures. A stronger model may improve
+quality, but neither hardware nor a model change guarantees factual correctness.
+Generated content remains unvalidated, and the interface and release notes must
+retain clear source-review guidance. Historical failed artifacts and labels stay
+intact while factual reliability remains an open improvement area.

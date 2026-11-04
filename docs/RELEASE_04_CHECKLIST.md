@@ -1,142 +1,124 @@
 # 0.4 Beta acceptance checklist
 
-Publication: **hold**. Public 0.3 assets remain unchanged.
-[Plan](PLAN_04.md) · [Presentation guide](PRESENTATIONS.md)
+Publication: **hold for fresh technical acceptance**. Public 0.3 assets remain
+unchanged. [Plan](PLAN_04.md) · [Presentation guide](PRESENTATIONS.md)
 
-**Owner decision, November 4:** keep 0.4 in development until automatic factual
-checking becomes more reliable. The owner declined publication as an AI-draft
-beta relying on manual review. Passing builds and the source-review interface
-do not waive the unresolved semantic-quality gate.
+**Latest owner decision, November 4:** prepare 0.4 Beta with the documented AI
+semantic limitation and rerun the final candidate's technical gates below.
+This supersedes the earlier decision to keep development open until automatic
+factual checking improves. It changes the accepted beta scope, not the failed
+model-quality result. Both decisions remain in the
+[model-review record](MODEL_REVIEW_04_DISPOSITION_2026-11-03.md).
+Publication timing remains a separate owner decision; passing these checks does
+not itself publish or tag the candidate.
 
 ## Implemented and checked locally
 
-The last [packaged follow-up](VERIFICATION_04_GROUNDING_2026-11-03.md) is source
-`629312ebf4f385445cd9026ea0278f42fe50957c`. The complete local suite passed
-685 tests in 48.91 seconds with one existing deprecation warning; the final
-focused transport suite passed 126 tests. Configured Ruff checks passed for
-178 Python files. The earlier
-[604-test candidate](VERIFICATION_04_CLOSURE_2026-11-03.md) remains historical
-evidence and does not identify the current packages.
+The [context-preservation verification](VERIFICATION_04_CONTEXT_2026-11-04.md)
+records **722 passing Python tests**, one existing deprecation warning, and
+Ruff lint/format checks for **183 Python files**. TypeScript, EN/RU parity, web
+build, presentation desktop checks and persistence checks also passed for that
+change. Synthetic provider checks do not establish real-model factual quality.
 
-November 4 final preparation adds slide-local source review and updates the
-Next.js/Electron patches. The earlier package hashes remain valid only for
-`629312e`; the changed candidate needs a fresh native matrix and installed
-upgrade before tagging. [Local final checks](VERIFICATION_04_FINAL_PREPARATION_2026-11-04.md)
-passed; publication remains on hold.
+The final AI-draft notice also passes TypeScript, 488-key EN/RU parity, Prettier
+and the production web build. Its local presentation desktop run passes 19 checks
+with zero model calls and two synthetic job submissions; the notice was visually
+reviewed in English/Light and Russian/Dark. Evidence:
+`test-results/presentations-desktop-1793812642386/result.json`.
 
-The subsequent [context-preservation repair](VERIFICATION_04_CONTEXT_2026-11-04.md)
-passes 722 Python tests and 183-file Ruff checks using existing dependencies.
-It removes budget/note clipping, supplies canonical whole source blocks to
-presentation outlines, reports unavailable/oversized context before inference
-and fixes Unicode citation highlighting. It does not close the frozen semantic
-audit. This production change also requires fresh packages before release.
+- [x] Python-owned outline generation, typed deck, bounded output and canonical citations.
+- [x] One source-anchored fact ledger for titles, bullets and notes, with a
+      fallible evidence audit and no automatic repair.
+- [x] Saved outline review frees the worker; separate Python assembly preserves
+      exact approved text, slide IDs, order, citations and review states without
+      another provider or embedding call.
+- [x] Pinned source context and outline revision, idempotency and restart without replay.
+- [x] Revision conflicts, preserved originals, recovery drafts and stale-save rejection.
+- [x] Slide editing, reorder/delete, Light/Dark templates and English/Russian controls.
+- [x] Complete saved source passages beside slides, source opening and original-reference
+      notices for unsaved, saved and recovered edits.
+- [x] PPTX/PDF exports, SVG preview, editable PPTX text/notes and embedded PDF/SVG Cyrillic fonts.
+- [x] Whole source/note blocks, valid Markdown fence boundaries and partial-context
+      warnings; unavailable or wholly oversized context fails before inference.
+- [x] Exact source quotation highlighting with Python Unicode offsets, including emoji.
+- [x] Interrupted outline recovery, deleted-slide claim cleanup and atomic job release.
+- [x] Separate eight-MiB SSE wire budget with ordinary JSON, answer/event bounds,
+      cancellation, deadlines and completion checks preserved.
+- [x] Electron 44.10.2 and Next.js 16.4.5 pass local build/desktop checks. Two
+      affected minimatch consumers use exact scoped overrides; the
+      [dependency assessment](DEPENDENCY_REVIEW_04_2026-11-03.md) retains 15
+      moderate build-tool findings rather than claiming zero findings.
 
-- [x] Python-owned typed deck, bounded output and canonical source references.
-- [x] Source-anchored fact ledger shared by titles, bullets and speaker notes;
-      structured, fallible evidence audit with no automatic repair.
-- [x] Saved outline review releases the worker before a separate explicit job.
-- [x] Pinned source context and outline revision; idempotency and restart without replay.
-- [x] Revision conflicts, preserved original, portable drafts and stale-save rejection.
-- [x] Slide title/bullet/notes editing, reorder/delete and light/dark templates.
-- [x] English/Russian interface strings and TypeScript validation.
-- [x] Real PPTX/PDF export tests, embedded PDF/SVG Cyrillic fonts and editable PPTX text.
-- [x] English/Russian sample PDFs rendered and visually inspected.
-- [x] All original Python tests pass alongside new presentation tests.
-- [x] Interrupted outline recovery, deleted-slide claim cleanup and atomic
-      terminal-job/operation-release regressions.
-- [x] Separate eight-MiB SSE wire budget; ordinary JSON stays at one MiB,
-      with answer/event bounds, deadlines and completion checks preserved.
+## Publication gates for the final candidate
 
-Measured results and limitations: [current verification](VERIFICATION_04_GROUNDING_2026-11-03.md)
-and [grounding evaluation](GROUNDING_04_FOLLOWUP_2026-11-03.md).
+- [x] Owner accepts the known semantic limitation for this beta, with honest
+      source-review guidance and no factual-certification claim.
+- [x] Release-note draft, presentation guide and model-review disposition record
+      that decision without changing historical failed scores.
+- [ ] Fresh Windows/macOS/Linux x64 and ARM64 matrix passes for the final source,
+      including packaged resources, desktop acceptance and export checks.
+- [ ] Verify the final ten packages and record their exact source identity,
+      manifest and SHA-256 checksums.
+- [ ] Installed Windows x64 0.3 → 0.4 acceptance uses the exact verified candidate
+      package and preserves notebooks, materials, revisions and historical citations,
+      including after uninstall.
+- [ ] Confirm the release tag, notes and uploaded assets all identify that tested
+      candidate before publishing 0.4 Beta at the owner's chosen time.
 
-## Release gates
+Earlier native/upgrade successes do not satisfy these unchecked gates. The later
+[native run 41859887109](https://github.com/woundscode/Racall/actions/runs/41859887109)
+passed Windows and Linux x64/ARM64, but neither macOS job acquired a hosted runner.
+It did not pass the six-target gate. Current context and interface changes require
+new candidate acceptance; see the
+[preparation record](VERIFICATION_04_FINAL_PREPARATION_2026-11-04.md).
 
-- [x] Final deterministic-assembly checks: exact approved text, slide IDs and
-      citations, preserved edited review states, no provider/embedding calls, and
-      offline **Create slides / Оформить слайды** followed by export.
-- [x] Previous-candidate automated desktop and installer acceptance across all six
-      Windows/macOS/Linux x64 and ARM64 targets, including packaged resources
-      and export smoke checks. [Native run 41836749757](https://github.com/woundscode/Racall/actions/runs/41836749757)
-      passed on source `629312e`.
-- [x] Previous-candidate installed Windows x64 0.3 → 0.4 upgrade preserves original
-      notebooks/materials/revisions and knowledge after uninstall.
-      [Upgrade run 41840303042](https://github.com/woundscode/Racall/actions/runs/41840303042)
-      passed eight checks against the verified Windows x64 artifact from the
-      successful native matrix; all 21 original fixture files remained
-      byte-for-byte unchanged after uninstall.
-- [x] Actual LibreOffice rendering and editable round trip checked; all 66 rendered
-      pages from the earlier `3c22f58` candidate were visually reviewed. Rendering
-      code is unchanged; font limits and untested PowerPoint are recorded in
-      [compatibility evidence](PRESENTATION_COMPATIBILITY_04.md).
-- [x] Frozen real-provider audit scored and independently reviewed: 34 claims,
-      three false acceptances, no false rejections, two of five cases passing.
-- [x] Post-transport-fix EN/RU end-to-end live evaluation on the current Windows
-      host: four production calls, separate outline/deck reviews, manual save,
-      offline assembly, PPTX/PDF export and restart. All eight rendered PDF pages
-      passed visual review. The Russian stream exceeded the former wire cap
-      and completed. [Runtime evidence](VERIFICATION_04_GROUNDING_2026-11-03.md)
-      records the host-specific settings and preserved earlier failures.
+## Open model-quality issue — accepted beta limitation
+
 - [ ] Original automatic factual-quality criterion: source-faithful initial
-      outlines in both languages. Recorded writer and auditor counterexamples
-      remain unresolved.
-- [x] A bounded single-claim isolation experiment evaluated the first known
-      false acceptance and stopped on its repeated semantic failure. No
-      per-claim inference change was added; the frozen audit score is unchanged.
-- [x] Final slide-local source review passes desktop checks, including complete
-      passages, source opening, edited states, restart and EN/RU themes.
-- [x] Final Next.js/Electron security patches pass the local web build and
-      presentation desktop checks;
-      dependency review records remaining findings separately.
-- [ ] Fresh six-target candidate and exact installed Windows upgrade include the
-      final source-review interface and dependency versions.
-- [x] Two affected minimatch consumers fixed using exact parent-scoped overrides;
-      15 remaining moderate build-tool findings assessed without suppression or a
-      zero-finding claim ([dependency assessment](DEPENDENCY_REVIEW_04_2026-11-03.md)).
-- [x] Candidate release-note draft updated with implemented features and known limits.
-- [x] Previous-candidate ten-package [manifest](releases/0.4.0-beta.1-candidate-629312e.json)
-      and [SHA-256 checksums](releases/0.4.0-beta.1-candidate-629312e-SHA256SUMS.txt).
-- [x] Previous-candidate installed-upgrade evidence recorded, including exact package
-      identity, original-file hashes and review of all four captured screenshots
-      ([verification](VERIFICATION_04_GROUNDING_2026-11-03.md)).
-- [x] Owner scope decision: retain development status until automatic factual
-      checking improves; do not publish with manual review as the substitute.
-- [ ] Later publication authorization after the retained quality requirement is met.
+      outlines and reliable rejection of unsupported claims in both languages.
+      This remains unresolved; the latest owner decision allows the beta to ship
+      with the limitation rather than marking this criterion passed.
 
-## Model-quality limits
+The [frozen audit](GROUNDING_04_FOLLOWUP_2026-11-03.md) evaluated 34 claims:
+all 23 valid claims were accepted, but three of eleven invalid controls were also
+accepted. There were no false rejections and two of five cases passed. The
+single-claim isolation experiment repeated its first semantic failure with the
+full short passage. Neither splitting the audit nor the context-preservation
+repair establishes a fix for those errors.
 
-The installed-upgrade test used nine synthetic provider calls and the same
-installation/profile. Its 23 final knowledge files comprise 21 unchanged originals
-and two expected additions. These preservation and interface checks do not
-establish real-model quality.
+A separate [bounded EN/RU workflow](VERIFICATION_04_GROUNDING_2026-11-03.md)
+completed four production calls, outline/deck reviews, manual save, offline
+assembly, export and restart; eight rendered PDF pages passed visual review.
+That establishes the tested workflow on one Windows/model configuration, not a
+replacement score for the frozen audit. Increased Windows commit headroom helped
+the model load, but memory alone does not correct full-context semantic mistakes.
+A stronger model may improve quality; no model or hardware choice guarantees it.
 
-Automated fixtures establish request, storage and file-format behavior, not model
-factual reliability. In the [frozen audit](GROUNDING_04_FOLLOWUP_2026-11-03.md),
-all 23 valid claims were accepted, but only eight of eleven invalid controls were
-rejected. The Russian receipt-versus-absence false acceptance persists even with
-structurally valid exact quotations. The separate pre-correction ledger run
-passed English review, exports and restart; Russian stopped at the SSE wire limit.
-The first post-correction run stopped earlier at external CUDA initialization.
-Neither failed attempt supplies a semantic score. After increasing the Windows
-page file and using ordinary non-mmap loading, a new cold-load EN/RU workflow
-passed four production calls and separate reviews of both saved outlines/decks.
-Those two examples establish the checked workflow, not a replacement score for
-the frozen audit or a general factual-reliability claim.
+Generated presentation content stays `validated=false`. User approval and Python
+assembly do not certify an initial claim. Review titles, bullets and speaker
+notes against their sources before sharing; manual review can also miss errors.
+The optional independent-verifier experiment remains shelved after the owner
+declined new downloads. It is not a required dependency or a proven fix.
 
-The [reference workflow](PRESENTATION_REFERENCE_REVIEW_04.md) retains AI outlines
-and manual correction. Python assembly preserves the approved text without a
-second writer or critic. This removes a rewrite opportunity; it cannot establish
-that an initial claim is true. Generated content stays `validated=false`, and
-user approval is not factual certification. Historical failures and their
-[disposition](MODEL_REVIEW_04_DISPOSITION_2026-11-03.md) remain recorded. No
-WSL/Docker load or model download was used for this follow-up.
+## Historical package and compatibility evidence
 
-## Historical package evidence
+- Source `629312e` passed 685 Python tests and the
+  [six-target native run 41836749757](https://github.com/woundscode/Racall/actions/runs/41836749757).
+  Its ten packages have a [manifest](releases/0.4.0-beta.1-candidate-629312e.json)
+  and [SHA-256 checksums](releases/0.4.0-beta.1-candidate-629312e-SHA256SUMS.txt).
+- Its [installed upgrade run 41840303042](https://github.com/woundscode/Racall/actions/runs/41840303042)
+  passed eight checks and preserved all 21 original fixture files byte-for-byte
+  after uninstall. Nine synthetic provider calls and two expected new files
+  exercised preservation and interface behavior, not model factual reliability.
+  [Recorded evidence](VERIFICATION_04_GROUNDING_2026-11-03.md) includes package
+  identity, original hashes and four reviewed screenshots.
+- Source `3c22f58` passed 604 tests, six native targets, package verification and
+  an installed upgrade ([record](VERIFICATION_04_CLOSURE_2026-11-03.md)). The later
+  `4fd974d` run passed five targets; macOS ARM64 did not acquire a hosted runner.
+- [LibreOffice compatibility checks](PRESENTATION_COMPATIBILITY_04.md) covered six
+  EN/RU cases and an editable round trip; all 66 rendered pages from `3c22f58`
+  were visually reviewed. Microsoft PowerPoint itself remains untested, and
+  PPTX font substitution remains possible.
 
-Source `3c22f58` passed 604 tests on six native targets, ten-package verification
-and an installed Windows upgrade preserving all 21 original fixture files
-([record](VERIFICATION_04_CLOSURE_2026-11-03.md)). Source `4fd974d` subsequently
-passed five native targets; macOS ARM64 never acquired a hosted runner. Its
-LibreOffice check succeeded. Those results do not replace the current source's
-native and installed-upgrade gates, and no historical package hash is reused as
-the new candidate's identity.
+These results remain valid historical evidence. No old package hash or successful
+workflow is reused as the final candidate's identity or semantic-quality score.

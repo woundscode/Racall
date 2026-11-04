@@ -89,6 +89,19 @@ async function openMaterial(page, title, locale = en, editable = true) {
   if (editable)
     await expect(page.getByLabel(locale['presentation.deckTitle'], { exact: true })).toBeEnabled();
 }
+async function expectDraftNotice(page, locale, stage) {
+  const key = stage === 'outline' ? 'presentation.outlineHint' : 'presentation.editHint';
+  const notice = page
+    .locator('.presentation-editor > .presentation-notice')
+    .filter({ hasText: locale[key] });
+  await expect(notice).toBeVisible();
+  // The visible limitation must not add a separate acknowledgement gate.
+  const action =
+    stage === 'outline'
+      ? locale['presentation.generateSlides']
+      : locale['presentation.exportFormat'].replace('{format}', 'PPTX');
+  await expect(page.getByRole('button', { name: action, exact: true })).toBeEnabled();
+}
 function seed(notebook, note, unrelatedNote) {
   const quote = sourceQuote;
   const citation = {
@@ -241,6 +254,7 @@ async function download(page, format) {
     const endpoint = base + `/materials/${material.id}/presentation`;
     await page.reload();
     await openMaterial(page, material.title);
+    await expectDraftNotice(page, en, 'slides');
     const firstSources = page.locator('[data-slide-id="slide-one"] .presentation-slide-evidence');
     await expect(firstSources.locator('summary')).toHaveText('Sources for this slide');
     await firstSources.locator('summary').click();
@@ -391,6 +405,7 @@ async function download(page, format) {
       return route.fulfill({ json: fixtureJobs });
     });
     await openMaterial(page, 'Outline fixture');
+    await expectDraftNotice(page, en, 'outline');
     const generate = page.getByRole('button', {
       name: en['presentation.generateSlides'],
       exact: true,
@@ -435,6 +450,7 @@ async function download(page, format) {
     await page.getByRole('radio', { name: ru['settings.themeDark'], exact: true }).click();
     await page.getByRole('button', { name: ru['common.back'], exact: true }).click();
     await openMaterial(page, 'Edited Marigold', ru);
+    await expectDraftNotice(page, ru, 'slides');
     const russianSources = page.locator('[data-slide-id="slide-one"] .presentation-slide-evidence');
     await expect(russianSources.locator('summary')).toHaveText(ru['presentation.slideSources']);
     await expect(russianSources.locator('.presentation-evidence-note')).toHaveText(
@@ -470,6 +486,8 @@ async function download(page, format) {
     await captureWindow(app, path.join(run, 'presentation-editor-dark-ru.png'));
     await page.locator('.presentation-preview').scrollIntoViewIfNeeded();
     await captureWindow(app, path.join(run, 'presentation-dark-ru.png'));
+    await openMaterial(page, 'Revised outline', ru);
+    await expectDraftNotice(page, ru, 'outline');
     assert.deepEqual(errors, []);
     assert.equal(
       (await api(page, base + '/jobs')).length,
@@ -488,6 +506,7 @@ async function download(page, format) {
             'real Python saved revisions',
             'draft survives restart',
             'edited claims invalidate verification',
+            'English/Russian AI draft notice stays visible without blocking saved export or assembly',
             'slide-local sources exclude unrelated citations and preserve full qualification',
             'source button opens the saved passage without submitting edits',
             'original-reference notice follows unsaved, recovered and saved edits',

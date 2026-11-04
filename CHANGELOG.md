@@ -4,6 +4,8 @@
 
 Editable presentations from selected sources and notes. Release preparation is
 in progress; [0.3 Beta remains the public release](https://github.com/woundscode/Racall/releases/tag/v0.3.0-beta.1).
+The owner approved this beta with the known AI semantic limitation, subject to
+fresh technical release checks. Generated slides need source review before sharing.
 
 ### Added
 
@@ -36,15 +38,19 @@ in progress; [0.3 Beta remains the public release](https://github.com/woundscode
 
 ### Verification and limits
 
-- Candidate source `629312e` passed 685 Python tests, six native x64/ARM64 targets
-  and an installed Windows 0.3 → 0.4 upgrade. Subsequent changes require the
-  corresponding fresh checks; see the [release checklist](docs/RELEASE_04_CHECKLIST.md).
+- The context-preservation update passed 722 Python tests, 183-file Ruff checks,
+  local web build and desktop presentation/persistence checks. Fresh six-target
+  native packages and the exact installed Windows 0.3 → 0.4 upgrade are still
+  required; see the [release checklist](docs/RELEASE_04_CHECKLIST.md).
 - A bounded local Ollama run completed English/Russian outline review, manual
   editing, offline assembly, export and restart. All eight rendered PDF pages
   were inspected. This covers one Windows/model/hardware configuration.
 - The separate frozen audit still contains three falsely accepted unsupported
   claims. Review generated titles, bullets and notes against their sources;
   neither model acceptance nor user approval certifies factual accuracy.
+- More memory helped the tested model load but does not fix full-context semantic
+  mistakes. A stronger model may help without guaranteeing correctness; no
+  additional verifier or model download is required by this update.
 - Microsoft PowerPoint itself was not tested. Windows/macOS packages remain
   unsigned, and macOS packages are not notarized. Images, generated audio/video,
   arbitrary slide imports and AI revision of individual slides are outside 0.4.

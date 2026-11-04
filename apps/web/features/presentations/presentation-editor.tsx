@@ -138,7 +138,7 @@ export function PresentationEditor({
           {tr('materials.partialContext')}
         </p>
       )}
-      <p className="muted">
+      <p className="presentation-notice">
         {tr(
           editor.document.stage === 'outline'
             ? 'presentation.outlineHint'
