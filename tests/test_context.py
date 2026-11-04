@@ -234,8 +234,7 @@ def test_gather_is_representative_and_reports_bounded_coverage(workflow):
     gathered = contexts.gather_snapshot(notebook, contexts.snapshot(notebook), limit=2)
     assert gathered["context_info"]["included_sources"] == 2
     capped, truncated = bounded_evidence(gathered["evidence"], max_chars=10)
-    assert truncated and sum(len(item["quote"]) for item in capped) == 10
-    assert capped[0]["location"]["offset_end"] == 10
+    assert truncated and capped == []  # Do not turn a whole passage into a misleading prefix.
 
 
 def test_wrong_supplied_evidence_never_reaches_provider(workflow, monkeypatch):

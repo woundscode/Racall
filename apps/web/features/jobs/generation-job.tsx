@@ -46,6 +46,8 @@ const errors: Record<string, MessageKey> = {
   context_changed: 'jobs.error.contextChanged',
   provider_changed: 'jobs.error.providerChanged',
   no_evidence: 'jobs.error.noEvidence',
+  context_too_large: 'jobs.error.contextTooLarge',
+  context_unavailable: 'jobs.error.contextUnavailable',
   unverified_output: 'jobs.error.unverified',
   generation_failed: 'jobs.error.failed',
   interrupted: 'jobs.error.interrupted',

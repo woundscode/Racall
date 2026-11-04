@@ -69,6 +69,13 @@ def setup(tmp_path, monkeypatch):
     source = {"id": uid(), "title": "Project", "status": "ready", "version": "v1", "created_at": now()}
     store.save_source(notebook, source)
     text = "Project Marigold's launch is planned for October 18. This is a plan."
+    write_json(
+        store.source_path(notebook, source["id"]) / "document.json",
+        {
+            "parser": "fixture",
+            "elements": [{"text": text, "type": "paragraph", "page": 2}],
+        },
+    )
     store.replace_chunks(
         notebook,
         source["id"],
@@ -91,6 +98,93 @@ def setup(tmp_path, monkeypatch):
     service.close()
     if service._thread:
         service._thread.join(timeout=2)
+
+
+def test_outline_receives_whole_canonical_block_not_a_search_chunk(setup):
+    store, notebook, source, service, provider = setup
+    text = "Background detail. " * 350 + "The launch remains conditional on approval."
+    write_json(
+        store.source_path(notebook, source["id"]) / "document.json",
+        {"parser": "fixture", "elements": [{"text": text, "page": 2}]},
+    )
+    # A pre-existing search index can split the paragraph before its qualification.
+    store.replace_chunks(
+        notebook,
+        source["id"],
+        source["version"],
+        [
+            {
+                "id": "old-short-chunk",
+                "text": text[:1500],
+                "location": {"element": 0, "offset_start": 0, "offset_end": 1500},
+            }
+        ],
+    )
+    outline = create_outline(service, notebook)
+    assert provider.calls[0][1]["evidence"][0]["quote"] == text
+    assert provider.calls[1][1]["evidence"][0]["quote"] == text
+    citation = outline["answer"]["citations"][0]
+    assert citation["quote"] == text
+    assert citation["location"]["offset_start"] == 0
+    assert citation["location"]["offset_end"] == len(text)
+    assert citation["id"] != "old-short-chunk"
+    assert not outline["context_info"]["evidence_truncated"]
+
+
+@pytest.mark.parametrize("kind", ["source", "note"])
+def test_context_that_cannot_fit_a_whole_block_fails_before_model_call(setup, kind):
+    store, notebook, source, service, provider = setup
+    text = "Long qualifying paragraph. " * 1000
+    if kind == "source":
+        write_json(
+            store.source_path(notebook, source["id"]) / "document.json",
+            {"parser": "fixture", "elements": [{"text": text}]},
+        )
+        selection = {"source_ids": [source["id"]]}
+    else:
+        note = store.save_note(notebook, "Long", text)
+        selection = {"source_ids": [], "note_ids": [note["id"]]}
+    service.start()
+    result = terminal(service, notebook, service.submit(notebook, request(context=selection)))
+    assert result["status"] == "failed" and result["error"] == "context_too_large"
+    assert provider.calls == []
+    assert service.materials.for_job(notebook, result["id"]) is None
+
+
+@pytest.mark.parametrize("contents", [None, {"elements": "invalid", "parser": "fixture"}])
+def test_missing_or_invalid_source_document_does_not_fall_back_to_partial_chunks(setup, contents):
+    store, notebook, source, service, provider = setup
+    path = store.source_path(notebook, source["id"]) / "document.json"
+    if contents is None:
+        path.unlink()
+    else:
+        write_json(path, contents)
+    service.start()
+    result = terminal(service, notebook, service.submit(notebook, request()))
+    assert result["status"] == "failed" and result["error"] == "context_unavailable"
+    assert provider.calls == []
+
+
+@pytest.mark.parametrize("kind", ["source", "note"])
+def test_complete_fitting_block_is_not_hidden_by_oversize_representative_candidates(setup, kind):
+    store, notebook, source, service, provider = setup
+    elements = [{"text": "x" * 25000} for _ in range(22)]
+    text = "The launch is planned for October 18. This remains a plan."
+    elements[18] = {"text": text}
+    if kind == "source":
+        write_json(
+            store.source_path(notebook, source["id"]) / "document.json",
+            {"parser": "fixture", "elements": elements},
+        )
+        selection = {"source_ids": [source["id"]]}
+    else:
+        note = store.save_note(notebook, "Long blocks", "\n\n".join(e["text"] for e in elements))
+        selection = {"source_ids": [], "note_ids": [note["id"]]}
+    outline = create_outline(service, notebook, context=selection)
+    assert [item["quote"] for item in provider.calls[0][1]["evidence"]] == [text]
+    assert outline["context_info"]["evidence_truncated"] is True
+    if kind == "source":
+        assert outline["answer"]["citations"][0]["location"]["element"] == 18
 
 
 def create_outline(service, notebook, **overrides):
@@ -152,12 +246,14 @@ def test_outline_approval_generates_separate_deck_with_canonical_sources(setup, 
     assert deck["presentation"]["language"] == language
     assert deck["presentation"]["template"] == "dark"
     assert deck["context"] == outline["context"]
-    assert deck["presentation"]["slides"][0]["evidence_ids"] == ["original-version-passage"]
+    citation_id = outline["answer"]["citations"][0]["id"]
+    assert citation_id != "E1"
+    assert deck["presentation"]["slides"][0]["evidence_ids"] == [citation_id]
     assert deck["answer"]["citations"][0]["version"] == "v1"
     assert deck["answer"]["citations"][0]["source_id"] == source["id"]
     assert deck["answer"]["claims"] == outline["answer"]["claims"]
     assert all(
-        anchor["evidence_id"] == "original-version-passage"
+        anchor["evidence_id"] == citation_id
         for claim in deck["answer"]["claims"]
         for anchor in claim["source_anchors"]
     )

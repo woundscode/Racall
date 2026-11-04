@@ -13,6 +13,7 @@ from ...provider_settings import embedding_settings
 from ...providers import frozen_provider_keys, provider_identity, provider_key
 from ...storage import ConflictError, Store, identifier, now, uid
 from ..artifacts.repository import Materials
+from ..context.errors import ContextTooLarge, ContextUnavailable
 from ..context.service import ContextService
 from ..studio.generator import NoEvidence, UnverifiedMaterial
 from .execution import generate_payload
@@ -294,6 +295,10 @@ class GenerationService:
                 self._fail(notebook, job_id, "context_changed")
             except ProviderChanged:
                 self._fail(notebook, job_id, "provider_changed")
+            except ContextTooLarge:
+                self._fail(notebook, job_id, "context_too_large")
+            except ContextUnavailable:
+                self._fail(notebook, job_id, "context_unavailable")
             except NoEvidence:
                 self._fail(notebook, job_id, "no_evidence")
             except UnverifiedMaterial:

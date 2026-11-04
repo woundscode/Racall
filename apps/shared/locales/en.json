@@ -37,6 +37,8 @@
   "jobs.error.contextChanged": "The selected materials changed. Retry to use their current versions.",
   "jobs.error.providerChanged": "AI settings changed. Retry to use the current settings.",
   "jobs.error.noEvidence": "No usable evidence was found in the selected materials. Choose other materials or adjust the request.",
+  "jobs.error.contextTooLarge": "No complete source block fits the presentation context limit. Select shorter material or create a shorter note that keeps the relevant conditions and qualifications.",
+  "jobs.error.contextUnavailable": "A selected source's saved text is missing or unreadable. Reimport that source before generating a presentation.",
   "jobs.error.unverified": "The result could not pass citation checks, so it was not saved. Try a narrower request or another model.",
   "jobs.error.failed": "Generation failed. Check the AI connection and retry.",
   "jobs.error.interrupted": "The application stopped before this task finished. You can start a new attempt.",

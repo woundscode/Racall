@@ -5,8 +5,10 @@ import json
 from ...storage import ConflictError, Store, identifier, now, read_text
 from ..notes.markdown import note_document
 from ..notes.repository import validate_note_id
+from .errors import ContextTooLarge
 from .evidence import bounded_evidence, note_passages, representative_groups
 from .schemas import normalize_selection
+from .source_blocks import source_blocks
 
 
 class ContextService:
@@ -95,12 +97,21 @@ class ContextService:
             "evidence_truncated": truncated,
         }
 
-    def gather_snapshot(self, notebook: str, snapshot: dict, *, limit=16, max_chars=24000) -> dict:
+    def gather_snapshot(
+        self, notebook: str, snapshot: dict, *, limit=16, max_chars=24000, whole_blocks=False
+    ) -> dict:
         with self.store.lock:
             self.validate_snapshot(notebook, snapshot)
             groups, total_passages = [], 0
             with self.store.db() as db:
                 for source in snapshot.get("sources", [])[:limit]:
+                    if whole_blocks:
+                        passages, count = source_blocks(
+                            self.store, notebook, source, limit=limit, max_chars=max_chars
+                        )
+                        groups.append(passages)
+                        total_passages += count
+                        continue
                     args = (notebook, source["id"], source["version"])
                     count = db.execute(
                         "SELECT COUNT(*) FROM chunks WHERE notebook=? AND source=? AND version=?", args
@@ -132,10 +143,14 @@ class ContextService:
                     )
             for ref in snapshot.get("notes", [])[:limit]:
                 passages = note_passages(notebook, self._note(notebook, ref["id"]))
-                groups.append(representative_groups([passages], limit=limit))
                 total_passages += len(passages)
+                if whole_blocks:
+                    passages = [item for item in passages if len(item["quote"]) <= max_chars]
+                groups.append(representative_groups([passages], limit=limit))
             sampled = representative_groups(groups, limit=limit, spread=False)
             evidence, truncated = bounded_evidence(sampled, limit=limit, max_chars=max_chars)
+            if whole_blocks and total_passages and not evidence:
+                raise ContextTooLarge("No complete context block fits the generation budget.")
             truncated = (
                 truncated
                 or total_passages > len(evidence)

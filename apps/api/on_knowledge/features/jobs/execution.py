@@ -36,7 +36,9 @@ def generate_payload(
         return {"answer": result["answer"]}, result
 
     progress("retrieval")
-    gathered = context.gather_snapshot(notebook, job["context"])
+    gathered = context.gather_snapshot(
+        notebook, job["context"], whole_blocks=job["kind"] == "presentation_outline"
+    )
     if job["kind"] == "presentation_outline":
         generated = generate_presentation(job, gathered["evidence"], settings, checkpoint, progress)
         generated["context_info"] = gathered["context_info"]

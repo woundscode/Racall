@@ -3,14 +3,15 @@
 import re
 from uuid import NAMESPACE_URL, uuid5
 
+from .blocks import note_ranges
+
 MAX_EVIDENCE_CHARS = 24000
 
 
 def note_passages(notebook: str, note: dict, *, size: int = 1600) -> list[dict]:
     body = note["body"]
     result = []
-    for start in range(0, len(body), size):
-        end = min(len(body), start + size)
+    for start, end, first, last in note_ranges(body, size=size):
         quote = body[start:end]
         if not quote.strip():
             continue
@@ -31,8 +32,8 @@ def note_passages(notebook: str, note: dict, *, size: int = 1600) -> list[dict]:
                     "element": 0,
                     "type": "note",
                     "section": note["title"],
-                    "line_start": body[:start].count("\n") + 1,
-                    "line_end": body[:end].count("\n") + 1,
+                    "line_start": first,
+                    "line_end": last,
                     "offset_start": start,
                     "offset_end": end,
                 },
@@ -52,26 +53,20 @@ def rank_note_passages(evidence: list[dict], query: str) -> list[dict]:
 def bounded_evidence(
     evidence: list[dict], *, limit: int = 16, max_chars: int = MAX_EVIDENCE_CHARS
 ) -> tuple[list[dict], bool]:
+    """Select whole passages; a prefix may omit the qualification that follows."""
     result, remaining, truncated = [], max_chars, False
     for original in evidence:
+        quote = original["quote"]
+        if not quote.strip():
+            continue
         if len(result) >= limit or remaining <= 0:
             truncated = True
             break
-        quote = original["quote"]
-        item = dict(original)
         if len(quote) > remaining:
-            quote = quote[:remaining]
-            location = {
-                **item["location"],
-                "offset_end": item["location"].get("offset_start", 0) + len(quote),
-            }
-            if "line_start" in location:
-                location["line_end"] = location["line_start"] + quote.count("\n")
-            item.update(quote=quote, location=location)
             truncated = True
+            continue
         remaining -= len(quote)
-        if quote.strip():
-            result.append(item)
+        result.append(dict(original))
     return result, truncated
 
 
